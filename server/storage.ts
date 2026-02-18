@@ -23,6 +23,12 @@ export interface IStorage {
   createProjectMessage(data: InsertProjectMessage): Promise<ProjectMessage>;
   getClientRequests(userId: string): Promise<ClientRequest[]>;
   createClientRequest(data: InsertClientRequest): Promise<ClientRequest>;
+  getAllUsers(): Promise<User[]>;
+  getAllProjectUpdates(): Promise<ProjectUpdate[]>;
+  getAllProjectMessages(): Promise<ProjectMessage[]>;
+  getAllClientRequests(): Promise<ClientRequest[]>;
+  updateClientRequestStatus(id: string, status: string): Promise<ClientRequest | undefined>;
+  updateProjectUpdateStatus(id: string, data: { status?: string; progressPercent?: number }): Promise<ProjectUpdate | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -85,6 +91,32 @@ export class DatabaseStorage implements IStorage {
   async createClientRequest(data: InsertClientRequest): Promise<ClientRequest> {
     const [req] = await db.insert(clientRequests).values(data).returning();
     return req;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  async getAllProjectUpdates(): Promise<ProjectUpdate[]> {
+    return db.select().from(projectUpdates).orderBy(desc(projectUpdates.createdAt));
+  }
+
+  async getAllProjectMessages(): Promise<ProjectMessage[]> {
+    return db.select().from(projectMessages).orderBy(desc(projectMessages.createdAt));
+  }
+
+  async getAllClientRequests(): Promise<ClientRequest[]> {
+    return db.select().from(clientRequests).orderBy(desc(clientRequests.createdAt));
+  }
+
+  async updateClientRequestStatus(id: string, status: string): Promise<ClientRequest | undefined> {
+    const [req] = await db.update(clientRequests).set({ status }).where(eq(clientRequests.id, id)).returning();
+    return req;
+  }
+
+  async updateProjectUpdateStatus(id: string, data: { status?: string; progressPercent?: number }): Promise<ProjectUpdate | undefined> {
+    const [update] = await db.update(projectUpdates).set(data).where(eq(projectUpdates.id, id)).returning();
+    return update;
   }
 }
 

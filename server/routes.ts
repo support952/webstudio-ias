@@ -1,12 +1,42 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSchema, insertUserSchema, insertClientRequestSchema } from "@shared/schema";
+import { insertContactSchema, insertUserSchema, insertClientRequestSchema, insertProjectUpdateSchema } from "@shared/schema";
 import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { sendContactEmail, sendAiSummaryEmail } from "./email";
 import bcrypt from "bcryptjs";
 import OpenAI from "openai";
+
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "webstudio-admin";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@webstudio-ias.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "WS@dmin2024!Secure";
+
+async function seedAdmin() {
+  try {
+    const existing = await storage.getUserByEmail(ADMIN_EMAIL);
+    if (!existing) {
+      const hashed = await bcrypt.hash(ADMIN_PASSWORD, 10);
+      await storage.createUser({
+        username: ADMIN_USERNAME,
+        email: ADMIN_EMAIL,
+        password: hashed,
+        fullName: "WebStudio Admin",
+      });
+      const admin = await storage.getUserByEmail(ADMIN_EMAIL);
+      if (admin) {
+        await storage.updateUser(admin.id, { password: admin.password } as any);
+        const { db } = await import("./db");
+        const { users } = await import("@shared/schema");
+        const { eq } = await import("drizzle-orm");
+        await db.update(users).set({ role: "admin" }).where(eq(users.id, admin.id));
+      }
+      console.log("[Admin] Admin user seeded successfully");
+    }
+  } catch (err) {
+    console.error("[Admin] Failed to seed admin:", err);
+  }
+}
 
 const registerSchema = insertUserSchema.extend({
   password: z.string().min(6),
@@ -64,6 +94,7 @@ export async function registerRoutes(
         username: user.username,
         email: user.email,
         fullName: user.fullName,
+        role: user.role,
       });
     } catch (error) {
       if (error instanceof ZodError) {
@@ -95,6 +126,7 @@ export async function registerRoutes(
         username: user.username,
         email: user.email,
         fullName: user.fullName,
+        role: user.role,
       });
     } catch (error) {
       if (error instanceof ZodError) {
@@ -130,6 +162,7 @@ export async function registerRoutes(
       username: user.username,
       email: user.email,
       fullName: user.fullName,
+      role: user.role,
     });
   });
 
@@ -214,6 +247,19 @@ Keep responses concise and conversational. Respond in the same language the clie
   function requireAuth(req: any, res: any): string | null {
     if (!req.session.userId) {
       res.status(401).json({ message: "Not authenticated" });
+      return null;
+    }
+    return req.session.userId;
+  }
+
+  async function requireAdmin(req: any, res: any): Promise<string | null> {
+    if (!req.session.userId) {
+      res.status(401).json({ message: "Not authenticated" });
+      return null;
+    }
+    const user = await storage.getUser(req.session.userId);
+    if (!user || user.role !== "admin") {
+      res.status(403).json({ message: "Access denied" });
       return null;
     }
     return req.session.userId;
@@ -386,6 +432,202 @@ Keep responses concise and conversational. Respond in the same language the clie
       latestRequests: requests.slice(0, 3),
     });
   });
+
+  // ─── Admin API Routes ───
+
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { email, password } = loginSchema.parse(req.body);
+      const user = await storage.getUserByEmail(email);
+      if (!user || user.role !== "admin") {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      req.session.userId = user.id;
+      res.json({ id: user.id, fullName: user.fullName, role: user.role });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/me", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const user = await storage.getUser(adminId);
+    if (!user) return res.status(401).json({ message: "Not found" });
+    res.json({ id: user.id, fullName: user.fullName, role: user.role });
+  });
+
+  app.get("/api/admin/overview", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const [allUsers, allContacts, allRequests, allMessages] = await Promise.all([
+      storage.getAllUsers(),
+      storage.getContactSubmissions(),
+      storage.getAllClientRequests(),
+      storage.getAllProjectMessages(),
+    ]);
+    const clients = allUsers.filter(u => u.role !== "admin");
+    res.json({
+      totalClients: clients.length,
+      totalContacts: allContacts.length,
+      totalRequests: allRequests.length,
+      totalMessages: allMessages.length,
+      openRequests: allRequests.filter(r => r.status === "open").length,
+      recentClients: clients.slice(0, 5).map(c => ({
+        id: c.id, username: c.username, email: c.email, fullName: c.fullName,
+        phone: c.phone, company: c.company, createdAt: c.createdAt,
+      })),
+      recentContacts: allContacts.slice(0, 5),
+      recentRequests: allRequests.slice(0, 5),
+    });
+  });
+
+  app.get("/api/admin/clients", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const allUsers = await storage.getAllUsers();
+    const clients = allUsers.filter(u => u.role !== "admin").map(c => ({
+      id: c.id, username: c.username, email: c.email, fullName: c.fullName,
+      phone: c.phone, company: c.company, createdAt: c.createdAt,
+    }));
+    res.json(clients);
+  });
+
+  app.get("/api/admin/clients/:clientId", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const clientId = req.params.clientId;
+    const client = await storage.getUser(clientId);
+    if (!client || client.role === "admin") {
+      return res.status(404).json({ message: "Client not found" });
+    }
+    const [updates, messages, requests] = await Promise.all([
+      storage.getProjectUpdates(clientId),
+      storage.getProjectMessages(clientId),
+      storage.getClientRequests(clientId),
+    ]);
+    res.json({
+      client: {
+        id: client.id, username: client.username, email: client.email,
+        fullName: client.fullName, phone: client.phone, company: client.company,
+        createdAt: client.createdAt,
+      },
+      updates,
+      messages,
+      requests,
+    });
+  });
+
+  app.get("/api/admin/contacts", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const contacts = await storage.getContactSubmissions();
+    res.json(contacts);
+  });
+
+  app.get("/api/admin/requests", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const requests = await storage.getAllClientRequests();
+    res.json(requests);
+  });
+
+  app.patch("/api/admin/requests/:id", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    try {
+      const { status } = z.object({ status: z.enum(["open", "in_progress", "resolved", "closed"]) }).parse(req.body);
+      const updated = await storage.updateClientRequestStatus(req.params.id, status);
+      if (!updated) return res.status(404).json({ message: "Request not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof ZodError) return res.status(400).json({ message: fromZodError(error).message });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/admin/messages", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const messages = await storage.getAllProjectMessages();
+    res.json(messages);
+  });
+
+  app.post("/api/admin/messages", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    try {
+      const msgSchema = z.object({
+        userId: z.string().min(1),
+        message: z.string().min(1),
+        projectUpdateId: z.string().optional(),
+      });
+      const data = msgSchema.parse(req.body);
+      const msg = await storage.createProjectMessage({
+        userId: data.userId,
+        message: data.message,
+        projectUpdateId: data.projectUpdateId || null,
+        senderType: "admin",
+        attachmentUrl: null,
+        attachmentType: null,
+      });
+      res.status(201).json(msg);
+    } catch (error) {
+      if (error instanceof ZodError) return res.status(400).json({ message: fromZodError(error).message });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/projects", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    try {
+      const projSchema = z.object({
+        userId: z.string().min(1),
+        title: z.string().min(1),
+        description: z.string().min(1),
+        status: z.enum(["pending", "in_progress", "review", "completed"]).optional(),
+        progressPercent: z.number().min(0).max(100).optional(),
+      });
+      const data = projSchema.parse(req.body);
+      const update = await storage.createProjectUpdate({
+        userId: data.userId,
+        title: data.title,
+        description: data.description,
+        status: data.status || "pending",
+        progressPercent: data.progressPercent || 0,
+      });
+      res.status(201).json(update);
+    } catch (error) {
+      if (error instanceof ZodError) return res.status(400).json({ message: fromZodError(error).message });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/admin/projects/:id", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    try {
+      const updateSchema = z.object({
+        status: z.enum(["pending", "in_progress", "review", "completed"]).optional(),
+        progressPercent: z.number().min(0).max(100).optional(),
+      });
+      const data = updateSchema.parse(req.body);
+      const updated = await storage.updateProjectUpdateStatus(req.params.id, data);
+      if (!updated) return res.status(404).json({ message: "Project not found" });
+      res.json(updated);
+    } catch (error) {
+      if (error instanceof ZodError) return res.status(400).json({ message: fromZodError(error).message });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Seed admin on startup
+  seedAdmin();
 
   return httpServer;
 }

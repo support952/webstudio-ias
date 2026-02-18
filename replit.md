@@ -27,6 +27,7 @@ An enterprise-grade multi-page digital agency platform with a dark cyber-tech ae
 - `client/src/pages/login.tsx` - User login page (redirects to /dashboard on success)
 - `client/src/pages/register.tsx` - User registration page (redirects to /dashboard on success)
 - `client/src/pages/dashboard.tsx` - Client dashboard with 5 tabs: Overview, Profile, Settings, Progress, Requests
+- `client/src/pages/admin-panel.tsx` - Admin CRM panel at /ws-panel-9x7k (separate login, hidden URL)
 
 ### Components
 - `client/src/components/navbar.tsx` - Fixed glass nav with language switcher + auth buttons
@@ -63,6 +64,30 @@ An enterprise-grade multi-page digital agency platform with a dark cyber-tech ae
 - `GET /api/requests` - Get client requests
 - `POST /api/requests` - Submit new request (subject, message, priority)
 - `GET /api/dashboard/overview` - Dashboard overview stats
+- `POST /api/admin/login` - Admin-only login (separate from client login)
+- `GET /api/admin/me` - Check admin session
+- `GET /api/admin/overview` - Admin dashboard overview stats
+- `GET /api/admin/clients` - Get all registered clients
+- `GET /api/admin/clients/:clientId` - Get client details with projects/messages/requests
+- `GET /api/admin/contacts` - Get all contact form submissions
+- `GET /api/admin/requests` - Get all client requests
+- `PATCH /api/admin/requests/:id` - Update request status
+- `GET /api/admin/messages` - Get all project messages
+- `POST /api/admin/messages` - Send message to client (as admin)
+- `POST /api/admin/projects` - Create project for client
+- `PATCH /api/admin/projects/:id` - Update project status/progress
+
+## Admin Panel
+- Hidden URL: `/ws-panel-9x7k` (not linked from site)
+- Separate admin login (admin@webstudio-ias.com / WS@dmin2024!Secure)
+- Features: Overview stats, Clients CRM list, Contact forms, Requests management, Messages
+- Admin can: view all clients, send messages, create/update projects, change request statuses
+
+## Auth & Routing
+- Logged-in users redirected from /login and /register to /dashboard
+- Dashboard requires authentication (redirects to /login if not logged in)
+- Users table has `role` field (default "client", admin has "admin")
+- Data isolation: each client only sees their own data
 
 ## i18n
 - Languages: English (EN), Spanish (ES), French (FR), Hebrew (HE)

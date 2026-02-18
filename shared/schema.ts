@@ -12,6 +12,8 @@ export const users = pgTable("users", {
   phone: text("phone"),
   company: text("company"),
   avatarUrl: text("avatar_url"),
+  role: text("role").notNull().default("client"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const contactSubmissions = pgTable("contact_submissions", {
