@@ -15,19 +15,19 @@ const planData: Record<string, { nameKey: string; priceKey: string; descKey: str
     nameKey: "pricing.starter",
     priceKey: "pricing.starter.price",
     descKey: "pricing.starter.desc",
-    features: ["pricing.feature.1a", "pricing.feature.1b", "pricing.feature.1c", "pricing.feature.1d", "pricing.feature.1e"],
+    features: ["pricing.feature.1a", "pricing.feature.1b", "pricing.feature.1c", "pricing.feature.1d", "pricing.feature.1e", "pricing.feature.security", "pricing.feature.server", "pricing.feature.retainer"],
   },
   pro: {
     nameKey: "pricing.pro",
     priceKey: "pricing.pro.price",
     descKey: "pricing.pro.desc",
-    features: ["pricing.feature.2a", "pricing.feature.2b", "pricing.feature.2c", "pricing.feature.2d", "pricing.feature.2e", "pricing.feature.2f", "pricing.feature.2g"],
+    features: ["pricing.feature.2a", "pricing.feature.2b", "pricing.feature.2c", "pricing.feature.2d", "pricing.feature.2e", "pricing.feature.2f", "pricing.feature.2g", "pricing.feature.security", "pricing.feature.server", "pricing.feature.retainer"],
   },
   enterprise: {
     nameKey: "pricing.enterprise",
     priceKey: "pricing.enterprise.price",
     descKey: "pricing.enterprise.desc",
-    features: ["pricing.feature.3a", "pricing.feature.3b", "pricing.feature.3c", "pricing.feature.3d", "pricing.feature.3e", "pricing.feature.3f", "pricing.feature.3g", "pricing.feature.3h"],
+    features: ["pricing.feature.3a", "pricing.feature.3b", "pricing.feature.3c", "pricing.feature.3d", "pricing.feature.3e", "pricing.feature.3f", "pricing.feature.3g", "pricing.feature.3h", "pricing.feature.security", "pricing.feature.server", "pricing.feature.retainer"],
   },
 };
 
