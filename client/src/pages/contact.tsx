@@ -200,7 +200,7 @@ export default function Contact() {
                 className="lg:col-span-2 space-y-6"
               >
                 {[
-                  { icon: Mail, labelKey: "contact.emailUs", value: "hello@webstudio.com", href: "mailto:hello@webstudio.com", color: "text-neon-purple", bg: "bg-neon-purple/10" },
+                  { icon: Mail, labelKey: "contact.emailUs", value: "support@webstudio-ias.com", href: "mailto:support@webstudio-ias.com", color: "text-neon-purple", bg: "bg-neon-purple/10" },
                   { icon: SiWhatsapp, labelKey: "contact.whatsapp", value: "+1 (555) 123-4567", href: "https://wa.me/15551234567", color: "text-emerald-400", bg: "bg-emerald-400/10" },
                   { icon: MessageCircle, labelKey: "contact.liveChat", valueKey: "contact.liveChat.value", href: "#", color: "text-neon-cyan", bg: "bg-neon-cyan/10" },
                   { icon: MapPin, labelKey: "contact.location", valueKey: "contact.location.value", href: "#", color: "text-neon-pink", bg: "bg-neon-pink/10" },

@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react";
+import { Zap, Mail } from "lucide-react";
 import { SiGithub, SiLinkedin, SiX } from "react-icons/si";
 import { Link } from "wouter";
 import { useI18n } from "@/lib/i18n";
@@ -37,10 +37,10 @@ export function Footer() {
     {
       title: t("footer.legal"),
       links: [
-        { label: t("footer.privacy"), href: "#" },
+        { label: t("footer.privacy"), href: "/privacy-policy" },
+        { label: t("footer.refund"), href: "/refund-policy" },
         { label: t("footer.terms"), href: "#" },
         { label: t("footer.cookies"), href: "#" },
-        { label: t("footer.gdpr"), href: "#" },
       ],
     },
   ];
@@ -56,9 +56,17 @@ export function Footer() {
               </div>
               <span className="text-lg font-bold text-white">WebStudio</span>
             </Link>
-            <p className="text-sm text-slate-500 leading-relaxed max-w-xs mb-6">
+            <p className="text-sm text-slate-500 leading-relaxed max-w-xs mb-4">
               {t("footer.tagline")}
             </p>
+            <a
+              href="mailto:support@webstudio-ias.com"
+              className="flex items-center gap-2 text-sm text-slate-400 hover:text-neon-cyan transition-colors mb-6"
+              data-testid="link-footer-email"
+            >
+              <Mail className="w-4 h-4" />
+              support@webstudio-ias.com
+            </a>
             <div className="flex items-center gap-3">
               {[
                 { icon: SiX, label: "X" },
@@ -102,10 +110,11 @@ export function Footer() {
           <p className="text-xs text-slate-600" data-testid="text-footer-copyright">
             {t("footer.copyright")}
           </p>
-          <div className="flex items-center gap-4 text-xs text-slate-600">
-            <a href="#" className="hover:text-slate-400 transition-colors">{t("footer.privacy")}</a>
-            <a href="#" className="hover:text-slate-400 transition-colors">{t("footer.terms")}</a>
-            <a href="#" className="hover:text-slate-400 transition-colors">{t("footer.cookies")}</a>
+          <div className="flex items-center flex-wrap gap-4 text-xs text-slate-600">
+            <Link href="/privacy-policy" className="hover:text-slate-400 transition-colors" data-testid="link-footer-bottom-privacy">{t("footer.privacy")}</Link>
+            <Link href="/refund-policy" className="hover:text-slate-400 transition-colors" data-testid="link-footer-bottom-refund">{t("footer.refund")}</Link>
+            <a href="#" className="hover:text-slate-400 transition-colors" data-testid="link-footer-bottom-terms">{t("footer.terms")}</a>
+            <a href="#" className="hover:text-slate-400 transition-colors" data-testid="link-footer-bottom-cookies">{t("footer.cookies")}</a>
           </div>
         </div>
       </div>

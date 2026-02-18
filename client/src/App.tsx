@@ -17,6 +17,8 @@ import Checkout from "@/pages/checkout";
 import Marketing from "@/pages/marketing";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import PrivacyPolicy from "@/pages/privacy-policy";
+import RefundPolicy from "@/pages/refund-policy";
 
 function Router() {
   return (
@@ -32,6 +34,8 @@ function Router() {
         <Route path="/marketing" component={Marketing} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/refund-policy" component={RefundPolicy} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
