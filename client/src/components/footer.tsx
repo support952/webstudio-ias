@@ -2,9 +2,13 @@ import { Zap, Mail } from "lucide-react";
 import { SiGithub, SiLinkedin, SiX } from "react-icons/si";
 import { Link } from "wouter";
 import { useI18n } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
 
 export function Footer() {
   const { t } = useI18n();
+  const { user } = useAuth();
+
+  if (user) return null;
 
   const columns = [
     {
