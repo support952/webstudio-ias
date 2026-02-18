@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, MessageCircle, MapPin, Send } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, MessageCircle, MapPin, ChevronRight, CheckCircle2, X, Shield } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,13 +23,11 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { useI18n } from "@/lib/i18n";
-import { AiChatModal } from "@/components/ai-chat-modal";
 
 export default function Contact() {
   const { toast } = useToast();
   const { t } = useI18n();
-  const [showAiChat, setShowAiChat] = useState(false);
-  const [clientInfo, setClientInfo] = useState<{ name?: string; email?: string }>({});
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const form = useForm<InsertContact>({
     resolver: zodResolver(insertContactSchema),
@@ -41,11 +39,10 @@ export default function Contact() {
       await apiRequest("POST", "/api/contact", data);
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({ title: t("contact.success"), description: t("contact.successDesc") });
-      setClientInfo({ name: data.name, email: data.email });
       form.reset();
-      setShowAiChat(true);
+      setShowConfirmation(true);
     },
     onError: () => {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
@@ -184,7 +181,7 @@ export default function Contact() {
                         </span>
                       ) : (
                         <span className="flex items-center gap-2">
-                          <Send className="w-4 h-4" />
+                          <ChevronRight className="w-4 h-4" />
                           {t("contact.send")}
                         </span>
                       )}
@@ -227,11 +224,61 @@ export default function Contact() {
 
         <Footer />
 
-        <AiChatModal
-          open={showAiChat}
-          onClose={() => setShowAiChat(false)}
-          clientInfo={clientInfo}
-        />
+        <AnimatePresence>
+          {showConfirmation && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowConfirmation(false)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.3 }}
+                className="glass-card rounded-md p-8 max-w-md w-full text-center relative"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setShowConfirmation(false)}
+                  className="absolute top-3 right-3"
+                  data-testid="button-close-confirmation"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+
+                <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-gradient-to-br from-neon-purple/20 to-neon-cyan/20 flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-neon-cyan" />
+                </div>
+
+                <h3 className="text-xl font-bold text-white mb-3" data-testid="text-confirm-title">
+                  {t("contact.confirmTitle")}
+                </h3>
+
+                <p className="text-slate-300 text-sm leading-relaxed mb-5" data-testid="text-confirm-message">
+                  {t("contact.confirmMessage")}
+                </p>
+
+                <div className="flex items-center justify-center gap-2 text-xs text-slate-500 mb-6" data-testid="text-secure-payment">
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>{t("contact.securePayment")}</span>
+                </div>
+
+                <Button
+                  onClick={() => setShowConfirmation(false)}
+                  className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                  data-testid="button-confirm-close"
+                >
+                  {t("contact.confirmClose")}
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </PageWrapper>
   );
