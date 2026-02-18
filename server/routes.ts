@@ -368,6 +368,12 @@ Keep responses concise and conversational. Respond in the same language the clie
         attachmentType: z.string().optional(),
       });
       const data = msgSchema.parse(req.body);
+      if (data.projectUpdateId) {
+        const project = await storage.getProjectUpdate(data.projectUpdateId);
+        if (!project || project.userId !== userId) {
+          return res.status(403).json({ message: "Forbidden" });
+        }
+      }
       const msg = await storage.createProjectMessage({
         userId,
         message: data.message,

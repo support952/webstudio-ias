@@ -18,6 +18,7 @@ export interface IStorage {
   createContactSubmission(contact: InsertContact): Promise<ContactSubmission>;
   getContactSubmissions(): Promise<ContactSubmission[]>;
   getProjectUpdates(userId: string): Promise<ProjectUpdate[]>;
+  getProjectUpdate(id: string): Promise<ProjectUpdate | undefined>;
   createProjectUpdate(data: InsertProjectUpdate): Promise<ProjectUpdate>;
   getProjectMessages(userId: string): Promise<ProjectMessage[]>;
   createProjectMessage(data: InsertProjectMessage): Promise<ProjectMessage>;
@@ -70,6 +71,11 @@ export class DatabaseStorage implements IStorage {
 
   async getProjectUpdates(userId: string): Promise<ProjectUpdate[]> {
     return db.select().from(projectUpdates).where(eq(projectUpdates.userId, userId)).orderBy(desc(projectUpdates.createdAt));
+  }
+
+  async getProjectUpdate(id: string): Promise<ProjectUpdate | undefined> {
+    const [update] = await db.select().from(projectUpdates).where(eq(projectUpdates.id, id));
+    return update;
   }
 
   async createProjectUpdate(data: InsertProjectUpdate): Promise<ProjectUpdate> {
