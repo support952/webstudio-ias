@@ -98,13 +98,6 @@ export default function Pricing() {
                     <p className="text-sm text-slate-400">{t(plan.descKey)}</p>
                   </div>
 
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-white" data-testid={`text-plan-price-${plan.id}`}>
-                      {t(plan.priceKey)}
-                    </span>
-                    <span className="text-slate-500 ms-2 text-sm">/{t("pricing.perProject")}</span>
-                  </div>
-
                   <ul className="space-y-3 mb-8 flex-1">
                     {plan.features.map((fKey) => (
                       <li key={fKey} className="flex items-start gap-3 text-sm text-slate-300">

@@ -13,6 +13,7 @@ import Work from "@/pages/work";
 import Pricing from "@/pages/pricing";
 import Contact from "@/pages/contact";
 import Checkout from "@/pages/checkout";
+import Marketing from "@/pages/marketing";
 
 function Router() {
   return (
@@ -25,6 +26,7 @@ function Router() {
         <Route path="/pricing" component={Pricing} />
         <Route path="/contact" component={Contact} />
         <Route path="/checkout" component={Checkout} />
+        <Route path="/marketing" component={Marketing} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>

@@ -62,7 +62,6 @@ export default function Checkout() {
     console.log("Order Details:", {
       plan: selectedPlanId,
       planName: t(plan.nameKey),
-      price: t(plan.priceKey),
       customer: {
         fullName: formData.fullName,
         company: formData.company,
@@ -133,8 +132,7 @@ export default function Checkout() {
                           </div>
                           <span className="font-semibold text-white text-sm">{t(p.nameKey)}</span>
                         </div>
-                        <div className="text-xl font-bold gradient-text mb-1">{t(p.priceKey)}</div>
-                        <div className="text-xs text-slate-500">{t("pricing.perProject")}</div>
+                        <div className="text-xs text-slate-400 mt-1">{t(p.descKey)}</div>
                       </button>
                     );
                   })}
@@ -146,10 +144,6 @@ export default function Checkout() {
                   <div>
                     <div className="text-lg font-semibold text-white">{t(plan.nameKey)}</div>
                     <div className="text-sm text-slate-400">{t(plan.descKey)}</div>
-                  </div>
-                  <div className="text-end">
-                    <div className="text-2xl font-bold gradient-text">{t(plan.priceKey)}</div>
-                    <div className="text-xs text-slate-500">{t("pricing.perProject")}</div>
                   </div>
                 </div>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -259,11 +253,7 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                <div className="glass-card rounded-md p-6 flex items-center justify-between gap-4 flex-wrap">
-                  <div>
-                    <div className="text-sm text-slate-500">{t("checkout.total")}</div>
-                    <div className="text-2xl font-bold text-white">{t(plan.priceKey)}</div>
-                  </div>
+                <div className="glass-card rounded-md p-6 flex items-center justify-end gap-4 flex-wrap">
                   <Button
                     type="submit"
                     disabled={processing}
