@@ -1,0 +1,76 @@
+ניתחתי את האתר ששלחת (https://webstudio-ias.com/). מדובר באתר בסגנון Cyber-Tech / Dark Mode מאוד מודרני. הוא משדר חדשנות, משתמש בהרבה צבעים כהים (שחור/כחול עמוק) עם "ניאונים" זוהרים, כרטיסיות עם אפקט זכוכית (Glassmorphism), ואנימציות חלקות.
+
+הנה הפרומפט המדויק שיבנה לך את האתר הזה ב-Replit. הוא כולל הנחיות ספציפיות לעיצוב, לצבעים ולמבנה.
+
+הפרומפט להעתקה ל-Replit Agent:
+"Build a stunning, high-performance Digital Agency Website heavily inspired by the futuristic aesthetic of https://webstudio-ias.com/.
+
+1. Visual Identity & Theme:
+
+Vibe: 'Cyber-Minimalism'. High-tech, premium, and sleek.
+
+Color Palette:
+
+Background: Deep Midnight Blue / Almost Black (#050A14 to #0B1120).
+
+Accents: Glowing gradients of Neon Purple (#8B5CF6), Cyan (#06B6D4), and Electric Pink (#EC4899).
+
+Text: Pure White for headings, Light Grey (#94A3B8) for body text.
+
+Glassmorphism: Use translucent backgrounds with blur effects (backdrop-blur-md, bg-white/5) for service cards and navigation bars.
+
+2. Tech Stack:
+
+Framework: React (Vite).
+
+Styling: Tailwind CSS (use extensive gradients and shadows).
+
+Animation: framer-motion for smooth entry animations (fade-up, slide-in) and hover effects.
+
+Icons: lucide-react (thin, modern strokes).
+
+3. Page Structure & Sections:
+
+Header (Navbar): Fixed, glass-effect top bar with a glowing 'Get Started' button.
+
+Hero Section:
+
+Large, bold typography: "Transforming Visions into Digital Reality".
+
+Background: Abstract animated gradient orbs or a subtle grid pattern.
+
+Two CTA buttons: "View Our Work" (Primary) and "Contact Us" (Secondary/Outline).
+
+Services Grid:
+
+3-column layout using 'Glass' cards.
+
+Each card should have a glowing border on hover.
+
+Services to list: Web Development, AI Automation, UI/UX Design, Digital Marketing.
+
+'Why Choose Us' Section:
+
+A clean layout with icons on the left and text on the right, highlighting 'Speed', 'Security', and 'Innovation'.
+
+Pricing / Packages:
+
+3 Distinct Cards (Starter, Pro, Enterprise).
+
+Make the middle card ('Pro') pop out (slightly larger with a gradient border).
+
+Contact Section:
+
+A sleek form on the left.
+
+Contact info (Email, WhatsApp) on the right with large icons.
+
+4. Specific Behaviors:
+
+Scroll: Implement smooth scrolling between sections.
+
+Responsiveness: The site must look perfect on mobile (stack cards vertically).
+
+Interactivity: Buttons should have a 'glow' effect when hovered.
+
+Instruction: Start by scaffolding the project with the dark theme and the Hero section, then pause for my review before building the rest.
