@@ -23,6 +23,7 @@ export interface IStorage {
   createProjectMessage(data: InsertProjectMessage): Promise<ProjectMessage>;
   getClientRequests(userId: string): Promise<ClientRequest[]>;
   createClientRequest(data: InsertClientRequest): Promise<ClientRequest>;
+  getClientRequest(id: string): Promise<ClientRequest | undefined>;
   getAllUsers(): Promise<User[]>;
   getAllProjectUpdates(): Promise<ProjectUpdate[]>;
   getAllProjectMessages(): Promise<ProjectMessage[]>;
@@ -90,6 +91,11 @@ export class DatabaseStorage implements IStorage {
 
   async createClientRequest(data: InsertClientRequest): Promise<ClientRequest> {
     const [req] = await db.insert(clientRequests).values(data).returning();
+    return req;
+  }
+
+  async getClientRequest(id: string): Promise<ClientRequest | undefined> {
+    const [req] = await db.select().from(clientRequests).where(eq(clientRequests.id, id));
     return req;
   }
 

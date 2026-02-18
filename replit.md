@@ -84,10 +84,13 @@ An enterprise-grade multi-page digital agency platform with a dark cyber-tech ae
 - Admin can: view all clients, send messages, create/update projects, change request statuses
 
 ## Auth & Routing
-- Logged-in users redirected from /login and /register to /dashboard
+- Logged-in users redirected from ALL public pages (home, services, about, work, pricing, contact, checkout, marketing, login, register) to /dashboard
 - Dashboard requires authentication (redirects to /login if not logged in)
+- Policy pages (privacy-policy, refund-policy) remain accessible to all
 - Users table has `role` field (default "client", admin has "admin")
-- Data isolation: each client only sees their own data
+- Data isolation: each client only sees their own data via userId filtering on all API endpoints
+- Individual request access: GET /api/requests/:id returns 403 if userId doesn't match (unless admin)
+- Conditional navbar: Guest sees Home/Services/About/Pricing/Contact + Login/Register; User sees Dashboard/New Request/Profile/Settings + Logout
 
 ## i18n
 - Languages: English (EN), Spanish (ES), French (FR), Hebrew (HE)

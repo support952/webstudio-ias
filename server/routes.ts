@@ -388,8 +388,32 @@ Keep responses concise and conversational. Respond in the same language the clie
   app.get("/api/requests", async (req, res) => {
     const userId = requireAuth(req, res);
     if (!userId) return;
+    const user = await storage.getUser(userId);
+    if (user?.role === "admin") {
+      const allRequests = await storage.getAllClientRequests();
+      const allUsers = await storage.getAllUsers();
+      const userMap = new Map(allUsers.map(u => [u.id, { fullName: u.fullName, email: u.email }]));
+      const enriched = allRequests.map(r => ({
+        ...r,
+        userName: userMap.get(r.userId)?.fullName || "Unknown",
+        userEmail: userMap.get(r.userId)?.email || "",
+      }));
+      return res.json(enriched);
+    }
     const requests = await storage.getClientRequests(userId);
     res.json(requests);
+  });
+
+  app.get("/api/requests/:id", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const request = await storage.getClientRequest(req.params.id);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    const user = await storage.getUser(userId);
+    if (user?.role !== "admin" && request.userId !== userId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    res.json(request);
   });
 
   app.post("/api/requests", async (req, res) => {

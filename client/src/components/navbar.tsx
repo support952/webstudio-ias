@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap, ChevronDown, Globe, LogIn, UserPlus, LogOut, User, LayoutDashboard } from "lucide-react";
+import { Menu, X, Zap, ChevronDown, Globe, LogIn, UserPlus, LogOut, User, LayoutDashboard, PlusCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { useI18n, languageNames, type Language } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 
-const navLinks = [
+const guestLinks = [
   { labelKey: "nav.home", href: "/" },
   { labelKey: "nav.services", href: "/services" },
   { labelKey: "nav.about", href: "/about" },
-  { labelKey: "nav.work", href: "/work" },
   { labelKey: "nav.pricing", href: "/pricing" },
   { labelKey: "nav.contact", href: "/contact" },
+];
+
+const userLinks = [
+  { labelKey: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { labelKey: "nav.newRequest", href: "/dashboard/requests", icon: PlusCircle },
+  { labelKey: "nav.profile", href: "/dashboard/profile", icon: User },
+  { labelKey: "nav.settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function Navbar() {
@@ -23,6 +29,8 @@ export function Navbar() {
   const { t, lang, setLang } = useI18n();
   const { user, logout } = useAuth();
   const [location] = useLocation();
+
+  const navLinks = user ? userLinks : guestLinks;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -63,20 +71,24 @@ export function Navbar() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1" data-testid="nav-desktop">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-3 py-2 text-sm transition-colors duration-200 rounded-md ${
-                  location === link.href
-                    ? "text-white"
-                    : "text-slate-400 hover:text-white"
-                }`}
-                data-testid={`link-nav-${link.labelKey.split(".")[1]}`}
-              >
-                {t(link.labelKey)}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location === link.href || (link.href !== "/" && location.startsWith(link.href));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-2 text-sm transition-colors duration-200 rounded-md flex items-center gap-1.5 ${
+                    isActive
+                      ? "text-white"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                  data-testid={`link-nav-${link.labelKey.split(".")[1]}`}
+                >
+                  {"icon" in link && link.icon && <link.icon className="w-4 h-4" />}
+                  {t(link.labelKey)}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -163,15 +175,6 @@ export function Navbar() {
                         <p className="text-sm text-white font-medium truncate">{user.fullName}</p>
                         <p className="text-xs text-slate-400 truncate">{user.email}</p>
                       </div>
-                      <Link
-                        href="/dashboard"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="w-full text-start px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-white/[0.03] flex items-center gap-2"
-                        data-testid="link-dashboard"
-                      >
-                        <LayoutDashboard className="w-4 h-4" />
-                        {t("nav.dashboard")}
-                      </Link>
                       <button
                         onClick={() => {
                           logout();
@@ -236,21 +239,25 @@ export function Navbar() {
             data-testid="nav-mobile"
           >
             <div className="px-4 py-4 space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-3 py-2.5 text-sm transition-colors rounded-md ${
-                    location === link.href
-                      ? "text-white"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                  data-testid={`link-mobile-${link.labelKey.split(".")[1]}`}
-                >
-                  {t(link.labelKey)}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = location === link.href || (link.href !== "/" && location.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block px-3 py-2.5 text-sm transition-colors rounded-md flex items-center gap-2 ${
+                      isActive
+                        ? "text-white"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                    data-testid={`link-mobile-${link.labelKey.split(".")[1]}`}
+                  >
+                    {"icon" in link && link.icon && <link.icon className="w-4 h-4" />}
+                    {t(link.labelKey)}
+                  </Link>
+                );
+              })}
 
               {user ? (
                 <div className="pt-2 border-t border-white/[0.06]">
@@ -258,15 +265,6 @@ export function Navbar() {
                     <p className="text-sm text-white font-medium">{user.fullName}</p>
                     <p className="text-xs text-slate-400">{user.email}</p>
                   </div>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="w-full text-start px-3 py-2.5 text-sm text-slate-400 hover:text-white flex items-center gap-2"
-                    data-testid="link-mobile-dashboard"
-                  >
-                    <LayoutDashboard className="w-4 h-4" />
-                    {t("nav.dashboard")}
-                  </Link>
                   <button
                     onClick={() => {
                       logout();

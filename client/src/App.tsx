@@ -57,13 +57,13 @@ function Router() {
     <AnimatePresence mode="wait">
       <Switch>
         <Route path="/">{() => <HomeOrDashboard />}</Route>
-        <Route path="/services" component={Services} />
-        <Route path="/about" component={About} />
-        <Route path="/work" component={Work} />
-        <Route path="/pricing" component={Pricing} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/checkout" component={Checkout} />
-        <Route path="/marketing" component={Marketing} />
+        <Route path="/services">{() => <AuthRedirect component={Services} />}</Route>
+        <Route path="/about">{() => <AuthRedirect component={About} />}</Route>
+        <Route path="/work">{() => <AuthRedirect component={Work} />}</Route>
+        <Route path="/pricing">{() => <AuthRedirect component={Pricing} />}</Route>
+        <Route path="/contact">{() => <AuthRedirect component={Contact} />}</Route>
+        <Route path="/checkout">{() => <AuthRedirect component={Checkout} />}</Route>
+        <Route path="/marketing">{() => <AuthRedirect component={Marketing} />}</Route>
         <Route path="/login">{() => <AuthRedirect component={Login} />}</Route>
         <Route path="/register">{() => <AuthRedirect component={Register} />}</Route>
         <Route path="/privacy-policy" component={PrivacyPolicy} />
