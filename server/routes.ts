@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSchema, insertUserSchema } from "@shared/schema";
+import { insertContactSchema, insertUserSchema, insertClientRequestSchema } from "@shared/schema";
 import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { sendContactEmail, sendAiSummaryEmail } from "./email";
@@ -209,6 +209,182 @@ Keep responses concise and conversational. Respond in the same language the clie
       console.error("[AI Chat] Error:", error);
       res.status(500).json({ message: "Failed to process AI chat" });
     }
+  });
+
+  function requireAuth(req: any, res: any): string | null {
+    if (!req.session.userId) {
+      res.status(401).json({ message: "Not authenticated" });
+      return null;
+    }
+    return req.session.userId;
+  }
+
+  app.get("/api/profile", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const user = await storage.getUser(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName,
+      phone: user.phone,
+      company: user.company,
+      avatarUrl: user.avatarUrl,
+    });
+  });
+
+  app.patch("/api/profile", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    try {
+      const profileSchema = z.object({
+        fullName: z.string().min(1).optional(),
+        email: z.string().email().optional(),
+        phone: z.string().optional(),
+        company: z.string().optional(),
+      });
+      const data = profileSchema.parse(req.body);
+      if (data.email) {
+        const existingEmail = await storage.getUserByEmail(data.email);
+        if (existingEmail && existingEmail.id !== userId) {
+          return res.status(409).json({ message: "Email already in use" });
+        }
+      }
+      const user = await storage.updateUser(userId, data);
+      if (!user) return res.status(404).json({ message: "User not found" });
+      res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName,
+        phone: user.phone,
+        company: user.company,
+        avatarUrl: user.avatarUrl,
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/profile/password", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    try {
+      const pwSchema = z.object({
+        currentPassword: z.string().min(1),
+        newPassword: z.string().min(6),
+      });
+      const { currentPassword, newPassword } = pwSchema.parse(req.body);
+      const user = await storage.getUser(userId);
+      if (!user) return res.status(404).json({ message: "User not found" });
+      const valid = await bcrypt.compare(currentPassword, user.password);
+      if (!valid) return res.status(400).json({ message: "Current password is incorrect" });
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await storage.updateUser(userId, { password: hashedPassword });
+      res.json({ message: "Password updated successfully" });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/progress", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const updates = await storage.getProjectUpdates(userId);
+    res.json(updates);
+  });
+
+  app.get("/api/messages", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const messages = await storage.getProjectMessages(userId);
+    res.json(messages);
+  });
+
+  app.post("/api/messages", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    try {
+      const msgSchema = z.object({
+        message: z.string().min(1),
+        projectUpdateId: z.string().optional(),
+        attachmentUrl: z.string().optional(),
+        attachmentType: z.string().optional(),
+      });
+      const data = msgSchema.parse(req.body);
+      const msg = await storage.createProjectMessage({
+        userId,
+        message: data.message,
+        projectUpdateId: data.projectUpdateId || null,
+        senderType: "client",
+        attachmentUrl: data.attachmentUrl || null,
+        attachmentType: data.attachmentType || null,
+      });
+      res.status(201).json(msg);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/requests", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const requests = await storage.getClientRequests(userId);
+    res.json(requests);
+  });
+
+  app.post("/api/requests", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    try {
+      const reqSchema = z.object({
+        subject: z.string().min(1),
+        message: z.string().min(1),
+        priority: z.enum(["low", "medium", "high"]).optional(),
+      });
+      const data = reqSchema.parse(req.body);
+      const request = await storage.createClientRequest({
+        userId,
+        subject: data.subject,
+        message: data.message,
+        priority: data.priority || "medium",
+      });
+      res.status(201).json(request);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/dashboard/overview", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const [updates, requests, messages] = await Promise.all([
+      storage.getProjectUpdates(userId),
+      storage.getClientRequests(userId),
+      storage.getProjectMessages(userId),
+    ]);
+    res.json({
+      projectCount: updates.length,
+      requestCount: requests.length,
+      messageCount: messages.length,
+      openRequests: requests.filter(r => r.status === "open").length,
+      latestUpdates: updates.slice(0, 3),
+      latestRequests: requests.slice(0, 3),
+    });
   });
 
   return httpServer;

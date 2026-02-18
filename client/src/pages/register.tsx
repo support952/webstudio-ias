@@ -42,7 +42,7 @@ export default function Register() {
     try {
       await register({ fullName, username, email, password });
       toast({ title: t("auth.registerSuccess") });
-      setLocation("/");
+      setLocation("/dashboard");
     } catch (err: any) {
       const msg = err?.message || t("auth.registerError");
       toast({ title: msg, variant: "destructive" });

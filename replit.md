@@ -24,8 +24,9 @@ An enterprise-grade multi-page digital agency platform with a dark cyber-tech ae
 - `client/src/pages/contact.tsx` - Contact form + info cards + AI chat modal
 - `client/src/pages/checkout.tsx` - Order summary + Stripe-style payment form
 - `client/src/pages/marketing.tsx` - Marketing Campaigns (PPC) page
-- `client/src/pages/login.tsx` - User login page
-- `client/src/pages/register.tsx` - User registration page
+- `client/src/pages/login.tsx` - User login page (redirects to /dashboard on success)
+- `client/src/pages/register.tsx` - User registration page (redirects to /dashboard on success)
+- `client/src/pages/dashboard.tsx` - Client dashboard with 5 tabs: Overview, Profile, Settings, Progress, Requests
 
 ### Components
 - `client/src/components/navbar.tsx` - Fixed glass nav with language switcher + auth buttons
@@ -40,10 +41,10 @@ An enterprise-grade multi-page digital agency platform with a dark cyber-tech ae
 - `client/src/lib/i18n.tsx` - i18n system (Context + translations)
 - `client/src/lib/auth.tsx` - Auth context (login, register, logout, session)
 - `client/src/App.tsx` - Router + providers (QueryClient, I18n, Auth)
-- `server/routes.ts` - API endpoints (auth, contact, AI chat)
-- `server/storage.ts` - Database storage layer
+- `server/routes.ts` - API endpoints (auth, contact, AI chat, dashboard)
+- `server/storage.ts` - Database storage layer (users, contacts, projects, messages, requests)
 - `server/email.ts` - Email sending (contact form + AI summary)
-- `shared/schema.ts` - Drizzle ORM schemas (users, contactSubmissions)
+- `shared/schema.ts` - Drizzle ORM schemas (users, contactSubmissions, projectUpdates, projectMessages, clientRequests)
 
 ## API Endpoints
 - `POST /api/auth/register` - Register new user (username, email, password, fullName)
@@ -53,12 +54,22 @@ An enterprise-grade multi-page digital agency platform with a dark cyber-tech ae
 - `POST /api/contact` - Submit contact form (name, email, subject, message)
 - `GET /api/contact` - Retrieve contact submissions
 - `POST /api/ai-chat` - AI chat agent endpoint (messages[], clientInfo)
+- `GET /api/profile` - Get user profile
+- `PATCH /api/profile` - Update user profile (fullName, email, phone, company)
+- `POST /api/profile/password` - Change password
+- `GET /api/progress` - Get project progress updates
+- `GET /api/messages` - Get project messages
+- `POST /api/messages` - Send message (with optional attachment)
+- `GET /api/requests` - Get client requests
+- `POST /api/requests` - Submit new request (subject, message, priority)
+- `GET /api/dashboard/overview` - Dashboard overview stats
 
 ## i18n
 - Languages: English (EN), Spanish (ES), French (FR), Hebrew (HE)
 - Hebrew auto-switches layout to RTL
 - Translations in `client/src/lib/i18n.tsx` as JSON objects
 - Auth translations: auth.loginTitle, auth.registerTitle, nav.login, nav.register, etc.
+- Dashboard translations: dashboard.overview, dashboard.profile, dashboard.settings, etc.
 
 ## Design Tokens
 - Background: Deep midnight blue (#050A14 range)

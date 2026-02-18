@@ -29,7 +29,7 @@ export default function Login() {
     try {
       await login(email, password);
       toast({ title: t("auth.loginSuccess") });
-      setLocation("/");
+      setLocation("/dashboard");
     } catch (err: any) {
       const msg = err?.message || t("auth.loginError");
       toast({ title: msg, variant: "destructive" });

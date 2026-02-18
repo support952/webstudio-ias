@@ -1,15 +1,28 @@
-import { type User, type InsertUser, type ContactSubmission, type InsertContact } from "@shared/schema";
-import { users, contactSubmissions } from "@shared/schema";
+import {
+  type User, type InsertUser,
+  type ContactSubmission, type InsertContact,
+  type ProjectUpdate, type InsertProjectUpdate,
+  type ProjectMessage, type InsertProjectMessage,
+  type ClientRequest, type InsertClientRequest,
+} from "@shared/schema";
+import { users, contactSubmissions, projectUpdates, projectMessages, clientRequests } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, data: Partial<Pick<User, "fullName" | "email" | "phone" | "company" | "avatarUrl" | "password">>): Promise<User | undefined>;
   createContactSubmission(contact: InsertContact): Promise<ContactSubmission>;
   getContactSubmissions(): Promise<ContactSubmission[]>;
+  getProjectUpdates(userId: string): Promise<ProjectUpdate[]>;
+  createProjectUpdate(data: InsertProjectUpdate): Promise<ProjectUpdate>;
+  getProjectMessages(userId: string): Promise<ProjectMessage[]>;
+  createProjectMessage(data: InsertProjectMessage): Promise<ProjectMessage>;
+  getClientRequests(userId: string): Promise<ClientRequest[]>;
+  createClientRequest(data: InsertClientRequest): Promise<ClientRequest>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -33,6 +46,11 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async updateUser(id: string, data: Partial<Pick<User, "fullName" | "email" | "phone" | "company" | "avatarUrl" | "password">>): Promise<User | undefined> {
+    const [user] = await db.update(users).set(data).where(eq(users.id, id)).returning();
+    return user;
+  }
+
   async createContactSubmission(contact: InsertContact): Promise<ContactSubmission> {
     const [submission] = await db.insert(contactSubmissions).values(contact).returning();
     return submission;
@@ -40,6 +58,33 @@ export class DatabaseStorage implements IStorage {
 
   async getContactSubmissions(): Promise<ContactSubmission[]> {
     return db.select().from(contactSubmissions);
+  }
+
+  async getProjectUpdates(userId: string): Promise<ProjectUpdate[]> {
+    return db.select().from(projectUpdates).where(eq(projectUpdates.userId, userId)).orderBy(desc(projectUpdates.createdAt));
+  }
+
+  async createProjectUpdate(data: InsertProjectUpdate): Promise<ProjectUpdate> {
+    const [update] = await db.insert(projectUpdates).values(data).returning();
+    return update;
+  }
+
+  async getProjectMessages(userId: string): Promise<ProjectMessage[]> {
+    return db.select().from(projectMessages).where(eq(projectMessages.userId, userId)).orderBy(desc(projectMessages.createdAt));
+  }
+
+  async createProjectMessage(data: InsertProjectMessage): Promise<ProjectMessage> {
+    const [msg] = await db.insert(projectMessages).values(data).returning();
+    return msg;
+  }
+
+  async getClientRequests(userId: string): Promise<ClientRequest[]> {
+    return db.select().from(clientRequests).where(eq(clientRequests.userId, userId)).orderBy(desc(clientRequests.createdAt));
+  }
+
+  async createClientRequest(data: InsertClientRequest): Promise<ClientRequest> {
+    const [req] = await db.insert(clientRequests).values(data).returning();
+    return req;
   }
 }
 

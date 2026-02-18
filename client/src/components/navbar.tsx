@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap, ChevronDown, Globe, LogIn, UserPlus, LogOut, User } from "lucide-react";
+import { Menu, X, Zap, ChevronDown, Globe, LogIn, UserPlus, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { useI18n, languageNames, type Language } from "@/lib/i18n";
@@ -163,6 +163,15 @@ export function Navbar() {
                         <p className="text-sm text-white font-medium truncate">{user.fullName}</p>
                         <p className="text-xs text-slate-400 truncate">{user.email}</p>
                       </div>
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="w-full text-start px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-white/[0.03] flex items-center gap-2"
+                        data-testid="link-dashboard"
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        {t("nav.dashboard")}
+                      </Link>
                       <button
                         onClick={() => {
                           logout();
@@ -180,25 +189,25 @@ export function Navbar() {
               </div>
             ) : (
               <div className="hidden sm:flex items-center gap-2">
-                <Link href="/login">
+                <Link href="/register">
                   <Button
                     variant="ghost"
                     size="sm"
                     className="text-slate-300 gap-1.5"
-                    data-testid="button-login"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    {t("nav.login")}
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button
-                    className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
-                    size="sm"
                     data-testid="button-register"
                   >
                     <UserPlus className="w-4 h-4" />
                     {t("nav.register")}
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button
+                    className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                    size="sm"
+                    data-testid="button-login"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    {t("nav.login")}
                   </Button>
                 </Link>
               </div>
@@ -249,6 +258,15 @@ export function Navbar() {
                     <p className="text-sm text-white font-medium">{user.fullName}</p>
                     <p className="text-xs text-slate-400">{user.email}</p>
                   </div>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full text-start px-3 py-2.5 text-sm text-slate-400 hover:text-white flex items-center gap-2"
+                    data-testid="link-mobile-dashboard"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    {t("nav.dashboard")}
+                  </Link>
                   <button
                     onClick={() => {
                       logout();
@@ -263,23 +281,23 @@ export function Navbar() {
                 </div>
               ) : (
                 <div className="pt-2 space-y-2 border-t border-white/[0.06]">
-                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                  <Link href="/register" onClick={() => setMobileOpen(false)}>
                     <Button
                       variant="ghost"
                       className="w-full justify-start gap-2 text-slate-300"
-                      data-testid="button-mobile-login"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      {t("nav.login")}
-                    </Button>
-                  </Link>
-                  <Link href="/register" onClick={() => setMobileOpen(false)}>
-                    <Button
-                      className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
                       data-testid="button-mobile-register"
                     >
                       <UserPlus className="w-4 h-4" />
                       {t("nav.register")}
+                    </Button>
+                  </Link>
+                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                    <Button
+                      className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                      data-testid="button-mobile-login"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      {t("nav.login")}
                     </Button>
                   </Link>
                 </div>
