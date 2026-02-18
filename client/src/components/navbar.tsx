@@ -1,25 +1,39 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Zap, ChevronDown, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "wouter";
+import { useI18n, languageNames, type Language } from "@/lib/i18n";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Why Us", href: "#why-us" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Contact", href: "#contact" },
+  { labelKey: "nav.home", href: "/" },
+  { labelKey: "nav.services", href: "/services" },
+  { labelKey: "nav.about", href: "/about" },
+  { labelKey: "nav.work", href: "/work" },
+  { labelKey: "nav.pricing", href: "/pricing" },
+  { labelKey: "nav.contact", href: "/contact" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const { t, lang, setLang } = useI18n();
+  const [location] = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClick = () => setLangOpen(false);
+    if (langOpen) {
+      document.addEventListener("click", handleClick);
+      return () => document.removeEventListener("click", handleClick);
+    }
+  }, [langOpen]);
 
   return (
     <motion.header
@@ -33,42 +47,95 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 h-16 sm:h-20">
-          <a href="#home" className="flex items-center gap-2 shrink-0" data-testid="link-logo">
+          <Link href="/" className="flex items-center gap-2 shrink-0" data-testid="link-logo">
             <div className="w-8 h-8 rounded-md bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span className="text-lg font-bold text-white tracking-tight">
               WebStudio
             </span>
-          </a>
+          </Link>
 
-          <nav className="hidden md:flex items-center gap-1" data-testid="nav-desktop">
+          <nav className="hidden lg:flex items-center gap-1" data-testid="nav-desktop">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
-                className="px-3 py-2 text-sm text-slate-300 hover:text-white transition-colors duration-200 rounded-md"
-                data-testid={`link-nav-${link.label.toLowerCase().replace(/\s/g, "-")}`}
+                className={`px-3 py-2 text-sm transition-colors duration-200 rounded-md ${
+                  location === link.href
+                    ? "text-white"
+                    : "text-slate-400 hover:text-white"
+                }`}
+                data-testid={`link-nav-${link.labelKey.split(".")[1]}`}
               >
-                {link.label}
-              </a>
+                {t(link.labelKey)}
+              </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <a href="#contact">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-400 gap-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLangOpen(!langOpen);
+                }}
+                data-testid="button-language-switcher"
+              >
+                <Globe className="w-4 h-4" />
+                <span className="hidden sm:inline text-xs uppercase">{lang}</span>
+                <ChevronDown className="w-3 h-3" />
+              </Button>
+
+              <AnimatePresence>
+                {langOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="absolute end-0 top-full mt-1 w-36 glass-card rounded-md py-1 z-50"
+                    data-testid="dropdown-language"
+                  >
+                    {(Object.entries(languageNames) as [Language, string][]).map(
+                      ([code, name]) => (
+                        <button
+                          key={code}
+                          onClick={() => {
+                            setLang(code);
+                            setLangOpen(false);
+                          }}
+                          className={`w-full text-start px-3 py-2 text-sm transition-colors ${
+                            lang === code
+                              ? "text-white bg-white/[0.06]"
+                              : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                          }`}
+                          data-testid={`button-lang-${code}`}
+                        >
+                          {name}
+                        </button>
+                      )
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <Link href="/contact">
               <Button
                 className="hidden sm:inline-flex bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
                 data-testid="button-get-started"
               >
-                Get Started
+                {t("nav.getStarted")}
               </Button>
-            </a>
+            </Link>
 
             <Button
               size="icon"
               variant="ghost"
-              className="md:hidden text-slate-300"
+              className="lg:hidden text-slate-300"
               onClick={() => setMobileOpen(!mobileOpen)}
               data-testid="button-mobile-menu"
             >
@@ -84,29 +151,33 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden glass-nav"
+            className="lg:hidden glass-nav"
             data-testid="nav-mobile"
           >
             <div className="px-4 py-4 space-y-1">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block px-3 py-2.5 text-sm text-slate-300 hover:text-white transition-colors rounded-md"
-                  data-testid={`link-mobile-${link.label.toLowerCase().replace(/\s/g, "-")}`}
+                  className={`block px-3 py-2.5 text-sm transition-colors rounded-md ${
+                    location === link.href
+                      ? "text-white"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                  data-testid={`link-mobile-${link.labelKey.split(".")[1]}`}
                 >
-                  {link.label}
-                </a>
+                  {t(link.labelKey)}
+                </Link>
               ))}
-              <a href="#contact" onClick={() => setMobileOpen(false)}>
+              <Link href="/contact" onClick={() => setMobileOpen(false)}>
                 <Button
                   className="w-full mt-2 bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
                   data-testid="button-mobile-get-started"
                 >
-                  Get Started
+                  {t("nav.getStarted")}
                 </Button>
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}
