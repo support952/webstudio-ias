@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Lock, CreditCard } from "lucide-react";
+import { ArrowLeft, Lock, CreditCard, Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,18 +10,36 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { useI18n } from "@/lib/i18n";
 
-const planData: Record<string, { nameKey: string; priceKey: string; descKey: string }> = {
-  starter: { nameKey: "pricing.starter", priceKey: "pricing.starter.price", descKey: "pricing.starter.desc" },
-  pro: { nameKey: "pricing.pro", priceKey: "pricing.pro.price", descKey: "pricing.pro.desc" },
-  enterprise: { nameKey: "pricing.enterprise", priceKey: "pricing.enterprise.price", descKey: "pricing.enterprise.desc" },
+const planData: Record<string, { nameKey: string; priceKey: string; descKey: string; features: string[] }> = {
+  starter: {
+    nameKey: "pricing.starter",
+    priceKey: "pricing.starter.price",
+    descKey: "pricing.starter.desc",
+    features: ["pricing.feature.1a", "pricing.feature.1b", "pricing.feature.1c", "pricing.feature.1d", "pricing.feature.1e"],
+  },
+  pro: {
+    nameKey: "pricing.pro",
+    priceKey: "pricing.pro.price",
+    descKey: "pricing.pro.desc",
+    features: ["pricing.feature.2a", "pricing.feature.2b", "pricing.feature.2c", "pricing.feature.2d", "pricing.feature.2e", "pricing.feature.2f", "pricing.feature.2g"],
+  },
+  enterprise: {
+    nameKey: "pricing.enterprise",
+    priceKey: "pricing.enterprise.price",
+    descKey: "pricing.enterprise.desc",
+    features: ["pricing.feature.3a", "pricing.feature.3b", "pricing.feature.3c", "pricing.feature.3d", "pricing.feature.3e", "pricing.feature.3f", "pricing.feature.3g", "pricing.feature.3h"],
+  },
 };
+
+const planIds = ["starter", "pro", "enterprise"] as const;
 
 export default function Checkout() {
   const { t } = useI18n();
   const search = useSearch();
   const params = new URLSearchParams(search);
-  const planId = params.get("plan") || "pro";
-  const plan = planData[planId] || planData.pro;
+  const initialPlan = params.get("plan") || "pro";
+  const [selectedPlanId, setSelectedPlanId] = useState(initialPlan in planData ? initialPlan : "pro");
+  const plan = planData[selectedPlanId];
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -42,7 +60,7 @@ export default function Checkout() {
     e.preventDefault();
     setProcessing(true);
     console.log("Order Details:", {
-      plan: planId,
+      plan: selectedPlanId,
       planName: t(plan.nameKey),
       price: t(plan.priceKey),
       customer: {
@@ -83,9 +101,48 @@ export default function Checkout() {
               </h1>
               <p className="text-slate-400 mb-8">{t("checkout.subtitle")}</p>
 
-              <div className="glass-card rounded-md p-6 mb-6" data-testid="card-order-summary">
-                <h3 className="text-sm text-slate-500 uppercase tracking-wider mb-3">{t("checkout.plan")}</h3>
-                <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="mb-6" data-testid="card-order-summary">
+                <h3 className="text-sm text-slate-500 uppercase tracking-wider mb-3">{t("checkout.choosePlan")}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {planIds.map((pid) => {
+                    const p = planData[pid];
+                    const isSelected = pid === selectedPlanId;
+                    return (
+                      <button
+                        key={pid}
+                        type="button"
+                        onClick={() => setSelectedPlanId(pid)}
+                        className={`relative glass-card rounded-md p-4 text-start transition-all duration-200 cursor-pointer ${
+                          isSelected
+                            ? "ring-2 ring-neon-purple/60 bg-neon-purple/[0.06]"
+                            : "ring-1 ring-white/[0.06] hover:ring-white/[0.12]"
+                        }`}
+                        data-testid={`button-select-plan-${pid}`}
+                      >
+                        {pid === "pro" && (
+                          <span className="absolute -top-2 end-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gradient-to-r from-neon-purple to-neon-cyan text-white">
+                            <Star className="w-2.5 h-2.5" />
+                            {t("pricing.popular")}
+                          </span>
+                        )}
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                            isSelected ? "border-neon-purple bg-neon-purple" : "border-slate-600"
+                          }`}>
+                            {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
+                          </div>
+                          <span className="font-semibold text-white text-sm">{t(p.nameKey)}</span>
+                        </div>
+                        <div className="text-xl font-bold gradient-text mb-1">{t(p.priceKey)}</div>
+                        <div className="text-xs text-slate-500">{t("pricing.perProject")}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="glass-card rounded-md p-5 mb-6" data-testid="card-plan-features">
+                <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
                   <div>
                     <div className="text-lg font-semibold text-white">{t(plan.nameKey)}</div>
                     <div className="text-sm text-slate-400">{t(plan.descKey)}</div>
@@ -95,6 +152,14 @@ export default function Checkout() {
                     <div className="text-xs text-slate-500">{t("pricing.perProject")}</div>
                   </div>
                 </div>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {plan.features.map((fKey) => (
+                    <li key={fKey} className="flex items-start gap-2 text-sm text-slate-300">
+                      <Check className="w-3.5 h-3.5 mt-0.5 shrink-0 text-neon-cyan" />
+                      {t(fKey)}
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6" data-testid="form-checkout">
