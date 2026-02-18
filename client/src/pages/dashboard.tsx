@@ -16,7 +16,7 @@ import {
   LayoutDashboard, User, Settings, Activity, MessageSquarePlus,
   Clock, CheckCircle2, AlertCircle, Send,
   Lock, Mail, Phone, Building2, Edit3, Save, FileText,
-  TrendingUp, Inbox, ImagePlus, X
+  TrendingUp, Inbox, ImagePlus, X, Trash2
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -548,6 +548,18 @@ function RequestsTab() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await apiRequest("DELETE", `/api/requests/${id}`);
+      if (!res.ok) throw new Error("Failed to delete request");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/overview"] });
+      toast({ title: t("dashboard.requestDeleted") });
+    },
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -633,6 +645,16 @@ function RequestsTab() {
                   <div className="flex items-center gap-2 shrink-0">
                     <PriorityBadge priority={req.priority} />
                     <StatusBadge status={req.status} />
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="text-slate-500 hover:text-red-400"
+                      onClick={() => deleteMutation.mutate(req.id)}
+                      disabled={deleteMutation.isPending}
+                      data-testid={`button-delete-request-${req.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </CardContent>

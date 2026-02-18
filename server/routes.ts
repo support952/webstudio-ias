@@ -416,6 +416,18 @@ Keep responses concise and conversational. Respond in the same language the clie
     res.json(request);
   });
 
+  app.delete("/api/requests/:id", async (req, res) => {
+    const userId = requireAuth(req, res);
+    if (!userId) return;
+    const request = await storage.getClientRequest(req.params.id);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    if (request.userId !== userId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    await storage.deleteClientRequest(req.params.id);
+    res.json({ success: true });
+  });
+
   app.post("/api/requests", async (req, res) => {
     const userId = requireAuth(req, res);
     if (!userId) return;
@@ -577,6 +589,15 @@ Keep responses concise and conversational. Respond in the same language the clie
       if (error instanceof ZodError) return res.status(400).json({ message: fromZodError(error).message });
       res.status(500).json({ message: "Internal server error" });
     }
+  });
+
+  app.delete("/api/admin/requests/:id", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
+    const request = await storage.getClientRequest(req.params.id);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    await storage.deleteClientRequest(req.params.id);
+    res.json({ success: true });
   });
 
   app.get("/api/admin/messages", async (req, res) => {

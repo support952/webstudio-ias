@@ -335,6 +335,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.priority.high": "High",
     "dashboard.submit": "Submit",
     "dashboard.requestSubmitted": "Request submitted successfully",
+    "dashboard.requestDeleted": "Request deleted successfully",
     "dashboard.noRequestsYet": "No requests yet. Submit a new request to get started.",
   },
   es: {
@@ -662,6 +663,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.priority.high": "Alta",
     "dashboard.submit": "Enviar",
     "dashboard.requestSubmitted": "Solicitud enviada exitosamente",
+    "dashboard.requestDeleted": "Solicitud eliminada exitosamente",
     "dashboard.noRequestsYet": "Sin solicitudes aun. Envia una nueva solicitud para comenzar.",
   },
   fr: {
@@ -989,6 +991,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.priority.high": "Haute",
     "dashboard.submit": "Soumettre",
     "dashboard.requestSubmitted": "Demande soumise avec succes",
+    "dashboard.requestDeleted": "Demande supprimee avec succes",
     "dashboard.noRequestsYet": "Pas encore de demandes. Soumettez une nouvelle demande pour commencer.",
   },
   he: {
@@ -1316,6 +1319,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.priority.high": "\u05d2\u05d1\u05d5\u05d4\u05d4",
     "dashboard.submit": "\u05e9\u05dc\u05d7",
     "dashboard.requestSubmitted": "\u05d4\u05d1\u05e7\u05e9\u05d4 \u05e0\u05e9\u05dc\u05d7\u05d4 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4",
+    "dashboard.requestDeleted": "\u05d4\u05d1\u05e7\u05e9\u05d4 \u05e0\u05de\u05d7\u05e7\u05d4 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4",
     "dashboard.noRequestsYet": "\u05d0\u05d9\u05df \u05d1\u05e7\u05e9\u05d5\u05ea \u05e2\u05d3\u05d9\u05d9\u05df. \u05e9\u05dc\u05d7 \u05d1\u05e7\u05e9\u05d4 \u05d7\u05d3\u05e9\u05d4 \u05db\u05d3\u05d9 \u05dc\u05d4\u05ea\u05d7\u05d9\u05dc.",
   },
 };

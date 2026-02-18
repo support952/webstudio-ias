@@ -13,7 +13,7 @@ import {
   Users, Mail, Inbox, MessageSquare, BarChart3, Eye,
   Lock, LogIn, LogOut, ChevronRight, Clock, CheckCircle2,
   AlertCircle, Search, Send, Plus, Zap, Shield,
-  ArrowLeft, TrendingUp, FileText
+  ArrowLeft, TrendingUp, FileText, Trash2
 } from "lucide-react";
 
 type AdminTab = "overview" | "clients" | "contacts" | "requests" | "messages";
@@ -595,9 +595,22 @@ function ContactsTab() {
 function AllRequestsTab() {
   const { data: requests, isLoading } = useQuery<any[]>({ queryKey: ["/api/admin/requests"] });
   const { data: clients } = useQuery<ClientInfo[]>({ queryKey: ["/api/admin/clients"] });
+  const { toast } = useToast();
 
   const clientMap: Record<string, string> = {};
   clients?.forEach(c => { clientMap[c.id] = c.fullName; });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await apiRequest("DELETE", `/api/admin/requests/${id}`);
+      if (!res.ok) throw new Error("Failed to delete request");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/overview"] });
+      toast({ title: "Request deleted" });
+    },
+  });
 
   if (isLoading) return <div className="space-y-2">{[...Array(3)].map((_, i) => <Card key={i} className="glass-card border-white/[0.06] animate-pulse"><CardContent className="p-4"><div className="h-12" /></CardContent></Card>)}</div>;
 
@@ -620,7 +633,19 @@ function AllRequestsTab() {
                   <span className="text-xs text-slate-600">{new Date(r.createdAt).toLocaleString()}</span>
                 </div>
               </div>
-              <StatusSelector requestId={r.id} currentStatus={r.status} clientId={r.userId} />
+              <div className="flex items-center gap-2 shrink-0">
+                <StatusSelector requestId={r.id} currentStatus={r.status} clientId={r.userId} />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-slate-500 hover:text-red-400"
+                  onClick={() => deleteMutation.mutate(r.id)}
+                  disabled={deleteMutation.isPending}
+                  data-testid={`button-admin-delete-request-${r.id}`}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

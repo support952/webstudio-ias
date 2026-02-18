@@ -29,6 +29,7 @@ export interface IStorage {
   getAllProjectMessages(): Promise<ProjectMessage[]>;
   getAllClientRequests(): Promise<ClientRequest[]>;
   updateClientRequestStatus(id: string, status: string): Promise<ClientRequest | undefined>;
+  deleteClientRequest(id: string): Promise<boolean>;
   updateProjectUpdateStatus(id: string, data: { status?: string; progressPercent?: number }): Promise<ProjectUpdate | undefined>;
 }
 
@@ -118,6 +119,11 @@ export class DatabaseStorage implements IStorage {
   async updateClientRequestStatus(id: string, status: string): Promise<ClientRequest | undefined> {
     const [req] = await db.update(clientRequests).set({ status }).where(eq(clientRequests.id, id)).returning();
     return req;
+  }
+
+  async deleteClientRequest(id: string): Promise<boolean> {
+    const result = await db.delete(clientRequests).where(eq(clientRequests.id, id)).returning();
+    return result.length > 0;
   }
 
   async updateProjectUpdateStatus(id: string, data: { status?: string; progressPercent?: number }): Promise<ProjectUpdate | undefined> {
