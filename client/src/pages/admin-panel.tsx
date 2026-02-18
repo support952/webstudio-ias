@@ -35,7 +35,7 @@ interface ClientInfo {
 }
 
 function AdminLogin({ onLogin }: { onLogin: (admin: AdminUser) => void }) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -45,7 +45,7 @@ function AdminLogin({ onLogin }: { onLogin: (admin: AdminUser) => void }) {
     setLoading(true);
     setError("");
     try {
-      const res = await apiRequest("POST", "/api/admin/login", { email, password });
+      const res = await apiRequest("POST", "/api/admin/login", { username, password });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       onLogin(data);
@@ -83,16 +83,16 @@ function AdminLogin({ onLogin }: { onLogin: (admin: AdminUser) => void }) {
               </div>
             )}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Email</label>
+              <label className="block text-xs text-slate-400 mb-1.5">Username</label>
               <div className="relative">
-                <Mail className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Users className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@webstudio-ias.com"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
                   className="ps-10 bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50"
-                  data-testid="input-admin-email"
+                  data-testid="input-admin-username"
                 />
               </div>
             </div>
@@ -112,7 +112,7 @@ function AdminLogin({ onLogin }: { onLogin: (admin: AdminUser) => void }) {
             </div>
             <Button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading || !username || !password}
               className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
               data-testid="button-admin-login"
             >

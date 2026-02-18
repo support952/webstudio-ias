@@ -8,9 +8,9 @@ import { sendContactEmail, sendAiSummaryEmail } from "./email";
 import bcrypt from "bcryptjs";
 import OpenAI from "openai";
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "webstudio-admin";
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "web.ias";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@webstudio-ias.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "WS@dmin2024!Secure";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "!@#$%^Q";
 
 async function seedAdmin() {
   try {
@@ -437,8 +437,11 @@ Keep responses concise and conversational. Respond in the same language the clie
 
   app.post("/api/admin/login", async (req, res) => {
     try {
-      const { email, password } = loginSchema.parse(req.body);
-      const user = await storage.getUserByEmail(email);
+      const { username, password } = req.body;
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password required" });
+      }
+      const user = await storage.getUserByUsername(username);
       if (!user || user.role !== "admin") {
         return res.status(401).json({ message: "Invalid credentials" });
       }
