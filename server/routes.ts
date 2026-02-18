@@ -185,7 +185,9 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/contact", async (_req, res) => {
+  app.get("/api/contact", async (req, res) => {
+    const adminId = await requireAdmin(req, res);
+    if (!adminId) return;
     try {
       const submissions = await storage.getContactSubmissions();
       res.json(submissions);
