@@ -75,11 +75,11 @@ export function HeroSection() {
             transition={{ duration: 0.7, delay: 0.45 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/services">
+            <Link href="/pricing">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate px-8"
-                data-testid="button-explore-services"
+                data-testid="button-get-started"
               >
                 {t("hero.cta1")}
                 <ArrowRight className="w-4 h-4 ms-2" />

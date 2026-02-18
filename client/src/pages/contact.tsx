@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MessageCircle, MapPin, Send } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
@@ -22,10 +23,13 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { useI18n } from "@/lib/i18n";
+import { AiChatModal } from "@/components/ai-chat-modal";
 
 export default function Contact() {
   const { toast } = useToast();
   const { t } = useI18n();
+  const [showAiChat, setShowAiChat] = useState(false);
+  const [clientInfo, setClientInfo] = useState<{ name?: string; email?: string }>({});
 
   const form = useForm<InsertContact>({
     resolver: zodResolver(insertContactSchema),
@@ -35,10 +39,13 @@ export default function Contact() {
   const mutation = useMutation({
     mutationFn: async (data: InsertContact) => {
       await apiRequest("POST", "/api/contact", data);
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({ title: t("contact.success"), description: t("contact.successDesc") });
+      setClientInfo({ name: data.name, email: data.email });
       form.reset();
+      setShowAiChat(true);
     },
     onError: () => {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
@@ -219,6 +226,12 @@ export default function Contact() {
         </section>
 
         <Footer />
+
+        <AiChatModal
+          open={showAiChat}
+          onClose={() => setShowAiChat(false)}
+          clientInfo={clientInfo}
+        />
       </div>
     </PageWrapper>
   );
