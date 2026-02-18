@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap, ChevronDown, Globe } from "lucide-react";
+import { Menu, X, Zap, ChevronDown, Globe, LogIn, UserPlus, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { useI18n, languageNames, type Language } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
 
 const navLinks = [
   { labelKey: "nav.home", href: "/" },
@@ -18,7 +19,9 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { t, lang, setLang } = useI18n();
+  const { user, logout } = useAuth();
   const [location] = useLocation();
 
   useEffect(() => {
@@ -28,12 +31,15 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const handleClick = () => setLangOpen(false);
-    if (langOpen) {
+    const handleClick = () => {
+      setLangOpen(false);
+      setUserMenuOpen(false);
+    };
+    if (langOpen || userMenuOpen) {
       document.addEventListener("click", handleClick);
       return () => document.removeEventListener("click", handleClick);
     }
-  }, [langOpen]);
+  }, [langOpen, userMenuOpen]);
 
   return (
     <motion.header
@@ -123,14 +129,80 @@ export function Navbar() {
               </AnimatePresence>
             </div>
 
-            <Link href="/contact">
-              <Button
-                className="hidden sm:inline-flex bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
-                data-testid="button-get-started"
-              >
-                {t("nav.getStarted")}
-              </Button>
-            </Link>
+            {user ? (
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-300 gap-1.5"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setUserMenuOpen(!userMenuOpen);
+                  }}
+                  data-testid="button-user-menu"
+                >
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center">
+                    <User className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <span className="hidden sm:inline text-sm max-w-[100px] truncate">
+                    {user.fullName.split(" ")[0]}
+                  </span>
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+
+                <AnimatePresence>
+                  {userMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="absolute end-0 top-full mt-1 w-48 glass-card rounded-md py-1 z-50"
+                      data-testid="dropdown-user-menu"
+                    >
+                      <div className="px-3 py-2 border-b border-white/[0.06]">
+                        <p className="text-sm text-white font-medium truncate">{user.fullName}</p>
+                        <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setUserMenuOpen(false);
+                        }}
+                        className="w-full text-start px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-white/[0.03] flex items-center gap-2"
+                        data-testid="button-logout"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        {t("nav.logout")}
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <div className="hidden sm:flex items-center gap-2">
+                <Link href="/login">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-slate-300 gap-1.5"
+                    data-testid="button-login"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    {t("nav.login")}
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button
+                    className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                    size="sm"
+                    data-testid="button-register"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    {t("nav.register")}
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             <Button
               size="icon"
@@ -170,14 +242,48 @@ export function Navbar() {
                   {t(link.labelKey)}
                 </Link>
               ))}
-              <Link href="/contact" onClick={() => setMobileOpen(false)}>
-                <Button
-                  className="w-full mt-2 bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
-                  data-testid="button-mobile-get-started"
-                >
-                  {t("nav.getStarted")}
-                </Button>
-              </Link>
+
+              {user ? (
+                <div className="pt-2 border-t border-white/[0.06]">
+                  <div className="px-3 py-2">
+                    <p className="text-sm text-white font-medium">{user.fullName}</p>
+                    <p className="text-xs text-slate-400">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileOpen(false);
+                    }}
+                    className="w-full text-start px-3 py-2.5 text-sm text-slate-400 hover:text-white flex items-center gap-2"
+                    data-testid="button-mobile-logout"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {t("nav.logout")}
+                  </button>
+                </div>
+              ) : (
+                <div className="pt-2 space-y-2 border-t border-white/[0.06]">
+                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2 text-slate-300"
+                      data-testid="button-mobile-login"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      {t("nav.login")}
+                    </Button>
+                  </Link>
+                  <Link href="/register" onClick={() => setMobileOpen(false)}>
+                    <Button
+                      className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                      data-testid="button-mobile-register"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      {t("nav.register")}
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

@@ -1,16 +1,32 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSchema } from "@shared/schema";
-import { ZodError } from "zod";
+import { insertContactSchema, insertUserSchema } from "@shared/schema";
+import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { sendContactEmail, sendAiSummaryEmail } from "./email";
+import bcrypt from "bcryptjs";
 import OpenAI from "openai";
+
+const registerSchema = insertUserSchema.extend({
+  password: z.string().min(6),
+  email: z.string().email(),
+  username: z.string().min(2),
+  fullName: z.string().min(1),
+});
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
 
 let _openai: OpenAI | null = null;
 function getOpenAI(): OpenAI {
   if (!_openai) {
-    _openai = new OpenAI();
+    _openai = new OpenAI({
+      apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+    });
   }
   return _openai;
 }
@@ -19,6 +35,104 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const { username, email, password, fullName } = registerSchema.parse(req.body);
+
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(409).json({ message: "Username already taken" });
+      }
+
+      const existingEmail = await storage.getUserByEmail(email);
+      if (existingEmail) {
+        return res.status(409).json({ message: "Email already registered" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await storage.createUser({
+        username,
+        email,
+        password: hashedPassword,
+        fullName,
+      });
+
+      req.session.userId = user.id;
+
+      res.status(201).json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName,
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      console.error("[Auth] Register error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = loginSchema.parse(req.body);
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      req.session.userId = user.id;
+
+      res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName,
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      console.error("[Auth] Login error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Failed to logout" });
+      }
+      res.clearCookie("connect.sid");
+      res.json({ message: "Logged out" });
+    });
+  });
+
+  app.get("/api/auth/me", async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName,
+    });
+  });
+
   app.post("/api/contact", async (req, res) => {
     try {
       const data = insertContactSchema.parse(req.body);
