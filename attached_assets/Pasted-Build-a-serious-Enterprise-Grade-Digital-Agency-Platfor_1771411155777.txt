@@ -1,0 +1,47 @@
+Build a serious, Enterprise-Grade Digital Agency Platform with a multi-page architecture.
+Visual Reference: Use the aesthetic of https://webstudio-ias.com/ (Dark Mode, Neon Blue/Purple accents, Glassmorphism, and clean, high-tech typography).
+
+1. Architecture & Navigation (The 'Many Windows' Requirement):
+
+Use react-router-dom to create distinct, separate pages (not a single-page scroll).
+
+Navigation Bar: Fixed top bar with links to: Home, Services, About Us, Our Work, Pricing, and Contact.
+
+Language Switcher: Implement a dropdown in the Navbar to switch languages.
+
+Default: English (EN).
+
+Options: Spanish (ES), French (FR), Hebrew (HE).
+
+Logic: When 'Hebrew' is selected, the entire site layout must flip to RTL (Right-to-Left) automatically.
+
+Note: Use a simple JSON object or Context API for text translations so I can easily edit the text later.
+
+2. Core Pages Structure:
+
+Home: Cinematic Hero section, Trust Badges (Client Logos), and a brief 'Services Overview'.
+
+Services (Catalog): A grid layout detailing different services (Web Design, AI Automation, Marketing). Each service should have a 'Learn More' button leading to a dedicated sub-page or modal.
+
+Pricing & Checkout Flow (E-commerce Ready):
+
+Display 3 tiered packages (Starter, Professional, Enterprise).
+
+Action: When a user clicks 'Select Plan', navigate them to a dedicated Order Summary / Checkout Page.
+
+Checkout UI: A professional form collecting User Details (Name, Company, Email) and a placeholder section for 'Credit Card Details' (styled like Stripe Elements).
+
+Backend Prep: Ensure the 'Pay Now' button console logs the order details, ready for a future Stripe API connection.
+
+3. Design System & Tech Stack:
+
+Framework: React (Vite) + Tailwind CSS.
+
+Icons: Lucide-React (Professional, thin strokes).
+
+Animations: Use framer-motion for page transitions (e.g., fade-in when switching tabs) to give it a 'Software' feel.
+
+Professional Tone: Avoid cartoons. Use abstract tech geometry or high-quality office photography placeholders.
+
+4. Specific Requirement:
+The site must feel like a large corporate entity, not a freelancer portfolio. Ensure deep footers with many links (Privacy Policy, Terms, Sitemap) to enhance credibility
