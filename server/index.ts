@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import express, { type Request, Response, NextFunction } from "express";
+import compression from "compression";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
@@ -13,6 +14,9 @@ import { createServer } from "http";
 import os from "os";
 
 const app = express();
+
+// Enable gzip/brotli compression for all responses
+app.use(compression());
 const httpServer = createServer(app);
 
 if (process.env.NODE_ENV !== "production") {

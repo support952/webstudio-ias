@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -9,37 +9,39 @@ import { ThemeProvider } from "@/lib/theme";
 import { LenisProvider, useLenis } from "@/lib/lenis";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { AnimatePresence } from "framer-motion";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
-import Services from "@/pages/services";
-import About from "@/pages/about";
-import Work from "@/pages/work";
-import Pricing from "@/pages/pricing";
-import Contact from "@/pages/contact";
-import ContactQuestionnaire from "@/pages/contact-questionnaire";
-import ContactAIChat from "@/pages/contact-ai-chat";
-import Checkout from "@/pages/checkout";
-import Marketing from "@/pages/marketing";
-import Login from "@/pages/login";
-import Register from "@/pages/register";
-import ForgotPassword from "@/pages/forgot-password";
-import PrivacyPolicy from "@/pages/privacy-policy";
-import RefundPolicy from "@/pages/refund-policy";
-import TermsOfService from "@/pages/terms-of-service";
-import CookiePolicy from "@/pages/cookie-policy";
-import SitemapPage from "@/pages/sitemap";
-import ComingSoon from "@/pages/coming-soon";
-import Dashboard from "@/pages/dashboard";
-import AdminPanel from "@/pages/admin-panel";
-import DemoDigitalCard from "@/pages/demos/digital-card";
-import DemoLanding from "@/pages/demos/landing";
-import DemoEcommerce from "@/pages/demos/ecommerce";
-import DemoWebsites from "@/pages/demos/websites";
-import DemoMarketing from "@/pages/demos/marketing";
-import PreviewLanding from "@/pages/preview/landing";
-import PreviewWebsites from "@/pages/preview/websites";
-import PreviewDigitalCard from "@/pages/preview/digital-card";
-import PreviewMarketing from "@/pages/preview/marketing";
+
+// Lazy-loaded page components for code splitting
+const NotFound = lazy(() => import("@/pages/not-found"));
+const Home = lazy(() => import("@/pages/home"));
+const Services = lazy(() => import("@/pages/services"));
+const About = lazy(() => import("@/pages/about"));
+const Work = lazy(() => import("@/pages/work"));
+const Pricing = lazy(() => import("@/pages/pricing"));
+const Contact = lazy(() => import("@/pages/contact"));
+const ContactQuestionnaire = lazy(() => import("@/pages/contact-questionnaire"));
+const ContactAIChat = lazy(() => import("@/pages/contact-ai-chat"));
+const Checkout = lazy(() => import("@/pages/checkout"));
+const Marketing = lazy(() => import("@/pages/marketing"));
+const Login = lazy(() => import("@/pages/login"));
+const Register = lazy(() => import("@/pages/register"));
+const ForgotPassword = lazy(() => import("@/pages/forgot-password"));
+const PrivacyPolicy = lazy(() => import("@/pages/privacy-policy"));
+const RefundPolicy = lazy(() => import("@/pages/refund-policy"));
+const TermsOfService = lazy(() => import("@/pages/terms-of-service"));
+const CookiePolicy = lazy(() => import("@/pages/cookie-policy"));
+const SitemapPage = lazy(() => import("@/pages/sitemap"));
+const ComingSoon = lazy(() => import("@/pages/coming-soon"));
+const Dashboard = lazy(() => import("@/pages/dashboard"));
+const AdminPanel = lazy(() => import("@/pages/admin-panel"));
+const DemoDigitalCard = lazy(() => import("@/pages/demos/digital-card"));
+const DemoLanding = lazy(() => import("@/pages/demos/landing"));
+const DemoEcommerce = lazy(() => import("@/pages/demos/ecommerce"));
+const DemoWebsites = lazy(() => import("@/pages/demos/websites"));
+const DemoMarketing = lazy(() => import("@/pages/demos/marketing"));
+const PreviewLanding = lazy(() => import("@/pages/preview/landing"));
+const PreviewWebsites = lazy(() => import("@/pages/preview/websites"));
+const PreviewDigitalCard = lazy(() => import("@/pages/preview/digital-card"));
+const PreviewMarketing = lazy(() => import("@/pages/preview/marketing"));
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -75,8 +77,17 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   return <Component />;
 }
 
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
 function Router() {
   return (
+    <Suspense fallback={<PageLoader />}>
     <AnimatePresence mode="wait">
       <Switch>
         <Route path="/">{() => <HomeOrDashboard />}</Route>
@@ -113,6 +124,7 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
+    </Suspense>
   );
 }
 
