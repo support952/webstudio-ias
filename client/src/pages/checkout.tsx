@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Lock, CreditCard, Check, Star } from "lucide-react";
+import { ArrowLeft, Lock, CreditCard, Check, Star, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,14 @@ import { Link, useSearch } from "wouter";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
+import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
+
+const DEPOSIT: Record<string, number> = {
+  starter: 250,
+  pro: 500,
+  enterprise: 1000,
+};
 
 const planData: Record<string, { nameKey: string; priceKey: string; descKey: string; features: string[] }> = {
   starter: {
@@ -51,6 +58,18 @@ export default function Checkout() {
     cvc: "",
   });
   const [processing, setProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "apple" | "google">("card");
+
+  const handleApplePay = () => {
+    setPaymentMethod("apple");
+    setProcessing(true);
+    setTimeout(() => setProcessing(false), 1500);
+  };
+  const handleGooglePay = () => {
+    setPaymentMethod("google");
+    setProcessing(true);
+    setTimeout(() => setProcessing(false), 1500);
+  };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
@@ -58,6 +77,7 @@ export default function Checkout() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (paymentMethod !== "card") return;
     setProcessing(true);
     console.log("Order Details:", {
       plan: selectedPlanId,
@@ -78,10 +98,11 @@ export default function Checkout() {
 
   return (
     <PageWrapper>
+      <SEOHead title="Checkout" path="/checkout" />
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <section className="pt-32 pb-24 sm:pt-40 sm:pb-32">
+        <section id="main-content" className="pt-32 pb-24 sm:pt-40 sm:pb-32">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -99,6 +120,7 @@ export default function Checkout() {
                 {t("checkout.title")}
               </h1>
               <p className="text-slate-400 mb-8">{t("checkout.subtitle")}</p>
+              <p className="text-sm text-slate-500 mb-6">{t("checkout.depositSubtitle")}</p>
 
               <div className="mb-6" data-testid="card-order-summary">
                 <h3 className="text-sm text-slate-500 uppercase tracking-wider mb-3">{t("checkout.choosePlan")}</h3>
@@ -133,6 +155,7 @@ export default function Checkout() {
                           <span className="font-semibold text-white text-sm">{t(p.nameKey)}</span>
                         </div>
                         <div className="text-xs text-slate-400 mt-1">{t(p.descKey)}</div>
+                        <div className="text-xs text-cyan-400 font-medium mt-2">${DEPOSIT[pid]} {t("checkout.deposit")}</div>
                       </button>
                     );
                   })}
@@ -144,6 +167,10 @@ export default function Checkout() {
                   <div>
                     <div className="text-lg font-semibold text-white">{t(plan.nameKey)}</div>
                     <div className="text-sm text-slate-400">{t(plan.descKey)}</div>
+                  </div>
+                  <div className="text-end">
+                    <div className="text-2xl font-bold text-cyan-400">${DEPOSIT[selectedPlanId]}</div>
+                    <div className="text-xs text-slate-500 uppercase tracking-wider">{t("checkout.deposit")}</div>
                   </div>
                 </div>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -207,10 +234,39 @@ export default function Checkout() {
                 </div>
 
                 <div className="glass-card rounded-md p-6">
-                  <h3 className="text-sm text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <h3 className="text-sm text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <CreditCard className="w-4 h-4" />
                     {t("checkout.payment")}
                   </h3>
+                  <p className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                    {t("checkout.secureNote")}
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-3 mb-5">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleApplePay}
+                      disabled={processing}
+                      className="flex-1 h-12 bg-black hover:bg-slate-900 text-white border-slate-600 hover:border-slate-500 font-medium"
+                      data-testid="button-apple-pay"
+                    >
+                      {t("checkout.applePay")}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleGooglePay}
+                      disabled={processing}
+                      className="flex-1 h-12 bg-white hover:bg-slate-100 text-slate-800 border-slate-300 font-medium"
+                      data-testid="button-google-pay"
+                    >
+                      {t("checkout.googlePay")}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-slate-500 mb-4">{t("checkout.orPayWithCard")}</p>
+
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label className="text-sm text-slate-300">{t("checkout.cardNumber")}</Label>
@@ -219,7 +275,7 @@ export default function Checkout() {
                         onChange={handleChange("cardNumber")}
                         placeholder="4242 4242 4242 4242"
                         maxLength={19}
-                        required
+                        required={paymentMethod === "card"}
                         className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 font-mono"
                         data-testid="input-checkout-card"
                       />
@@ -232,7 +288,7 @@ export default function Checkout() {
                           onChange={handleChange("expiry")}
                           placeholder="MM/YY"
                           maxLength={5}
-                          required
+                          required={paymentMethod === "card"}
                           className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 font-mono"
                           data-testid="input-checkout-expiry"
                         />
@@ -244,7 +300,7 @@ export default function Checkout() {
                           onChange={handleChange("cvc")}
                           placeholder="123"
                           maxLength={4}
-                          required
+                          required={paymentMethod === "card"}
                           className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 font-mono"
                           data-testid="input-checkout-cvc"
                         />
@@ -253,7 +309,11 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                <div className="glass-card rounded-md p-6 flex items-center justify-end gap-4 flex-wrap">
+                <div className="glass-card rounded-md p-6 flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex items-center gap-2 text-slate-300">
+                    <Lock className="w-4 h-4 text-emerald-400" />
+                    <span className="text-sm font-medium">${DEPOSIT[selectedPlanId]} {t("checkout.deposit")} — {t("checkout.securePaymentOnSite")}</span>
+                  </div>
                   <Button
                     type="submit"
                     disabled={processing}
@@ -267,7 +327,7 @@ export default function Checkout() {
                         {t("checkout.processing")}
                       </span>
                     ) : (
-                      t("checkout.payNow")
+                      `${t("checkout.pay")} $${DEPOSIT[selectedPlanId]} ${t("checkout.deposit")}`
                     )}
                   </Button>
                 </div>
@@ -276,6 +336,9 @@ export default function Checkout() {
                   <Lock className="w-3 h-3" />
                   {t("checkout.secure")}
                 </div>
+                <p className="text-center text-xs text-slate-500 max-w-md mx-auto">
+                  {t("checkout.secureFull")}
+                </p>
               </form>
             </motion.div>
           </div>

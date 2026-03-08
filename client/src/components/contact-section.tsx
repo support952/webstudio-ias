@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Mail, MessageCircle, MapPin, Send } from "lucide-react";
-import { SiWhatsapp } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,7 +56,7 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="relative py-24 sm:py-32" data-testid="section-contact">
+    <section id="contact" className="section-spacing relative bg-transparent" data-testid="section-contact">
       <div className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-neon-pink/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -68,14 +67,14 @@ export function ContactSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-neon-cyan text-sm font-medium uppercase tracking-widest" data-testid="text-contact-label">
+          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-foreground" data-testid="text-contact-label">
             Get In Touch
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 mb-4" data-testid="text-contact-title">
+          <h2 className="text-section-title font-bold text-foreground mt-3 mb-4" data-testid="text-contact-title">
             Let's Start a{" "}
             <span className="gradient-text">Project</span>
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
+          <p className="text-section-subtitle text-muted-foreground max-w-2xl mx-auto">
             Ready to bring your vision to life? Reach out and let's discuss how we can help.
           </p>
         </motion.div>
@@ -94,17 +93,17 @@ export function ContactSection() {
                 className="glass-card rounded-md p-6 sm:p-8 space-y-5"
                 data-testid="form-contact"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   <FormField
                     control={form.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm text-slate-300">Your Name</FormLabel>
+                        <FormLabel className="form-label text-sm">Your Name</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="John Doe"
-                            className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                            className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                             {...field}
                             data-testid="input-name"
                           />
@@ -118,12 +117,12 @@ export function ContactSection() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm text-slate-300">Email Address</FormLabel>
+                        <FormLabel className="form-label text-sm">Email Address</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
                             placeholder="john@example.com"
-                            className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                            className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                             {...field}
                             data-testid="input-email"
                           />
@@ -139,11 +138,11 @@ export function ContactSection() {
                   name="subject"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm text-slate-300">Subject</FormLabel>
+                      <FormLabel className="form-label text-sm">Subject</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Project Inquiry"
-                          className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                          className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                           {...field}
                           data-testid="input-subject"
                         />
@@ -158,12 +157,12 @@ export function ContactSection() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm text-slate-300">Message</FormLabel>
+                      <FormLabel className="form-label text-sm">Message</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Tell us about your project..."
                           rows={5}
-                          className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20 resize-none"
+                          className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary resize-none"
                           {...field}
                           data-testid="input-message"
                         />
@@ -212,14 +211,6 @@ export function ContactSection() {
                 bg: "bg-neon-purple/10",
               },
               {
-                icon: SiWhatsapp,
-                label: "WhatsApp",
-                value: "+1 (555) 123-4567",
-                href: "https://wa.me/15551234567",
-                color: "text-emerald-400",
-                bg: "bg-emerald-400/10",
-              },
-              {
                 icon: MessageCircle,
                 label: "Live Chat",
                 value: "Available 24/7",
@@ -245,9 +236,9 @@ export function ContactSection() {
                 <div className={`shrink-0 w-12 h-12 rounded-md ${item.bg} flex items-center justify-center`}>
                   <item.icon className={`w-5 h-5 ${item.color}`} />
                 </div>
-                <div>
-                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">{item.label}</div>
-                  <div className="text-sm text-white font-medium">{item.value}</div>
+                <div className="contact-card-inner flex-1 min-w-0 py-4 pl-2 pr-5 rounded-r-md">
+                  <div className="contact-card-label text-xs uppercase tracking-wider mb-0.5 font-semibold">{item.label}</div>
+                  <div className="contact-card-value text-sm font-medium">{item.value}</div>
                 </div>
               </a>
             ))}

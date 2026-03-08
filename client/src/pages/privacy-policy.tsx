@@ -3,6 +3,7 @@ import { Shield, Eye, Lock, Cookie, Globe, Users, FileText, Mail } from "lucide-
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
+import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
 
 const sections = [
@@ -24,10 +25,11 @@ export default function PrivacyPolicy() {
 
   return (
     <PageWrapper>
+      <SEOHead title="Privacy Policy" path="/privacy-policy" />
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <section className="pt-32 pb-16 sm:pt-40 sm:pb-20">
+        <section id="main-content" className="pt-32 pb-16 sm:pt-40 sm:pb-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}

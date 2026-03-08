@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot, User } from "lucide-react";
+import { X, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/lib/queryClient";
@@ -109,29 +109,30 @@ export function AiChatModal({ open, onClose, clientInfo }: AiChatModalProps) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3 }}
-          className="w-full max-w-lg glass-card rounded-md flex flex-col overflow-hidden"
+          className="w-full max-w-lg glass-card living-shadow rounded-2xl flex flex-col overflow-hidden border border-white/[0.08]"
           style={{ maxHeight: "80vh" }}
         >
           <div className="flex items-center justify-between gap-2 p-4 border-b border-white/[0.08]">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-md bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center">
-                <Bot className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center text-white font-semibold text-sm shrink-0" aria-hidden>
+                J
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-white" data-testid="text-ai-chat-title">{t("aiChat.title")}</h3>
-                <p className="text-xs text-slate-400">{t("aiChat.subtitle")}</p>
+                <h3 className="text-sm font-semibold text-white" data-testid="text-ai-chat-title">{t("aiChat.agentName")}</h3>
+                <p className="text-xs text-muted-foreground">{t("aiChat.subtitle")}</p>
               </div>
             </div>
             <Button
               size="icon"
               variant="ghost"
               onClick={onClose}
-              className="text-slate-400"
+              className="text-muted-foreground"
               data-testid="button-close-ai-chat"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
+          <p className="text-xs text-muted-foreground px-4 pb-2 border-b border-border">{t("aiChat.multilingualNotice")}</p>
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px]">
             {messages.map((msg, i) => (
@@ -141,8 +142,8 @@ export function AiChatModal({ open, onClose, clientInfo }: AiChatModalProps) {
                 data-testid={`message-${msg.role}-${i}`}
               >
                 {msg.role === "assistant" && (
-                  <div className="w-7 h-7 rounded-md bg-neon-purple/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <Bot className="w-4 h-4 text-neon-purple" />
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center text-white font-semibold text-xs shrink-0 mt-0.5" aria-hidden>
+                    J
                   </div>
                 )}
                 <div
@@ -164,8 +165,8 @@ export function AiChatModal({ open, onClose, clientInfo }: AiChatModalProps) {
 
             {loading && (
               <div className="flex gap-2 justify-start">
-                <div className="w-7 h-7 rounded-md bg-neon-purple/20 flex items-center justify-center shrink-0">
-                  <Bot className="w-4 h-4 text-neon-purple" />
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center text-white font-semibold text-xs shrink-0" aria-hidden>
+                  J
                 </div>
                 <div className="bg-white/[0.05] rounded-md px-3 py-2">
                   <div className="flex gap-1">
@@ -195,7 +196,7 @@ export function AiChatModal({ open, onClose, clientInfo }: AiChatModalProps) {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={summaryDone ? t("aiChat.chatEnded") : t("aiChat.placeholder")}
                 disabled={loading || summaryDone}
-                className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                 data-testid="input-ai-chat"
               />
               <Button

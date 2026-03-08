@@ -8,12 +8,28 @@ import { sendContactEmail, sendAiSummaryEmail } from "./email";
 import bcrypt from "bcryptjs";
 import OpenAI from "openai";
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "web.ias";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@webstudio-ias.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "!@#$%^Q";
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+// Shared password policy for registration and password changes
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters long")
+  .regex(
+    /^(?=.*[A-Za-z])(?=.*\d).+$/,
+    "Password must include at least one letter and one number",
+  );
 
 async function seedAdmin() {
   try {
+    if (!ADMIN_USERNAME || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
+      console.warn(
+        "[Admin] Skipping admin seeding: ADMIN_USERNAME, ADMIN_EMAIL and ADMIN_PASSWORD must all be set.",
+      );
+      return;
+    }
+
     const existing = await storage.getUserByEmail(ADMIN_EMAIL);
     if (!existing) {
       const hashed = await bcrypt.hash(ADMIN_PASSWORD, 10);
@@ -25,11 +41,7 @@ async function seedAdmin() {
       });
       const admin = await storage.getUserByEmail(ADMIN_EMAIL);
       if (admin) {
-        await storage.updateUser(admin.id, { password: admin.password } as any);
-        const { db } = await import("./db");
-        const { users } = await import("@shared/schema");
-        const { eq } = await import("drizzle-orm");
-        await db.update(users).set({ role: "admin" }).where(eq(users.id, admin.id));
+        await storage.updateUser(admin.id, { role: "admin" });
       }
       console.log("[Admin] Admin user seeded successfully");
     }
@@ -39,7 +51,7 @@ async function seedAdmin() {
 }
 
 const registerSchema = insertUserSchema.extend({
-  password: z.string().min(6),
+  password: passwordSchema,
   email: z.string().email(),
   username: z.string().min(2),
   fullName: z.string().min(1),
@@ -50,21 +62,116 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-let _openai: OpenAI | null = null;
-function getOpenAI(): OpenAI {
-  if (!_openai) {
-    _openai = new OpenAI({
-      apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-    });
-  }
-  return _openai;
+function getOpenAIApiKey(): string {
+  const raw =
+    process.env.OPENAI_API_KEY ||
+    process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||
+    "";
+  return raw.replace(/\r\n|\r|\n/g, "").trim();
 }
+
+function getOpenAI(): OpenAI {
+  const apiKey = getOpenAIApiKey();
+  const baseURL = (
+    process.env.OPENAI_BASE_URL ||
+    process.env.AI_INTEGRATIONS_OPENAI_BASE_URL ||
+    ""
+  ).trim();
+  return new OpenAI({
+    apiKey: apiKey || "not-set",
+    ...(baseURL && { baseURL }),
+  });
+}
+
+function hasOpenAIKey(): boolean {
+  return getOpenAIApiKey().length > 0;
+}
+
+// Basic in-memory rate limiting for login endpoints (per IP)
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_ATTEMPTS = 10;
+const loginAttempts = new Map<string, { count: number; since: number }>();
+
+function getClientIp(req: any): string {
+  const xfwd = req.headers?.["x-forwarded-for"];
+  if (typeof xfwd === "string" && xfwd.length > 0) {
+    return xfwd.split(",")[0]!.trim();
+  }
+  if (Array.isArray(xfwd) && xfwd.length > 0) {
+    return String(xfwd[0]).split(",")[0]!.trim();
+  }
+  return req.ip || req.connection?.remoteAddress || "unknown";
+}
+
+function rateLimitLogin(req: any, res: any, next: any) {
+  const ip = getClientIp(req);
+  const now = Date.now();
+  const existing = loginAttempts.get(ip) || { count: 0, since: now };
+
+  // Reset window if expired
+  if (now - existing.since > LOGIN_WINDOW_MS) {
+    existing.count = 0;
+    existing.since = now;
+  }
+
+  existing.count += 1;
+  loginAttempts.set(ip, existing);
+
+  if (existing.count > LOGIN_MAX_ATTEMPTS) {
+    return res
+      .status(429)
+      .json({ message: "Too many login attempts. Please try again later." });
+  }
+
+  next();
+}
+
+const SITE_URL = "https://webstudio-ias.com";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  app.get("/robots.txt", (_req, res) => {
+    res.type("text/plain");
+    res.send(
+      "User-agent: *\nAllow: /\nSitemap: " + SITE_URL + "/sitemap.xml"
+    );
+  });
+
+  app.get("/sitemap.xml", (_req, res) => {
+    const publicPaths = [
+      "",
+      "/services",
+      "/pricing",
+      "/contact",
+      "/about",
+      "/work",
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/sitemap",
+      "/marketing",
+      "/coming-soon",
+      "/privacy-policy",
+      "/refund-policy",
+      "/terms-of-service",
+      "/cookie-policy",
+    ];
+    const urls = publicPaths
+      .map(
+        (p) =>
+          `  <url><loc>${SITE_URL}${p || "/"}</loc><changefreq>weekly</changefreq><priority>${p === "" ? "1.0" : "0.8"}</priority></url>`
+      )
+      .join("\n");
+    res.type("application/xml");
+    res.send(
+      '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+        urls +
+        "\n</urlset>"
+    );
+  });
+
   app.post("/api/auth/register", async (req, res) => {
     try {
       const { username, email, password, fullName } = registerSchema.parse(req.body);
@@ -105,7 +212,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/auth/login", async (req, res) => {
+  app.post("/api/auth/login", rateLimitLogin, async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
 
@@ -168,14 +275,33 @@ export async function registerRoutes(
 
   app.post("/api/contact", async (req, res) => {
     try {
-      const data = insertContactSchema.parse(req.body);
+      const body = req.body as Record<string, unknown>;
+      const questionnaireAnswers =
+        body.questionnaireAnswers != null
+          ? typeof body.questionnaireAnswers === "string"
+            ? body.questionnaireAnswers
+            : JSON.stringify(body.questionnaireAnswers)
+          : undefined;
+      const chatTranscript =
+        body.chatTranscript != null
+          ? typeof body.chatTranscript === "string"
+            ? body.chatTranscript
+            : JSON.stringify(body.chatTranscript)
+          : undefined;
+      const data = insertContactSchema.parse({
+        ...body,
+        questionnaireAnswers,
+        chatTranscript,
+      });
       const submission = await storage.createContactSubmission(data);
 
-      sendContactEmail(data).catch((err) =>
-        console.error("[Email] Failed to send contact email:", err)
-      );
+      // Send email for every contact (with or without questionnaire)
+      const emailSent = await sendContactEmail({ ...data, service: data.service ?? undefined }).catch((err) => {
+        console.error("[Email] Failed to send contact email:", err);
+        return false;
+      });
 
-      res.status(201).json(submission);
+      res.status(201).json({ ...submission, emailSent });
     } catch (error) {
       if (error instanceof ZodError) {
         res.status(400).json({ message: fromZodError(error).message });
@@ -198,51 +324,126 @@ export async function registerRoutes(
 
   app.post("/api/ai-chat", async (req, res) => {
     try {
-      const { messages, clientInfo } = req.body;
+      const { messages, clientInfo, questionnaireContext, productType } = req.body;
 
       if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({ message: "Messages array required" });
       }
 
-      const systemPrompt = `You are a professional sales assistant for WebStudio, a digital agency. Your job is to collect information from potential clients about their project needs. Be friendly, professional, and ask relevant questions.
+      const productTypeLabel =
+        productType === "digital_business_card"
+          ? "Digital Business Card (כרטיס ביקור דיגיטלי)"
+          : productType === "marketing_ppc"
+            ? "Marketing campaigns (PPC)"
+            : "Websites (אתרים)";
 
-You need to collect:
-1. What type of project they need (website, web app, marketing campaign, etc.)
-2. Their business name and industry
-3. Target audience
-4. Key features or requirements they need
-5. Timeline expectations
-6. Budget range (if they're comfortable sharing)
-7. Any specific design preferences or references
+      if (!hasOpenAIKey()) {
+        console.error("[AI Chat] OPENAI_API_KEY is missing or empty. Set it in .env and restart the server.");
+        return res.status(503).json({
+          message: "Chat is temporarily unavailable. You can click 'Finish and send' to submit your request.",
+        });
+      }
 
-Ask these questions naturally in conversation, one or two at a time. Don't overwhelm the client. When you feel you have enough information, generate a structured summary.
+      const apiKey = getOpenAIApiKey();
+      const keyLen = apiKey.length;
+      const keyStart = apiKey.slice(0, 12);
+      const keyEnd = keyLen > 16 ? apiKey.slice(-4) : "???";
+      console.log("[AI Chat] Key length:", keyLen, "| starts with:", keyStart, "| ends with:", keyEnd);
 
-When you have collected enough information, your LAST message should start with "---SUMMARY---" followed by a structured prompt summarizing all the client information in a clear format that the team can use to prepare a proposal. Include all gathered details organized by category.
+      const model =
+        process.env.OPENAI_MODEL ||
+        process.env.AI_INTEGRATIONS_OPENAI_MODEL ||
+        "gpt-4o-mini";
+      const baseURL = (
+        process.env.OPENAI_BASE_URL ||
+        process.env.AI_INTEGRATIONS_OPENAI_BASE_URL ||
+        ""
+      ).trim();
+      console.log("[AI Chat] Model:", model, "| Base URL:", baseURL || "(default api.openai.com)");
 
-Keep responses concise and conversational. Respond in the same language the client uses.`;
+      let systemPrompt: string;
+      type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+      let chatMessages: Array<{ role: "system" | "user" | "assistant"; content: string | ContentPart[] }>;
 
+      const normalizeContent = (raw: unknown): string | ContentPart[] => {
+        if (typeof raw === "string") return raw;
+        if (Array.isArray(raw)) {
+          const parts: ContentPart[] = [];
+          for (const p of raw) {
+            if (p && typeof p === "object") {
+              if (p.type === "text" && typeof p.text === "string") parts.push({ type: "text", text: p.text });
+              else if (p.type === "image_url" && p.image_url?.url) parts.push({ type: "image_url", image_url: { url: String(p.image_url.url) } });
+            }
+          }
+          if (parts.length === 0) return "";
+          if (parts.length === 1 && parts[0].type === "text") return parts[0].text;
+          return parts;
+        }
+        return String(raw ?? "");
+      };
+
+      const normalizeMessages = (msgs: unknown[]): Array<{ role: "user" | "assistant"; content: string | ContentPart[] }> =>
+        msgs.map((m: any) => ({
+          role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
+          content: normalizeContent(m.content),
+        }));
+
+      if (questionnaireContext && typeof questionnaireContext === "object" && Object.keys(questionnaireContext).length > 0) {
+        const contextLines = Object.entries(questionnaireContext)
+          .filter(([, v]) => v != null && String(v).trim() !== "")
+          .map(([k, v]) => `  ${k}: ${String(v)}`)
+          .join("\n");
+        systemPrompt = `You are a professional sales assistant for WebStudio, a digital agency. The client has already filled a requirements questionnaire. They chose: ${productTypeLabel}. Your job is to continue the conversation about the website, landing page, or digital business card they want to build.
+
+IMPORTANT: Ask only ONE question per message. Keep your reply very short (1–3 sentences). Do not list multiple points, suggestions, or numbered items. Wait for the client's answer, then ask the next single question. Be conversational and brief.
+
+Questionnaire answers:
+${contextLines}
+
+When you have collected enough information, your LAST message should start with "---SUMMARY---" followed by a structured prompt summarizing the full project (questionnaire + conversation) for the team. Until then, ask only one question at a time. Respond in the same language the client uses.`;
+        const msgs = messages.length > 0
+          ? messages
+          : [{ role: "user" as const, content: "I've completed the questionnaire. Let's continue the conversation about my project." }];
+        chatMessages = [{ role: "system", content: systemPrompt }, ...normalizeMessages(msgs)];
+      } else {
+        systemPrompt = `You are a professional sales assistant for WebStudio, a digital agency. Your job is to collect information from potential clients about their project needs.
+
+IMPORTANT: Ask only ONE question per message. Keep your reply very short (1–3 sentences). Do not list multiple points, suggestions, or numbered items. Wait for the client's answer, then ask the next single question. Be conversational and brief.
+
+You need to collect (one at a time): type of project, business name, target audience, key features, timeline, budget if they share it, design preferences. When you have enough information, your LAST message should start with "---SUMMARY---" followed by a structured prompt summarizing all the client information for the team. Until then, ask only one question at a time. Respond in the same language the client uses.`;
+        chatMessages = [{ role: "system", content: systemPrompt }, ...normalizeMessages(messages)];
+      }
+
+      console.log("[AI Chat] Calling OpenAI API, messages count:", chatMessages.length);
       const completion = await getOpenAI().chat.completions.create({
-        model: "gpt-5-nano",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
+        model,
+        messages: chatMessages as any,
         max_tokens: 1000,
       });
 
       const reply = completion.choices[0]?.message?.content || "";
 
+      console.log("[AI Chat] OpenAI response OK, reply length:", reply.length);
+
       if (reply.includes("---SUMMARY---")) {
-        const summary = reply.split("---SUMMARY---")[1].trim();
-        sendAiSummaryEmail(summary, clientInfo || {}).catch((err) =>
-          console.error("[Email] Failed to send AI summary:", err)
-        );
+        const summary = reply.split("---SUMMARY---")[1]?.trim() ?? "";
+        if (summary) {
+          sendAiSummaryEmail(summary, clientInfo || {}).catch((err) =>
+            console.error("[Email] Failed to send AI summary:", err)
+          );
+        }
       }
 
       res.json({ reply });
-    } catch (error) {
-      console.error("[AI Chat] Error:", error);
-      res.status(500).json({ message: "Failed to process AI chat" });
+    } catch (error: unknown) {
+      const msg =
+        error && typeof error === "object" && "message" in error
+          ? String((error as { message: unknown }).message)
+          : "Unknown error";
+      console.error("[AI Chat] Error:", msg, error);
+      res.status(500).json({
+        message: "Chat is temporarily unavailable. You can click 'Finish and send' to submit your request.",
+      });
     }
   });
 
@@ -325,7 +526,7 @@ Keep responses concise and conversational. Respond in the same language the clie
     try {
       const pwSchema = z.object({
         currentPassword: z.string().min(1),
-        newPassword: z.string().min(6),
+        newPassword: passwordSchema,
       });
       const { currentPassword, newPassword } = pwSchema.parse(req.body);
       const user = await storage.getUser(userId);
@@ -479,7 +680,7 @@ Keep responses concise and conversational. Respond in the same language the clie
 
   // ─── Admin API Routes ───
 
-  app.post("/api/admin/login", async (req, res) => {
+  app.post("/api/admin/login", rateLimitLogin, async (req, res) => {
     try {
       const { username, password } = req.body;
       if (!username || !password) {
@@ -496,6 +697,7 @@ Keep responses concise and conversational. Respond in the same language the clie
       req.session.userId = user.id;
       res.json({ id: user.id, fullName: user.fullName, role: user.role });
     } catch (error) {
+      console.error("[Admin] Login error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
@@ -683,7 +885,7 @@ Keep responses concise and conversational. Respond in the same language the clie
   });
 
   // Seed admin on startup
-  seedAdmin();
+  await seedAdmin();
 
   return httpServer;
 }

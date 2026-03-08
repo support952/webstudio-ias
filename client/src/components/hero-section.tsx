@@ -1,121 +1,166 @@
-import { motion } from "framer-motion";
+import { useState, useCallback, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useI18n } from "@/lib/i18n";
+import { HeroLogoParallax } from "@/components/hero-logo-parallax";
+import { useCountUp } from "@/lib/use-count-up";
 
-function AnimatedOrbs() {
+function HeroMeshBackground() {
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 300], [1, 0.4]);
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-neon-purple/20 blur-[120px] animate-orb-1" />
-      <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-neon-cyan/15 blur-[100px] animate-orb-2" />
-      <div className="absolute bottom-1/4 left-1/3 w-[350px] h-[350px] rounded-full bg-neon-pink/10 blur-[80px] animate-orb-3" />
-      <div className="absolute inset-0 opacity-[0.03]"
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+      <motion.div style={{ opacity }} className="hero-canvas-mesh absolute inset-0" />
+      <div
+        className="absolute inset-0 opacity-[0.03]"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)`,
+          backgroundSize: "64px 64px",
         }}
       />
     </div>
   );
 }
 
+const HERO_STATS = [
+  { valueKey: "hero.stat1.value", labelKey: "hero.stat1.label", accent: "text-neon-cyan" },
+  { valueKey: "hero.stat3.value", labelKey: "hero.stat3.label", accent: "text-emerald-400" },
+  { valueKey: "hero.stat4.value", labelKey: "hero.stat4.label", accent: "text-amber-400" },
+] as const;
+
+const stagger = { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const };
+
+function HeroStat({ valueKey, labelKey, accent, statsRef }: {
+  valueKey: (typeof HERO_STATS)[number]["valueKey"];
+  labelKey: (typeof HERO_STATS)[number]["labelKey"];
+  accent: string;
+  statsRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const { t } = useI18n();
+  const display = useCountUp(t(valueKey), statsRef, 1.4);
+  return (
+    <div className="glass-float rounded-2xl px-4 py-5 sm:px-6 sm:py-6 text-center transition-all duration-300 hover:border-primary/30">
+      <p className={`font-bold ${accent}`} style={{ fontSize: "clamp(1.5rem, 4vw + 1rem, 2.25rem)" }}>{display}</p>
+      <p className="text-section-subtitle text-muted-foreground mt-1 font-medium">{t(labelKey)}</p>
+    </div>
+  );
+}
+
 export function HeroSection() {
   const { t } = useI18n();
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
 
-  const stats = [
-    { valueKey: "hero.stat1.value", labelKey: "hero.stat1.label" },
-    { valueKey: "hero.stat2.value", labelKey: "hero.stat2.label" },
-    { valueKey: "hero.stat3.value", labelKey: "hero.stat3.label" },
-    { valueKey: "hero.stat4.value", labelKey: "hero.stat4.label" },
-  ];
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    });
+  }, []);
+
+  const onMouseLeave = useCallback(() => setMousePosition(null), []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20" data-testid="section-hero">
-      <AnimatedOrbs />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-        <div className="text-center max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase glass-card text-neon-cyan mb-8" data-testid="badge-hero-tag">
-              <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-pulse" />
-              {t("hero.badge")}
-            </span>
-          </motion.div>
+    <section
+      data-hero-section
+      className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden bg-transparent"
+      data-testid="section-hero"
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+    >
+      <HeroMeshBackground />
+      <HeroLogoParallax mousePosition={mousePosition} />
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6"
-            data-testid="text-hero-title"
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24 flex flex-col items-center text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...stagger, delay: 0 }}
+          className="mb-6 sm:mb-8"
+        >
+          <span
+            className="hero-badge-glass inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-[11px] font-medium tracking-[0.2em] uppercase text-foreground"
+            data-testid="badge-hero-tag"
           >
-            {t("hero.title1")}{" "}
-            <br className="hidden sm:block" />
-            {t("hero.title2")}{" "}
-            <span className="gradient-text">{t("hero.title3")}</span>
-          </motion.h1>
+            <span className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+            {t("hero.badge")}
+          </span>
+        </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed"
-            data-testid="text-hero-subtitle"
-          >
-            {t("hero.subtitle")}
-          </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...stagger, delay: 0.1 }}
+          className="hero-headline-boutique font-bold text-foreground mb-3 sm:mb-4"
+          data-testid="text-hero-title"
+        >
+          {t("hero.title1")}{" "}
+          <br className="hidden sm:block" />
+          {t("hero.title2")}{" "}
+          <span className="hero-gradient-text hero-headline-shimmer">{t("hero.title3")}</span>
+        </motion.h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Link href="/pricing">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate px-8"
-                data-testid="button-get-started"
-              >
-                {t("hero.cta1")}
-                <ArrowRight className="w-4 h-4 ms-2" />
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-slate-700 text-slate-300 no-default-hover-elevate no-default-active-elevate px-8 bg-transparent"
-                data-testid="button-contact-hero"
-              >
-                <Play className="w-4 h-4 me-2" />
-                {t("hero.cta2")}
-              </Button>
-            </Link>
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent mb-6 sm:mb-8"
+        />
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
-            className="mt-16 sm:mt-20 flex flex-wrap items-center justify-center gap-8 sm:gap-12"
-            data-testid="stats-hero"
-          >
-            {stats.map((stat) => (
-              <div key={stat.labelKey} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold gradient-text">
-                  {t(stat.valueKey)}
-                </div>
-                <div className="text-xs sm:text-sm text-slate-500 mt-1">{t(stat.labelKey)}</div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...stagger, delay: 0.22 }}
+          className="hero-subtext text-muted-foreground max-w-xl mx-auto mb-8 sm:mb-10 px-1"
+          data-testid="text-hero-subtitle"
+        >
+          {t("hero.subtitle")}
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...stagger, delay: 0.32 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+        >
+          <Link href="/pricing">
+            <Button
+              size="lg"
+              className="hero-cta-primary rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 px-6 sm:px-8 py-5 sm:py-6 text-sm font-semibold tracking-wide shadow-[0_8px_30px_rgba(139,92,246,0.35)]"
+              data-testid="button-get-started"
+            >
+              {t("hero.cta1")}
+              <ArrowRight className="w-4 h-4 ms-2" />
+            </Button>
+          </Link>
+          <Link href="/contact">
+            <Button
+              variant="outline"
+              size="lg"
+              className="hero-cta-secondary glass-float rounded-xl text-foreground px-6 sm:px-8 py-5 sm:py-6"
+              data-testid="button-contact-hero"
+            >
+              <Play className="w-4 h-4 me-2" />
+              {t("hero.cta2")}
+            </Button>
+          </Link>
+        </motion.div>
       </div>
+
+      <motion.div
+        ref={statsRef}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="relative z-10 mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-3xl mx-auto px-4"
+      >
+        {HERO_STATS.map(({ valueKey, labelKey, accent }) => (
+          <HeroStat key={valueKey} valueKey={valueKey} labelKey={labelKey} accent={accent} statsRef={statsRef} />
+        ))}
+      </motion.div>
     </section>
   );
 }

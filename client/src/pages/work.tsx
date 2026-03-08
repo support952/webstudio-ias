@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
+import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
 
 const projects = [
@@ -65,72 +66,74 @@ export default function Work() {
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-background text-foreground">
+      <SEOHead title="Our Work" path="/work" />
+      <div className="min-h-screen text-foreground font-sans antialiased">
         <Navbar />
 
-        <section className="pt-32 pb-24 sm:pt-40 sm:pb-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <span className="text-neon-pink text-sm font-medium uppercase tracking-widest">
-                {t("work.label")}
-              </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 mb-4" data-testid="text-work-title">
-                {t("work.title").split(" ")[0]}{" "}
-                <span className="gradient-text">{t("work.title").split(" ").slice(1).join(" ")}</span>
-              </h1>
-              <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
-                {t("work.subtitle")}
-              </p>
-            </motion.div>
+        <main id="main-content">
+          <section className="pt-28 pb-20 sm:pt-36 sm:pb-28">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-center mb-20"
+              >
+                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-slate-500">
+                  {t("work.label")}
+                </span>
+                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3" data-testid="text-work-title">
+                  {t("work.title").split(" ")[0]}{" "}
+                  <span className="gradient-text">{t("work.title").split(" ").slice(1).join(" ")}</span>
+                </h1>
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
+                <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
+                  {t("work.subtitle")}
+                </p>
+              </motion.div>
 
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {projects.map((project, idx) => (
-                <motion.div
-                  key={project.title}
-                  variants={itemVariants}
-                  className={`glass-card rounded-md overflow-visible gradient-border flex flex-col`}
-                  data-testid={`card-project-${idx}`}
-                >
-                  <div className={`h-40 bg-gradient-to-br ${project.gradient} flex items-center justify-center rounded-t-md`}>
-                    <div className="text-4xl font-bold text-white/10 select-none">
-                      0{idx + 1}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {projects.map((project, idx) => (
+                  <motion.div
+                    key={project.title}
+                    variants={itemVariants}
+                    className="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden flex flex-col transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04] hover:shadow-xl hover:shadow-black/15"
+                    data-testid={`card-project-${idx}`}
+                  >
+                    <div className={`h-36 bg-gradient-to-br ${project.gradient} flex items-center justify-center border-b border-white/[0.06]`}>
+                      <div className="text-4xl font-bold text-white/10 select-none">0{idx + 1}</div>
                     </div>
-                  </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <span className="text-xs text-neon-cyan uppercase tracking-wider mb-2">{project.category}</span>
-                    <h3 className="text-lg font-semibold text-white mb-2">{project.title}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed mb-4 flex-1">{project.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech.map((tag) => (
-                        <span key={tag} className="text-xs px-2 py-1 rounded-full bg-white/[0.04] text-slate-400 border border-white/[0.06]">
-                          {tag}
-                        </span>
-                      ))}
+                    <div className="p-6 flex-1 flex flex-col">
+                      <span className="text-[11px] font-medium text-neon-cyan uppercase tracking-wider mb-2">{project.category}</span>
+                      <h3 className="text-lg font-semibold text-white mb-2 tracking-tight">{project.title}</h3>
+                      <p className="text-sm text-slate-400 leading-[1.6] mb-4 flex-1">{project.description}</p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tech.map((tag) => (
+                          <span key={tag} className="text-xs px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-400 border border-white/[0.06]">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-slate-300 hover:text-neon-cyan p-0 h-auto w-fit text-sm font-medium transition-colors"
+                      >
+                        {t("work.viewProject")}
+                        <ExternalLink className="w-3.5 h-3.5 ms-1.5 opacity-80" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-neon-cyan p-0 h-auto w-fit"
-                    >
-                      {t("work.viewProject")}
-                      <ExternalLink className="w-3 h-3 ms-1" />
-                    </Button>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+        </main>
 
         <Footer />
       </div>

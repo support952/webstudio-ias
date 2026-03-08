@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SEOHead } from "@/components/seo-head";
 
 type TabKey = "overview" | "profile" | "settings" | "progress" | "requests";
 
@@ -734,8 +735,9 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-deep-900">
+      <SEOHead title="Dashboard" path="/dashboard" />
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-16">
+      <div id="main-content" className="pt-20 sm:pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 12 }}

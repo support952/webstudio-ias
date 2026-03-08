@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageCircle, MapPin, ChevronRight, CheckCircle2, X, Shield } from "lucide-react";
-import { SiWhatsapp } from "react-icons/si";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { Mail, MessageCircle, MapPin, Send } from "lucide-react";
+import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,93 +13,136 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertContactSchema, type InsertContact } from "@shared/schema";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
+import { SEOHead } from "@/components/seo-head";
+import { ContactPageJsonLd } from "@/components/json-ld";
 import { useI18n } from "@/lib/i18n";
 
+const CONTACT_DRAFT_KEY = "contact_draft";
+
+const planIdToSubject: Record<string, string> = {
+  starter: "Starter Plan",
+  pro: "Pro Plan",
+  enterprise: "Enterprise Plan",
+};
+
 export default function Contact() {
-  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  const search = useSearch();
   const { t } = useI18n();
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { toast } = useToast();
+
+  const planParam = typeof search === "string" && search.startsWith("?") ? new URLSearchParams(search).get("plan") : null;
+  const planSubject = planParam && planIdToSubject[planParam] ? planIdToSubject[planParam] : null;
 
   const form = useForm<InsertContact>({
     resolver: zodResolver(insertContactSchema),
-    defaultValues: { name: "", email: "", subject: "", message: "" },
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: planSubject ?? "",
+      message: planSubject ? `I'm interested in the ${planSubject}.` : "",
+      service: "websites",
+    },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: InsertContact) => {
-      await apiRequest("POST", "/api/contact", data);
-      return data;
-    },
-    onSuccess: () => {
-      toast({ title: t("contact.success"), description: t("contact.successDesc") });
-      form.reset();
-      setShowConfirmation(true);
-    },
-    onError: () => {
+  useEffect(() => {
+    if (planSubject) {
+      form.setValue("subject", planSubject);
+      form.setValue("message", `I'm interested in the ${planSubject}.`);
+    }
+  }, [planSubject, form]);
+
+  const onNextStep = form.handleSubmit((data) => {
+    try {
+      sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(data));
+      setLocation("/contact/questionnaire");
+    } catch {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
-    },
+    }
   });
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-background text-foreground">
+      <SEOHead title="Contact Us" path="/contact" />
+      <ContactPageJsonLd />
+      <div className="min-h-screen text-foreground font-sans antialiased">
         <Navbar />
 
-        <section className="pt-32 pb-24 sm:pt-40 sm:pb-32 relative">
-          <div className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-neon-pink/5 blur-[120px] pointer-events-none" />
+        <main id="main-content">
+          <section className="pt-20 pb-16 sm:pt-24 sm:pb-20 relative">
+            <div className="absolute top-1/3 right-0 w-[380px] h-[380px] rounded-full bg-neon-pink/8 blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-1/4 left-0 w-[280px] h-[280px] rounded-full bg-neon-cyan/5 blur-[80px] pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <span className="text-neon-cyan text-sm font-medium uppercase tracking-widest">
-                {t("contact.label")}
-              </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 mb-4" data-testid="text-contact-title">
-                {t("contact.title").split(" ").slice(0, -1).join(" ")}{" "}
-                <span className="gradient-text">{t("contact.title").split(" ").pop()}</span>
-              </h1>
-              <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
-                {t("contact.subtitle")}
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
               <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="lg:col-span-3"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-center mb-16"
               >
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
-                    className="glass-card rounded-md p-6 sm:p-8 space-y-5"
-                    data-testid="form-contact"
-                  >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <span className="text-section-label font-medium tracking-[0.2em] uppercase text-foreground">
+                  {t("contact.label")}
+                </span>
+                <h1 className="text-section-title font-semibold tracking-[-0.02em] text-foreground mt-3 mb-3" data-testid="text-contact-title">
+                  {t("contact.title").split(" ").slice(0, -1).join(" ")}{" "}
+                  <span className="gradient-text">{t("contact.title").split(" ").pop()}</span>
+                </h1>
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mb-5" />
+                <p className="text-section-subtitle text-muted-foreground max-w-xl mx-auto leading-[1.65]">
+                  {t("contact.subtitle")}
+                </p>
+              </motion.div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+                <motion.div
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="lg:col-span-3 space-y-6"
+                >
+                  {planParam && ["starter", "pro", "enterprise"].includes(planParam) && (
+                    <div
+                      className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-lg contact-plan-summary"
+                      data-testid="contact-selected-plan"
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">
+                        {t("contact.inquiringAbout")}
+                      </p>
+                      <h2 className="text-lg font-semibold text-foreground mb-2">{t(`pricing.${planParam}`)}</h2>
+                      <p className="text-sm text-muted-foreground leading-relaxed contact-plan-summary-desc">{t(`pricing.${planParam}.desc`)}</p>
+                    </div>
+                  )}
+                  <Form {...form}>
+                    <form
+                      onSubmit={onNextStep}
+                      className="rounded-2xl border border-border bg-card/80 contact-form-card p-6 sm:p-8 space-y-5 transition-all duration-300 hover:shadow-xl hover:shadow-black/10"
+                      data-testid="form-contact"
+                    >
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                       <FormField
                         control={form.control}
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm text-slate-300">{t("contact.name")}</FormLabel>
+                            <FormLabel className="form-label text-sm">{t("contact.name")}</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="John Doe"
-                                className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                                className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                                 {...field}
                                 data-testid="input-name"
                               />
@@ -113,12 +156,12 @@ export default function Contact() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-sm text-slate-300">{t("contact.email")}</FormLabel>
+                            <FormLabel className="form-label text-sm">{t("contact.email")}</FormLabel>
                             <FormControl>
                               <Input
                                 type="email"
                                 placeholder="john@example.com"
-                                className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                                className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                                 {...field}
                                 data-testid="input-email"
                               />
@@ -131,14 +174,55 @@ export default function Contact() {
 
                     <FormField
                       control={form.control}
+                      name="service"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="form-label text-sm">{t("contact.service")}</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value ?? "websites"}
+                          >
+                            <FormControl>
+                              <SelectTrigger
+                                className="bg-background/80 border-border text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary data-[placeholder]:text-muted-foreground"
+                                data-testid="select-service"
+                              >
+                                <SelectValue placeholder={t("contact.servicePlaceholder")} />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {(
+                                [
+                                  "websites",
+                                  "digital_business_card",
+                                  "marketing_ppc",
+                                ] as const
+                              ).map((key) => (
+                                <SelectItem
+                                  key={key}
+                                  value={key}
+                                  className="focus:bg-accent focus:text-accent-foreground"
+                                >
+                                  {t(`contact.serviceOptions.${key}`)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm text-slate-300">{t("contact.subject")}</FormLabel>
+                          <FormLabel className="form-label text-sm">{t("contact.subject")}</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Project Inquiry"
-                              className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20"
+                              className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
                               {...field}
                               data-testid="input-subject"
                             />
@@ -153,12 +237,12 @@ export default function Contact() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-sm text-slate-300">{t("contact.message")}</FormLabel>
+                          <FormLabel className="form-label text-sm">{t("contact.message")}</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Tell us about your project..."
                               rows={5}
-                              className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 focus:ring-neon-purple/20 resize-none"
+                              className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary resize-none"
                               {...field}
                               data-testid="input-message"
                             />
@@ -170,21 +254,13 @@ export default function Contact() {
 
                     <Button
                       type="submit"
-                      disabled={mutation.isPending}
-                      className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                      className="w-full rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 py-6 text-sm font-medium shadow-lg hover:shadow-xl transition-shadow duration-300"
                       data-testid="button-submit-contact"
                     >
-                      {mutation.isPending ? (
-                        <span className="flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          {t("contact.sending")}
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <ChevronRight className="w-4 h-4" />
-                          {t("contact.send")}
-                        </span>
-                      )}
+                      <span className="flex items-center gap-2">
+                        <Send className="w-4 h-4" />
+                        {t("contact.send")}
+                      </span>
                     </Button>
                   </form>
                 </Form>
@@ -198,22 +274,21 @@ export default function Contact() {
               >
                 {[
                   { icon: Mail, labelKey: "contact.emailUs", value: "support@webstudio-ias.com", href: "mailto:support@webstudio-ias.com", color: "text-neon-purple", bg: "bg-neon-purple/10" },
-                  { icon: SiWhatsapp, labelKey: "contact.whatsapp", value: "+1 (555) 123-4567", href: "https://wa.me/15551234567", color: "text-emerald-400", bg: "bg-emerald-400/10" },
                   { icon: MessageCircle, labelKey: "contact.liveChat", valueKey: "contact.liveChat.value", href: "#", color: "text-neon-cyan", bg: "bg-neon-cyan/10" },
                   { icon: MapPin, labelKey: "contact.location", valueKey: "contact.location.value", href: "#", color: "text-neon-pink", bg: "bg-neon-pink/10" },
                 ].map((item) => (
                   <a
                     key={item.labelKey}
                     href={item.href}
-                    className="flex items-center gap-4 p-5 glass-card rounded-md transition-all duration-300 gradient-border group"
+                    className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card/50 transition-all duration-300 hover:border-primary/30 hover:bg-card hover:shadow-lg group"
                     data-testid={`link-contact-${t(item.labelKey).toLowerCase().replace(/\s/g, "-")}`}
                   >
-                    <div className={`shrink-0 w-12 h-12 rounded-md ${item.bg} flex items-center justify-center`}>
+                    <div className={`shrink-0 w-12 h-12 rounded-xl ${item.bg} flex items-center justify-center shadow-md`}>
                       <item.icon className={`w-5 h-5 ${item.color}`} />
                     </div>
-                    <div>
-                      <div className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">{t(item.labelKey)}</div>
-                      <div className="text-sm text-white font-medium">{item.value || t(item.valueKey!)}</div>
+                    <div className="contact-card-inner flex-1 min-w-0 py-0.5 pl-0 rounded-r-xl">
+                      <div className="contact-card-label text-xs uppercase tracking-wider mb-0.5 font-semibold">{t(item.labelKey)}</div>
+                      <div className="contact-card-value text-sm font-medium">{item.value || t(item.valueKey!)}</div>
                     </div>
                   </a>
                 ))}
@@ -221,64 +296,9 @@ export default function Contact() {
             </div>
           </div>
         </section>
+        </main>
 
         <Footer />
-
-        <AnimatePresence>
-          {showConfirmation && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-              onClick={() => setShowConfirmation(false)}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ duration: 0.3 }}
-                className="glass-card rounded-md p-8 max-w-md w-full text-center relative"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setShowConfirmation(false)}
-                  className="absolute top-3 right-3"
-                  data-testid="button-close-confirmation"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-
-                <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-gradient-to-br from-neon-purple/20 to-neon-cyan/20 flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-neon-cyan" />
-                </div>
-
-                <h3 className="text-xl font-bold text-white mb-3" data-testid="text-confirm-title">
-                  {t("contact.confirmTitle")}
-                </h3>
-
-                <p className="text-slate-300 text-sm leading-relaxed mb-5" data-testid="text-confirm-message">
-                  {t("contact.confirmMessage")}
-                </p>
-
-                <div className="flex items-center justify-center gap-2 text-xs text-slate-500 mb-6" data-testid="text-secure-payment">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>{t("contact.securePayment")}</span>
-                </div>
-
-                <Button
-                  onClick={() => setShowConfirmation(false)}
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
-                  data-testid="button-confirm-close"
-                >
-                  {t("contact.confirmClose")}
-                </Button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </PageWrapper>
   );

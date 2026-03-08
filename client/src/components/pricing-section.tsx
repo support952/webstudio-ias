@@ -83,10 +83,7 @@ export function PricingSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-neon-pink text-sm font-medium uppercase tracking-widest" data-testid="text-pricing-label">
-            Pricing
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 mb-4" data-testid="text-pricing-title">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" data-testid="text-pricing-title">
             Choose Your{" "}
             <span className="gradient-text">Plan</span>
           </h2>

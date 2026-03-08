@@ -1,12 +1,34 @@
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 import express, { type Request, Response, NextFunction } from "express";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import os from "os";
 
 const app = express();
 const httpServer = createServer(app);
+
+if (process.env.NODE_ENV !== "production") {
+  const openaiKey = (process.env.OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_API_KEY || "").trim();
+  console.log(openaiKey ? "[Config] OpenAI API key: loaded" : "[Config] OpenAI API key: not set (AI chat will be unavailable)");
+}
+
+const isProduction = process.env.NODE_ENV === "production";
+const sessionSecret = process.env.SESSION_SECRET;
+
+if (isProduction && !sessionSecret) {
+  // In production we require a strong, explicit session secret.
+  throw new Error(
+    "SESSION_SECRET environment variable must be set in production for secure sessions.",
+  );
+}
 
 declare module "http" {
   interface IncomingMessage {
@@ -30,24 +52,7 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-const PgStore = connectPgSimple(session);
-app.use(
-  session({
-    store: new PgStore({
-      conString: process.env.DATABASE_URL,
-      createTableIfMissing: true,
-    }),
-    secret: process.env.SESSION_SECRET || "webstudio-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    },
-  }),
-);
+// Session middleware is set up below after we know if DB is available
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -87,6 +92,62 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  let useMemoryStore = !process.env.DATABASE_URL;
+  if (process.env.DATABASE_URL) {
+    try {
+      const pg = await import("pg");
+      const pool = new pg.default.Pool({ connectionString: process.env.DATABASE_URL });
+      const client = await pool.connect();
+      client.release();
+      await pool.end();
+    } catch {
+      useMemoryStore = true;
+    }
+  }
+
+  if (useMemoryStore) {
+    const { setStorage } = await import("./storage");
+    const { MemoryStorage } = await import("./storage-memory");
+    setStorage(new MemoryStorage());
+    log("Using in-memory storage (PostgreSQL not available).");
+    const { createRequire } = await import("module");
+    const require = createRequire(import.meta.url);
+    const MemoryStore = require("memorystore")(session);
+    app.use(
+      session({
+        store: new MemoryStore({ checkPeriod: 86400000 }),
+        secret: sessionSecret ?? "dev-webstudio-secret-key",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+          httpOnly: true,
+          secure: isProduction,
+          sameSite: "lax",
+        },
+      }),
+    );
+  } else {
+    const PgStore = connectPgSimple(session);
+    app.use(
+      session({
+        store: new PgStore({
+          conString: process.env.DATABASE_URL,
+          createTableIfMissing: true,
+        }),
+        secret: sessionSecret ?? "dev-webstudio-secret-key",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+          httpOnly: true,
+          secure: isProduction,
+          sameSite: "lax",
+        },
+      }),
+    );
+  }
+
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
@@ -121,10 +182,22 @@ app.use((req, res, next) => {
     {
       port,
       host: "0.0.0.0",
-      reusePort: true,
+      // Note: reusePort is not supported on all platforms (e.g. Windows),
+      // so we omit it to avoid ENOTSUP errors when listening.
     },
     () => {
-      log(`serving on port ${port}`);
+      const url = `http://localhost:${port}`;
+      log("Server is up.");
+      log(`Website: ${url}`);
+      // Show LAN address so you can open from another device on the same network
+      const ifaces = os.networkInterfaces();
+      for (const name of Object.keys(ifaces)) {
+        for (const iface of ifaces[name] ?? []) {
+          if (iface.family === "IPv4" && !iface.internal) {
+            log(`On this network: http://${iface.address}:${port}`);
+          }
+        }
+      }
     },
   );
 })();

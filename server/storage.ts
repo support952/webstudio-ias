@@ -14,7 +14,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: string, data: Partial<Pick<User, "fullName" | "email" | "phone" | "company" | "avatarUrl" | "password">>): Promise<User | undefined>;
+  updateUser(id: string, data: Partial<Pick<User, "fullName" | "email" | "phone" | "company" | "avatarUrl" | "password" | "role">>): Promise<User | undefined>;
   createContactSubmission(contact: InsertContact): Promise<ContactSubmission>;
   getContactSubmissions(): Promise<ContactSubmission[]>;
   getProjectUpdates(userId: string): Promise<ProjectUpdate[]>;
@@ -55,7 +55,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUser(id: string, data: Partial<Pick<User, "fullName" | "email" | "phone" | "company" | "avatarUrl" | "password">>): Promise<User | undefined> {
+  async updateUser(id: string, data: Partial<Pick<User, "fullName" | "email" | "phone" | "company" | "avatarUrl" | "password" | "role">>): Promise<User | undefined> {
     const [user] = await db.update(users).set(data).where(eq(users.id, id)).returning();
     return user;
   }
@@ -138,4 +138,7 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export let storage: IStorage = new DatabaseStorage();
+export function setStorage(s: IStorage): void {
+  storage = s;
+}

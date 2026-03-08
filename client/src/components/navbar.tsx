@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap, ChevronDown, Globe, LogIn, UserPlus, LogOut, User, LayoutDashboard, PlusCircle, Settings } from "lucide-react";
+import { Menu, X, ChevronDown, Globe, LogIn, UserPlus, LogOut, User, LayoutDashboard, PlusCircle, Settings, Sun, Moon, type LucideIcon } from "lucide-react";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { useI18n, languageNames, type Language } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/lib/theme";
 
-const guestLinks = [
+const guestLinks: { labelKey: string; href: string }[] = [
   { labelKey: "nav.home", href: "/" },
   { labelKey: "nav.services", href: "/services" },
-  { labelKey: "nav.about", href: "/about" },
   { labelKey: "nav.pricing", href: "/pricing" },
   { labelKey: "nav.contact", href: "/contact" },
 ];
 
-const userLinks = [
+const userLinks: { labelKey: string; href: string; icon: LucideIcon }[] = [
   { labelKey: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard },
   { labelKey: "nav.newRequest", href: "/dashboard/requests", icon: PlusCircle },
   { labelKey: "nav.profile", href: "/dashboard/profile", icon: User },
@@ -28,6 +29,7 @@ export function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { t, lang, setLang } = useI18n();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
 
   const navLinks = user ? userLinks : guestLinks;
@@ -59,32 +61,34 @@ export function Navbar() {
       }`}
       data-testid="header-navbar"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-neon-cyan font-medium"
+      >
+        Skip to Content
+      </a>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 h-16 sm:h-20">
-          <Link href="/" className="flex items-center gap-2 shrink-0" data-testid="link-logo">
-            <div className="w-8 h-8 rounded-md bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white tracking-tight">
-              WebStudio
-            </span>
-          </Link>
+          <Logo href="/" variant={theme === "light" ? "light" : "dark"} className="shrink-0" />
 
-          <nav className="hidden lg:flex items-center gap-1" data-testid="nav-desktop">
+          <nav className="hidden lg:flex items-center gap-0.5" data-testid="nav-desktop">
             {navLinks.map((link) => {
               const isActive = location === link.href || (link.href !== "/" && location.startsWith(link.href));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-2 text-sm transition-colors duration-200 rounded-md flex items-center gap-1.5 ${
+                  className={`px-3.5 py-2.5 text-sm font-medium tracking-wide transition-colors duration-200 rounded-lg flex items-center gap-1.5 ${
                     isActive
-                      ? "text-white"
-                      : "text-slate-400 hover:text-white"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                   data-testid={`link-nav-${link.labelKey.split(".")[1]}`}
                 >
-                  {"icon" in link && link.icon && <link.icon className="w-4 h-4" />}
+                  {"icon" in link && (() => {
+                    const Icon = link.icon as LucideIcon;
+                    return <Icon className="w-4 h-4" />;
+                  })()}
                   {t(link.labelKey)}
                 </Link>
               );
@@ -92,15 +96,26 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              data-testid="button-theme-toggle"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             <div className="relative">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-slate-400 gap-1.5"
+                className="text-muted-foreground hover:text-foreground gap-1.5"
                 onClick={(e) => {
                   e.stopPropagation();
                   setLangOpen(!langOpen);
                 }}
+                aria-label="Select language"
                 data-testid="button-language-switcher"
               >
                 <Globe className="w-4 h-4" />
@@ -127,8 +142,8 @@ export function Navbar() {
                           }}
                           className={`w-full text-start px-3 py-2 text-sm transition-colors ${
                             lang === code
-                              ? "text-white bg-white/[0.06]"
-                              : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                              ? "text-foreground bg-accent"
+                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
                           }`}
                           data-testid={`button-lang-${code}`}
                         >
@@ -146,7 +161,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-slate-300 gap-1.5"
+                  className="text-muted-foreground gap-1.5"
                   onClick={(e) => {
                     e.stopPropagation();
                     setUserMenuOpen(!userMenuOpen);
@@ -154,7 +169,7 @@ export function Navbar() {
                   data-testid="button-user-menu"
                 >
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center">
-                    <User className="w-3.5 h-3.5 text-white" />
+                    <User className="w-3.5 h-3.5 text-primary-foreground" />
                   </div>
                   <span className="hidden sm:inline text-sm max-w-[100px] truncate">
                     {user.fullName.split(" ")[0]}
@@ -172,15 +187,15 @@ export function Navbar() {
                       data-testid="dropdown-user-menu"
                     >
                       <div className="px-3 py-2 border-b border-white/[0.06]">
-                        <p className="text-sm text-white font-medium truncate">{user.fullName}</p>
-                        <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                        <p className="text-sm text-foreground font-medium truncate">{user.fullName}</p>
+                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                       </div>
                       <button
                         onClick={() => {
                           logout();
                           setUserMenuOpen(false);
                         }}
-                        className="w-full text-start px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-white/[0.03] flex items-center gap-2"
+                        className="w-full text-start px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent flex items-center gap-2"
                         data-testid="button-logout"
                       >
                         <LogOut className="w-4 h-4" />
@@ -196,7 +211,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-slate-300 gap-1.5"
+                    className="text-muted-foreground gap-1.5"
                     data-testid="button-register"
                   >
                     <UserPlus className="w-4 h-4" />
@@ -205,7 +220,7 @@ export function Navbar() {
                 </Link>
                 <Link href="/login">
                   <Button
-                    className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                    className="bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 no-default-hover-elevate no-default-active-elevate"
                     size="sm"
                     data-testid="button-login"
                   >
@@ -219,11 +234,19 @@ export function Navbar() {
             <Button
               size="icon"
               variant="ghost"
-              className="lg:hidden text-slate-300"
+              className="lg:hidden text-muted-foreground min-h-[48px] min-w-[48px] rounded-lg transition-transform duration-200 hover:scale-105 active:scale-95"
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
               data-testid="button-mobile-menu"
             >
-              {mobileOpen ? <X /> : <Menu />}
+              <motion.span
+                initial={false}
+                animate={{ rotate: mobileOpen ? 90 : 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+              >
+                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </motion.span>
             </Button>
           </div>
         </div>
@@ -235,10 +258,11 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
             className="lg:hidden glass-nav"
             data-testid="nav-mobile"
           >
-            <div className="px-4 py-4 space-y-1">
+            <div className="px-4 py-3 space-y-0.5">
               {navLinks.map((link) => {
                 const isActive = location === link.href || (link.href !== "/" && location.startsWith(link.href));
                 return (
@@ -246,14 +270,17 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`block px-3 py-2.5 text-sm transition-colors rounded-md flex items-center gap-2 ${
+                    className={`flex min-h-[48px] items-center px-3 py-3 text-sm transition-colors rounded-lg gap-2 ${
                       isActive
-                        ? "text-white"
-                        : "text-slate-400 hover:text-white"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                     data-testid={`link-mobile-${link.labelKey.split(".")[1]}`}
                   >
-                    {"icon" in link && link.icon && <link.icon className="w-4 h-4" />}
+                    {"icon" in link && (() => {
+                      const Icon = link.icon as LucideIcon;
+                      return <Icon className="w-4 h-4" />;
+                    })()}
                     {t(link.labelKey)}
                   </Link>
                 );
@@ -262,15 +289,15 @@ export function Navbar() {
               {user ? (
                 <div className="pt-2 border-t border-white/[0.06]">
                   <div className="px-3 py-2">
-                    <p className="text-sm text-white font-medium">{user.fullName}</p>
-                    <p className="text-xs text-slate-400">{user.email}</p>
+                    <p className="text-sm text-foreground font-medium">{user.fullName}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                   <button
                     onClick={() => {
                       logout();
                       setMobileOpen(false);
                     }}
-                    className="w-full text-start px-3 py-2.5 text-sm text-slate-400 hover:text-white flex items-center gap-2"
+                    className="w-full min-h-[48px] text-start px-3 py-3 text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 rounded-lg"
                     data-testid="button-mobile-logout"
                   >
                     <LogOut className="w-4 h-4" />
@@ -278,20 +305,20 @@ export function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="pt-2 space-y-2 border-t border-white/[0.06]">
-                  <Link href="/register" onClick={() => setMobileOpen(false)}>
+                <div className="pt-2 space-y-1 border-t border-white/[0.06]">
+                  <Link href="/register" onClick={() => setMobileOpen(false)} className="block">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start gap-2 text-slate-300"
+                      className="w-full justify-start gap-2 text-muted-foreground min-h-[48px] rounded-lg"
                       data-testid="button-mobile-register"
                     >
                       <UserPlus className="w-4 h-4" />
                       {t("nav.register")}
                     </Button>
                   </Link>
-                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                  <Link href="/login" onClick={() => setMobileOpen(false)} className="block">
                     <Button
-                      className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                      className="w-full min-h-[48px] rounded-lg bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 no-default-hover-elevate no-default-active-elevate"
                       data-testid="button-mobile-login"
                     >
                       <LogIn className="w-4 h-4" />

@@ -22,6 +22,9 @@ export const contactSubmissions = pgTable("contact_submissions", {
   email: text("email").notNull(),
   subject: text("subject").notNull(),
   message: text("message").notNull(),
+  service: text("service"),
+  questionnaireAnswers: text("questionnaire_answers"),
+  chatTranscript: text("chat_transcript"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -68,6 +71,9 @@ export const insertContactSchema = createInsertSchema(contactSubmissions).pick({
   email: true,
   subject: true,
   message: true,
+  service: true,
+  questionnaireAnswers: true,
+  chatTranscript: true,
 });
 
 export const insertProjectUpdateSchema = createInsertSchema(projectUpdates).pick({

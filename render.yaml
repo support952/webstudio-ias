@@ -1,0 +1,18 @@
+# Render.com – פריסת הפרויקט
+# https://render.com – חינם ל-Web Service בסיסי
+
+services:
+  - type: web
+    name: webstudio-ias
+    runtime: node
+    region: frankfurt
+
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      # הוסף ב-Dashboard: DATABASE_URL, CONTACT_EMAIL, SMTP_*, ADMIN_* לפי הצורך
