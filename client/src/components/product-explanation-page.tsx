@@ -57,8 +57,8 @@ export function ProductExplanationPage({ productId, children }: ProductExplanati
   const prefix = productId === "digital-card" ? "product.card" : `product.${productId}`;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur-md">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <span className="font-bold text-lg text-slate-200">
             {t(`${prefix}.heroTitle`)}
@@ -78,7 +78,7 @@ export function ProductExplanationPage({ productId, children }: ProductExplanati
 
       <main id="main-content" className="max-w-4xl mx-auto px-4 py-10 sm:py-14">
         <div className="text-center mb-12 sm:mb-16">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 gradient-text">
             {t(`${prefix}.heroTitle`)}
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">

@@ -1078,3 +1078,78 @@
     animation: glow-pulse 2.5s ease-in-out infinite;
   }
 }
+
+/* ================================================================
+   PAGE LOADER – Animated Lightning Bolt
+   ================================================================ */
+.page-loader-bolt {
+  animation: bolt-pulse 1.8s ease-in-out infinite, bolt-glow 1.8s ease-in-out infinite;
+}
+@keyframes bolt-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+@keyframes bolt-glow {
+  0%, 100% { filter: drop-shadow(0 0 24px hsl(263 70% 58% / 0.5)) drop-shadow(0 0 60px hsl(263 70% 58% / 0.15)); }
+  50% { filter: drop-shadow(0 0 40px hsl(189 85% 48% / 0.6)) drop-shadow(0 0 90px hsl(263 70% 58% / 0.3)); }
+}
+
+/* ================================================================
+   LIGHT MODE – GLOBAL READABILITY & CONTRAST OVERRIDES
+   Fixes dark-theme-only Tailwind utilities (text-slate-*, text-white,
+   border-white/*, bg-white/* etc.) so text, borders, and inputs
+   remain fully legible on the light background.
+   ================================================================ */
+
+/* --- Text: slate shades → high-contrast dark equivalents --- */
+[data-theme="light"] .text-slate-200 { color: hsl(220 15% 20%) !important; }
+[data-theme="light"] .text-slate-300 { color: hsl(220 14% 28%) !important; }
+[data-theme="light"] .text-slate-400 { color: hsl(220 12% 35%) !important; }
+[data-theme="light"] .text-slate-500 { color: hsl(220 10% 40%) !important; }
+[data-theme="light"] .text-slate-600 { color: hsl(220 10% 42%) !important; }
+
+/* --- text-white → foreground (dark) in light mode --- */
+[data-theme="light"] .text-white {
+  color: hsl(var(--foreground)) !important;
+}
+/* Keep white text inside gradient / solid colored backgrounds */
+[data-theme="light"] [class*="bg-gradient"].text-white,
+[data-theme="light"] [class*="bg-gradient"] .text-white,
+[data-theme="light"] .bg-black.text-white,
+[data-theme="light"] .bg-black .text-white {
+  color: white !important;
+}
+
+/* --- Borders: white-alpha → visible theme border --- */
+[data-theme="light"] [class*="border-white/"] {
+  border-color: hsl(var(--border)) !important;
+}
+[data-theme="light"] .border-slate-700 { border-color: hsl(var(--border)) !important; }
+[data-theme="light"] .border-slate-600 { border-color: hsl(var(--border)) !important; }
+
+/* --- Rings: white-alpha → visible --- */
+[data-theme="light"] [class*="ring-white/"] {
+  --tw-ring-color: hsl(var(--border)) !important;
+}
+[data-theme="light"] [class*="ring-neon-purple/"] {
+  --tw-ring-color: hsl(263 70% 50% / 0.3) !important;
+}
+
+/* --- Low-opacity white backgrounds → subtle gray tint --- */
+[data-theme="light"] .bg-white\/5 { background-color: hsl(220 15% 94%) !important; }
+[data-theme="light"] [class*="bg-white/[0.0"] {
+  background-color: hsl(220 15% 95%) !important;
+}
+
+/* --- Dark-chrome containers (.preserve-dark-ui): restore original colors --- */
+[data-theme="light"] .preserve-dark-ui .text-white { color: white !important; }
+[data-theme="light"] .preserve-dark-ui .text-slate-200 { color: rgb(226 232 240) !important; }
+[data-theme="light"] .preserve-dark-ui .text-slate-300 { color: rgb(203 213 225) !important; }
+[data-theme="light"] .preserve-dark-ui .text-slate-400 { color: rgb(148 163 184) !important; }
+[data-theme="light"] .preserve-dark-ui .text-slate-500 { color: rgb(100 116 139) !important; }
+[data-theme="light"] .preserve-dark-ui [class*="border-white/"] {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+[data-theme="light"] .preserve-dark-ui [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}

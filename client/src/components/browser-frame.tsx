@@ -10,7 +10,7 @@ interface BrowserFrameProps {
 export function BrowserFrame({ children, url = "https://shop-demo.webstudio.co.il", title = "ShopDemo", className = "" }: BrowserFrameProps) {
   return (
     <div
-      className={`overflow-hidden rounded-xl border border-white/10 bg-slate-900/80 shadow-2xl shadow-black/40 ${className}`}
+      className={`preserve-dark-ui overflow-hidden rounded-xl border border-white/10 bg-slate-900/80 shadow-2xl shadow-black/40 ${className}`}
       style={{ boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)" }}
     >
       {/* Title bar - traffic lights + URL bar */}

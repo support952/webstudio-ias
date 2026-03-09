@@ -52,7 +52,7 @@ export function BrowserSimulator({ open, onClose, url, title }: BrowserSimulator
       aria-label={title ?? t("demo.browserWindow")}
     >
       <div
-        className="w-full max-w-5xl h-[85vh] flex flex-col rounded-xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl"
+        className="preserve-dark-ui w-full max-w-5xl h-[85vh] flex flex-col rounded-xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Browser title bar */}
