@@ -5,7 +5,6 @@ import { ExamplesShowcase } from "@/components/examples-showcase";
 import { TrustSection } from "@/components/trust-section";
 import { GlobalReachBanner } from "@/components/global-reach-banner";
 import { TestimonialsSection } from "@/components/testimonials-section";
-import { ServicesOverview } from "@/components/services-overview";
 import { FAQSection } from "@/components/faq-section";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
@@ -27,7 +26,6 @@ export default function Home() {
           <TrustSection />
           <GlobalReachBanner />
           <TestimonialsSection />
-          <ServicesOverview />
           <FAQSection />
           </main>
           <Footer />

@@ -1,58 +1,52 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MessageCircle, MapPin, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertContactSchema, type InsertContact } from "@shared/schema";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/lib/i18n";
+
+const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_FORM_ID
+  ? `https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_FORM_ID}`
+  : null;
 
 export function ContactSection() {
   const { toast } = useToast();
+  const { t } = useI18n();
+  const [sending, setSending] = useState(false);
 
-  const form = useForm<InsertContact>({
-    resolver: zodResolver(insertContactSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
-  });
-
-  const mutation = useMutation({
-    mutationFn: async (data: InsertContact) => {
-      await apiRequest("POST", "/api/contact", data);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you within 24 hours.",
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!FORMSPREE_ENDPOINT) {
+      toast({ title: t("contact.error"), description: "Formspree is not configured.", variant: "destructive" });
+      return;
+    }
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.set("Service", "General Inquiry");
+    const name = (formData.get("Name") as string)?.trim() || "";
+    const email = (formData.get("Email") as string)?.trim() || "";
+    formData.set("_subject", `ליד חדש [General]: ${name || "לקוח"}`);
+    formData.set("_replyto", email);
+    setSending(true);
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
       });
-      form.reset();
-    },
-    onError: () => {
-      toast({
-        title: "Something went wrong",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const onSubmit = (data: InsertContact) => {
-    mutation.mutate(data);
+      if (response.ok) {
+        toast({ title: t("contact.success"), description: t("contact.successDesc") });
+        form.reset();
+      } else {
+        toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
+      }
+    } catch {
+      toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -87,111 +81,82 @@ export function ContactSection() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-3"
           >
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="glass-card rounded-md p-6 sm:p-8 space-y-5"
-                data-testid="form-contact"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="form-label text-sm">Your Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="John Doe"
-                            className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
-                            {...field}
-                            data-testid="input-name"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="form-label text-sm">Email Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="email"
-                            placeholder="john@example.com"
-                            className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
-                            {...field}
-                            data-testid="input-email"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+            <form
+              onSubmit={handleSubmit}
+              className="glass-card rounded-md p-6 sm:p-8 space-y-5"
+              data-testid="form-contact"
+            >
+              <input type="hidden" name="Service" value="General Inquiry" readOnly />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label htmlFor="contact-section-name" className="form-label text-sm block">Your Name</label>
+                  <Input
+                    id="contact-section-name"
+                    name="Name"
+                    type="text"
+                    required
+                    placeholder="John Doe"
+                    className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
+                    data-testid="input-name"
                   />
                 </div>
+                <div className="space-y-2">
+                  <label htmlFor="contact-section-email" className="form-label text-sm block">Email Address</label>
+                  <Input
+                    id="contact-section-email"
+                    name="Email"
+                    type="email"
+                    required
+                    placeholder="john@example.com"
+                    className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
+                    data-testid="input-email"
+                  />
+                </div>
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="subject"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="form-label text-sm">Subject</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Project Inquiry"
-                          className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
-                          {...field}
-                          data-testid="input-subject"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              <div className="space-y-2">
+                <label htmlFor="contact-section-subject" className="form-label text-sm block">Subject</label>
+                <Input
+                  id="contact-section-subject"
+                  name="Subject"
+                  placeholder="Project Inquiry"
+                  className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary"
+                  data-testid="input-subject"
                 />
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="form-label text-sm">Message</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Tell us about your project..."
-                          rows={5}
-                          className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary resize-none"
-                          {...field}
-                          data-testid="input-message"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              <div className="space-y-2">
+                <label htmlFor="contact-section-message" className="form-label text-sm block">Message</label>
+                <Textarea
+                  id="contact-section-message"
+                  name="Message"
+                  required
+                  placeholder="Tell us about your project..."
+                  rows={5}
+                  className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary resize-none"
+                  data-testid="input-message"
                 />
+              </div>
 
-                <Button
-                  type="submit"
-                  disabled={mutation.isPending}
-                  className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
-                  data-testid="button-submit-contact"
-                >
-                  {mutation.isPending ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Sending...
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Send className="w-4 h-4" />
-                      Send Message
-                    </span>
-                  )}
-                </Button>
-              </form>
-            </Form>
+              <Button
+                type="submit"
+                disabled={sending}
+                className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
+                data-testid="button-submit-contact"
+              >
+                {sending ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {t("contact.sending")}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Send className="w-4 h-4" />
+                    {t("contact.send")}
+                  </span>
+                )}
+              </Button>
+            </form>
           </motion.div>
 
           <motion.div
@@ -220,9 +185,9 @@ export function ContactSection() {
               },
               {
                 icon: MapPin,
-                label: "Location",
-                value: "San Francisco, CA",
-                href: "#",
+                label: t("contact.location"),
+                value: t("contact.location.value"),
+                href: "https://maps.google.com/?q=2+N+Central+Ave+Phoenix+AZ+85004",
                 color: "text-neon-pink",
                 bg: "bg-neon-pink/10",
               },

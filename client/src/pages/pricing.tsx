@@ -70,7 +70,7 @@ export default function Pricing() {
         <Navbar />
 
         <main id="main-content">
-          <section className="pt-28 pb-20 sm:pt-36 sm:pb-28 relative">
+          <section className="pt-28 pb-20 sm:pt-36 sm:pb-28 relative" data-testid="section-pricing">
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-neon-cyan/8 blur-[100px] pointer-events-none" />
             <div className="absolute top-1/4 right-0 w-[300px] h-[300px] rounded-full bg-neon-purple/6 blur-[80px] pointer-events-none" />
 

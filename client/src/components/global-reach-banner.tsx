@@ -8,15 +8,19 @@ const FLAG_CODES = [
 ];
 
 const FLAG_BASE = "https://flagcdn.com";
-/** Flagcdn.com only supports fixed sizes: 16x12, 20x15, 24x18, 32x24, 40x30, 48x36, 64x48, etc. */
+/** Flagcdn.com fixed sizes – using highest res for crisp display on all screens */
 const FLAG_SIZES = {
-  small: "24x18",   // mobile
-  medium: "32x24",  // default
-  large: "64x48",   // 2x retina
+  small: "64x48",   // 1x baseline
+  medium: "128x96", // 2x retina
+  xlarge: "256x192",// 4x for high-DPI
 } as const;
 
 function flagSrc(code: string, size: keyof typeof FLAG_SIZES) {
   return `${FLAG_BASE}/${FLAG_SIZES[size]}/${code}.png`;
+}
+
+function flagSrcSet(code: string) {
+  return `${flagSrc(code, "small")} 1x, ${flagSrc(code, "medium")} 2x, ${flagSrc(code, "xlarge")} 3x`;
 }
 
 /** Duplicated list for seamless infinite loop (keyframes translate -50%). */
@@ -37,7 +41,7 @@ export function GlobalReachBanner() {
       <p className="global-reach-message text-center text-muted-foreground mb-6 px-4">
         {t("globalReach.message")}
       </p>
-      <div className="global-reach-track-wrap relative overflow-hidden flex items-center min-h-[32px] sm:min-h-[40px] pointer-events-none">
+      <div className="global-reach-track-wrap relative overflow-hidden flex items-center min-h-[64px] sm:min-h-[96px] pointer-events-none">
         <div
           className="carousel-track flex items-center gap-2 sm:gap-3 w-max animate-flags-scroll"
           style={{ willChange: "transform", backfaceVisibility: "hidden" }}
@@ -45,17 +49,18 @@ export function GlobalReachBanner() {
           {FLAGS_DOUBLED.map((code, i) => (
             <span
               key={`${code}-${i}`}
-              className="flag-item inline-flex items-center justify-center shrink-0 w-8 h-6 sm:w-[43px] sm:h-8"
+              className="flag-item inline-flex items-center justify-center shrink-0 w-14 h-10 sm:w-[72px] sm:h-[54px] md:w-20 md:h-15"
             >
               <img
-                src={flagSrc(code, "large")}
-                srcSet={`${flagSrc(code, "small")} 1x, ${flagSrc(code, "medium")} 1.33x, ${flagSrc(code, "large")} 2x`}
+                src={flagSrc(code, "medium")}
+                srcSet={flagSrcSet(code)}
                 alt=""
-                width={32}
-                height={24}
+                width={128}
+                height={96}
                 loading="lazy"
                 decoding="async"
                 className="flag-img block w-full h-full object-contain"
+                style={{ imageRendering: "crisp-edges" as const }}
                 referrerPolicy="no-referrer"
               />
             </span>

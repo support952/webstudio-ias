@@ -47,6 +47,27 @@
 
 ---
 
+---
+
+## לידים ל-support@webstudio-ias.com (Formspree)
+
+כדי שכל הלידים יגיעו מסודרים ל־support@webstudio-ias.com:
+
+1. היכנס ל־https://formspree.io והתחבר.
+2. **New Form** – בחר "Email" והזן: **support@webstudio-ias.com**
+3. העתק את ה־form ID מתוך ה־URL (למשל: `https://formspree.io/f/xyzabc12` → `xyzabc12`).
+4. ב־`.env` או ב־Environment Variables של השרת הגדר:
+   ```
+   VITE_FORMSPREE_FORM_ID=xyzabc12
+   ```
+
+בכל ליד תקבל מייל עם:
+- **נושא מסודר:** `ליד חדש [Ecommerce]: שם הלקוח`
+- **שדות ברורים:** Name, Email, Message, Service
+- **Reply-To:** לחיצה על "Reply" תשלח ישירות ללקוח
+
+---
+
 ## לפני הפריסה
 
 1. **בדיקה מקומית:**

@@ -10,10 +10,10 @@ import { ServiceJsonLd } from "@/components/json-ld";
 import { useI18n } from "@/lib/i18n";
 
 const services = [
-  { icon: Code2, titleKey: "services.web.title", descKey: "services.web.desc", longKey: "services.web.long", gradient: "from-neon-purple to-blue-500" },
-  { icon: BrainCircuit, titleKey: "services.ai.title", descKey: "services.ai.desc", longKey: "services.ai.long", gradient: "from-neon-cyan to-emerald-500" },
-  { icon: Palette, titleKey: "services.design.title", descKey: "services.design.desc", longKey: "services.design.long", gradient: "from-neon-pink to-rose-500" },
-  { icon: Megaphone, titleKey: "services.marketing.title", descKey: "services.marketing.desc", longKey: "services.marketing.long", gradient: "from-amber-400 to-orange-500" },
+  { icon: Code2, titleKey: "services.web.title", descKey: "services.web.desc", longKey: "services.web.long", gradient: "from-neon-purple to-blue-500", serviceParam: "Ecommerce" },
+  { icon: BrainCircuit, titleKey: "services.ai.title", descKey: "services.ai.desc", longKey: "services.ai.long", gradient: "from-neon-cyan to-emerald-500", serviceParam: null },
+  { icon: Palette, titleKey: "services.design.title", descKey: "services.design.desc", longKey: "services.design.long", gradient: "from-neon-pink to-rose-500", serviceParam: "Branding" },
+  { icon: Megaphone, titleKey: "services.marketing.title", descKey: "services.marketing.desc", longKey: "services.marketing.long", gradient: "from-amber-400 to-orange-500", serviceParam: "Branding" },
 ];
 
 const containerVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.12 } } };
@@ -87,7 +87,7 @@ export default function Services() {
                         <p className="text-slate-400 text-sm sm:text-base leading-[1.65] mb-6">
                           {t(service.longKey)}
                         </p>
-                        <Link href="/contact">
+                        <Link href={service.serviceParam ? `/contact?service=${service.serviceParam}` : "/contact"}>
                           <Button
                             size="sm"
                             className="rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate px-6 py-5 text-sm font-medium tracking-wide shadow-lg hover:shadow-xl transition-shadow duration-300"

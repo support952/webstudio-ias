@@ -34,7 +34,7 @@ export function FeaturesStrip() {
               </div>
               <div className="min-w-0">
                 <span className="text-sm font-semibold text-foreground tracking-tight block">{t(labelKey)}</span>
-                <span className="text-xs text-muted-foreground mt-0.5 block">{t(descKey)}</span>
+                <span className="text-xs text-muted-foreground features-strip-desc mt-0.5 block">{t(descKey)}</span>
               </div>
             </motion.div>
           ))}

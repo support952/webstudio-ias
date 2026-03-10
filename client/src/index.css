@@ -10,7 +10,7 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
   --background: 220 40% 4%;
-  --foreground: 210 20% 95%;
+  --foreground: 210 10% 98%;
   --border: 220 30% 12%;
   --card: 220 35% 7%;
   --card-foreground: 210 20% 95%;
@@ -31,15 +31,15 @@
   --secondary: 220 30% 14%;
   --secondary-foreground: 210 20% 92%;
   --muted: 220 25% 12%;
-  --muted-foreground: 215 15% 55%;
+  --muted-foreground: 210 8% 92%;
   --accent: 220 25% 11%;
-  --accent-foreground: 210 20% 88%;
+  --accent-foreground: 210 18% 88%;
   --destructive: 0 72% 42%;
   --destructive-foreground: 0 0% 100%;
   --input: 220 30% 18%;
   --ring: 263 70% 58%;
-  --form-label: 210 20% 88%;
-  --placeholder: 215 15% 55%;
+  --form-label: 210 10% 94%;
+  --placeholder: 210 8% 82%;
   --chart-1: 189 85% 48%;
   --chart-2: 263 70% 58%;
   --chart-3: 328 70% 55%;
@@ -87,34 +87,43 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
-/* Light theme */
+/* Dark theme: ensure max contrast (bright text) */
+[data-theme="dark"] {
+  --foreground: 210 5% 98%;
+  --muted-foreground: 210 8% 95%;
+  --card-foreground: 210 5% 97%;
+  --form-label: 210 5% 96%;
+  --placeholder: 210 8% 85%;
+}
+
+/* Light theme — max contrast for readability */
 [data-theme="light"] {
   --button-outline: rgba(0, 0, 0, 0.08);
   --badge-outline: rgba(0, 0, 0, 0.05);
   --elevate-1: rgba(0, 0, 0, 0.03);
   --elevate-2: rgba(0, 0, 0, 0.06);
   --background: 0 0% 99%;
-  --foreground: 220 20% 12%;
+  --foreground: 220 30% 6%;
   --border: 220 15% 88%;
   --card: 0 0% 100%;
-  --card-foreground: 220 20% 12%;
+  --card-foreground: 220 25% 6%;
   --card-border: 220 15% 90%;
   --sidebar: 220 15% 98%;
-  --sidebar-foreground: 220 20% 15%;
+  --sidebar-foreground: 220 20% 10%;
   --sidebar-border: 220 15% 90%;
   --popover: 0 0% 100%;
-  --popover-foreground: 220 20% 12%;
+  --popover-foreground: 220 20% 8%;
   --popover-border: 220 15% 88%;
   --primary: 263 70% 50%;
   --primary-foreground: 0 0% 100%;
   --secondary: 220 15% 94%;
-  --secondary-foreground: 220 20% 15%;
+  --secondary-foreground: 220 25% 8%;
   --muted: 220 15% 94%;
-  --muted-foreground: 220 14% 28%;
-  --form-label: 220 14% 18%;
-  --placeholder: 220 12% 35%;
+  --muted-foreground: 220 25% 8%;
+  --form-label: 220 25% 6%;
+  --placeholder: 220 15% 20%;
   --accent: 220 15% 94%;
-  --accent-foreground: 220 20% 15%;
+  --accent-foreground: 220 25% 8%;
   --input: 220 15% 92%;
   --ring: 263 70% 50%;
   --destructive: 0 72% 42%;
@@ -129,7 +138,7 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
   --background: 220 40% 4%;
-  --foreground: 210 20% 95%;
+  --foreground: 210 10% 98%;
   --border: 220 30% 12%;
   --card: 220 35% 7%;
   --card-foreground: 210 20% 95%;
@@ -150,9 +159,9 @@
   --secondary: 220 30% 14%;
   --secondary-foreground: 210 20% 92%;
   --muted: 220 25% 12%;
-  --muted-foreground: 215 15% 55%;
+  --muted-foreground: 210 8% 92%;
   --accent: 220 25% 11%;
-  --accent-foreground: 210 20% 88%;
+  --accent-foreground: 210 18% 88%;
   --destructive: 0 72% 42%;
   --destructive-foreground: 0 0% 100%;
   --input: 220 30% 18%;
@@ -203,7 +212,7 @@
     background: transparent !important;
   }
   [data-theme="light"] html {
-    background: hsl(240 15% 96%) !important;
+    background: hsl(0 0% 98%) !important;
   }
   body {
     @apply font-sans antialiased text-foreground;
@@ -239,11 +248,90 @@
   /* Section labels: always high-contrast (no light-on-light) */
   [data-theme="light"] [data-unified-canvas] .text-section-label,
   [data-theme="light"] [data-unified-canvas] .trust-title-glow {
-    color: hsl(var(--foreground)) !important;
+    color: hsl(220 25% 6%) !important;
   }
   [data-theme="light"] .text-section-subtitle,
   [data-theme="light"] .text-muted-foreground {
-    color: hsl(220 14% 28%) !important;
+    color: hsl(220 25% 8%) !important;
+  }
+  /* Contact page header: maximum contrast on light gradient */
+  [data-theme="light"] .contact-header-label,
+  [data-theme="light"] .contact-header-title,
+  [data-theme="light"] .contact-header-subtitle {
+    color: hsl(220 25% 6%) !important;
+  }
+  /* ——— ACCESSIBILITY: maximum contrast (WCAG AAA) ——— */
+  .text-foreground { color: hsl(210 5% 98%) !important; }
+  [data-theme="light"] .text-foreground { color: hsl(220 30% 6%) !important; }
+  /* Light theme: dark text everywhere for max readability */
+  [data-theme="light"] .text-muted-foreground,
+  [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4,
+  [data-theme="light"] .hero-subtext,
+  [data-theme="light"] .trust-title-glow,
+  [data-theme="light"] [data-hero-section] p,
+  [data-theme="light"] main p,
+  [data-theme="light"] section p {
+    color: hsl(220 25% 8%) !important;
+  }
+  /* Dark theme: near-white text — max contrast for readability */
+  [data-theme="dark"] .text-foreground,
+  [data-theme="dark"] .text-muted-foreground,
+  [data-theme="dark"] .text-section-subtitle,
+  [data-theme="dark"] .card-futuristic .text-foreground,
+  [data-theme="dark"] .card-futuristic .text-muted-foreground,
+  [data-theme="dark"] .card-futuristic h3,
+  [data-theme="dark"] .glass-float .text-foreground,
+  [data-theme="dark"] .glass-float .text-muted-foreground,
+  [data-theme="dark"] [data-testid="section-services-overview"] .text-foreground,
+  [data-theme="dark"] [data-testid="section-services-overview"] .text-muted-foreground,
+  [data-theme="dark"] [data-testid="section-examples"] .text-muted-foreground,
+  [data-theme="dark"] [data-testid="section-examples"] a,
+  [data-theme="dark"] [data-testid="footer"] .text-muted-foreground,
+  [data-theme="dark"] [data-testid="footer"] .text-foreground,
+  [data-theme="dark"] .contact-plan-summary-desc,
+  [data-theme="dark"] .contact-header-label,
+  [data-theme="dark"] .contact-header-subtitle {
+    color: hsl(210 5% 96%) !important;
+  }
+  [data-theme="dark"] .contact-header-title,
+  [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3 {
+    color: hsl(0 0% 98%) !important;
+  }
+  .text-slate-300,
+  .text-slate-400,
+  .text-slate-500 {
+    color: hsl(210 5% 95%) !important;
+  }
+  .text-slate-200 {
+    color: hsl(210 5% 97%) !important;
+  }
+  .text-slate-600 {
+    color: hsl(210 5% 90%) !important;
+  }
+  [data-theme="dark"] .text-slate-200,
+  [data-theme="dark"] .text-slate-300,
+  [data-theme="dark"] .text-slate-400,
+  [data-theme="dark"] .text-slate-500,
+  [data-theme="dark"] .text-muted-foreground {
+    color: hsl(210 5% 96%) !important;
+  }
+  [data-theme="dark"] .trust-title-glow,
+  [data-theme="dark"] [data-unified-canvas] .text-section-label {
+    color: hsl(210 5% 96%) !important;
+  }
+  /* Light theme: near-black text */
+  [data-theme="light"] .text-slate-400,
+  [data-theme="light"] .text-slate-500 {
+    color: hsl(220 20% 10%) !important;
+  }
+  [data-theme="light"] .text-slate-300 {
+    color: hsl(220 20% 8%) !important;
+  }
+  [data-theme="light"] .text-slate-200 {
+    color: hsl(220 25% 6%) !important;
+  }
+  [data-theme="light"] .text-slate-600 {
+    color: hsl(220 20% 8%) !important;
   }
   /* FAQ question bars: sharp label text in both themes */
   .faq-question-bar .font-semibold {
@@ -258,6 +346,23 @@
     scroll-behavior: auto;
   }
 
+  /* Mobile: safe area for notched devices, touch-friendly defaults */
+  body {
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  /* Fixed header: respect safe area on notched devices */
+  [data-testid="header-navbar"] {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  @media (max-width: 768px) {
+    html {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+  }
+
   /* High-contrast text: always legible against background (theme-aware) */
   .text-contrast-primary {
     color: hsl(var(--foreground));
@@ -269,7 +374,7 @@
     color: hsl(var(--muted-foreground));
   }
   [data-theme="light"] .text-contrast-muted-strong {
-    color: hsl(220 12% 35%);
+    color: hsl(220 18% 12%);
   }
 
   /* Form labels & placeholders: WCAG AA contrast (4.5:1+) — deep neutral for legibility */
@@ -429,29 +534,24 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
-  /* Contact / floating cards: solid text container for WCAG (no gradient bleed) */
+  /* Contact cards: unified look, no box-in-box – text follows theme */
   .contact-card-inner {
-    background: hsl(220 18% 11%);
-    color: hsl(var(--foreground));
-    border-radius: inherit;
-  }
-  [data-theme="light"] .contact-card-inner {
-    background: #ffffff;
-    color: hsl(220 15% 18%);
+    background: transparent;
+    color: inherit;
   }
   .contact-card-inner .contact-card-label {
-    color: hsl(210 18% 82%);
+    color: hsl(210 12% 65%);
     font-weight: 600;
   }
   [data-theme="light"] .contact-card-inner .contact-card-label {
-    color: hsl(220 12% 28%);
+    color: hsl(220 15% 35%) !important;
   }
   .contact-card-inner .contact-card-value {
-    color: hsl(210 20% 97%);
+    color: hsl(var(--foreground));
     font-weight: 500;
   }
   [data-theme="light"] .contact-card-inner .contact-card-value {
-    color: hsl(220 18% 12%);
+    color: hsl(220 25% 8%) !important;
   }
   /* Selected plan summary on contact page: solid background, high-contrast text */
   .contact-plan-summary {
@@ -459,25 +559,54 @@
     border-color: rgba(255, 255, 255, 0.12);
   }
   .contact-plan-summary .contact-plan-summary-desc {
-    color: hsl(210 20% 88%);
+    color: hsl(210 5% 94%) !important;
   }
   [data-theme="light"] .contact-plan-summary {
     background: #ffffff !important;
     border-color: hsl(220 15% 88%);
   }
   [data-theme="light"] .contact-plan-summary .text-muted-foreground {
-    color: hsl(220 12% 35%);
+    color: hsl(220 14% 16%) !important;
   }
   [data-theme="light"] .contact-plan-summary .text-foreground {
-    color: hsl(220 20% 10%);
+    color: hsl(220 18% 8%) !important;
   }
   [data-theme="light"] .contact-plan-summary .contact-plan-summary-desc {
-    color: hsl(220 14% 22%);
+    color: hsl(220 20% 8%) !important;
   }
   /* Contact page form: solid background in light mode for label/input readability */
   [data-theme="light"] .contact-form-card {
     background: hsl(0 0% 100% / 0.96) !important;
     border-color: hsl(220 15% 88%);
+  }
+  /* Contact form card: subtle glass in dark mode */
+  .contact-form-card {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Features strip cards: readable description on dark glass (dark theme) and on light (light theme) */
+  .features-strip-desc {
+    color: hsl(210 5% 94%) !important;
+  }
+  [data-theme="light"] .features-strip-desc {
+    color: hsl(220 20% 8%) !important;
+  }
+
+  /* Footer: maximum contrast in both themes */
+  [data-testid="footer"] .text-muted-foreground,
+  [data-testid="footer"] a.text-muted-foreground,
+  [data-testid="footer"] .text-xs {
+    color: hsl(210 5% 94%) !important;
+  }
+  [data-theme="light"] [data-testid="footer"] .text-muted-foreground,
+  [data-theme="light"] [data-testid="footer"] a.text-muted-foreground,
+  [data-theme="light"] [data-testid="footer"] .text-xs,
+  [data-theme="light"] [data-testid="footer"] .text-foreground {
+    color: hsl(220 20% 8%) !important;
+  }
+  [data-theme="light"] [data-testid="footer"] a:hover {
+    color: hsl(220 60% 35%) !important;
   }
 
   .glass-nav {
@@ -488,10 +617,80 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255,255,255,0.03) inset;
   }
 
+  /* Navbar over light background: dark text for links and icons */
+  [data-theme="light"] [data-testid="header-navbar"] nav a,
+  [data-theme="light"] [data-testid="header-navbar"] [data-testid="button-theme-toggle"],
+  [data-theme="light"] [data-testid="header-navbar"] [data-testid="button-language-switcher"],
+  [data-theme="light"] [data-testid="header-navbar"] .text-muted-foreground {
+    color: hsl(220 25% 8%) !important;
+  }
+  [data-theme="light"] [data-testid="header-navbar"] nav a:hover,
+  [data-theme="light"] [data-testid="header-navbar"] [data-testid="button-theme-toggle"]:hover,
+  [data-theme="light"] [data-testid="header-navbar"] [data-testid="button-language-switcher"]:hover {
+    color: hsl(220 60% 25%) !important;
+  }
+  /* Light theme: cards + sections — force dark text for readability */
+  [data-theme="light"] .card-futuristic .text-foreground,
+  [data-theme="light"] .card-futuristic .text-muted-foreground,
+  [data-theme="light"] .card-futuristic h3,
+  [data-theme="light"] .glass-float .text-foreground,
+  [data-theme="light"] .glass-float .text-muted-foreground,
+  [data-theme="light"] [data-testid="section-services-overview"] .text-muted-foreground,
+  [data-theme="light"] [data-testid="section-services-overview"] .text-foreground,
+  [data-theme="light"] [data-testid="section-examples"] .text-muted-foreground,
+  [data-theme="light"] [data-testid="section-examples"] a {
+    color: hsl(220 25% 6%) !important;
+  }
+  [data-theme="light"] [data-testid="section-examples"] .text-primary,
+  [data-theme="light"] [data-testid="section-examples"] a:hover {
+    color: hsl(263 70% 40%) !important;
+  }
+  /* Pricing page header in light theme */
+  [data-theme="light"] [data-testid="section-pricing"] .text-slate-500,
+  [data-theme="light"] [data-testid="section-pricing"] .text-slate-400 {
+    color: hsl(220 18% 12%) !important;
+  }
+  [data-theme="light"] [data-testid="section-pricing"] [data-testid="text-pricing-title"] {
+    color: hsl(220 25% 8%) !important;
+  }
+  /* Pricing cards in light theme: always dark text */
+  [data-theme="light"] [data-testid^="card-pricing-"] p,
+  [data-theme="light"] [data-testid^="card-pricing-"] li,
+  [data-theme="light"] [data-testid^="card-pricing-"] h3,
+  [data-theme="light"] [data-testid^="card-pricing-"] .text-slate-200,
+  [data-theme="light"] [data-testid^="card-pricing-"] .text-slate-400 {
+    color: hsl(220 25% 8%) !important;
+  }
+  /* Dark theme: form + contact cards — ensure labels are bright on dark bg */
+  .contact-form-card .form-label,
+  .contact-card-inner .contact-card-label,
+  .glass-card .form-label {
+    color: hsl(210 5% 96%) !important;
+  }
+  [data-theme="light"] .contact-form-card .form-label,
+  [data-theme="light"] .contact-card-inner .contact-card-label,
+  [data-theme="light"] .glass-card .form-label {
+    color: hsl(220 25% 8%) !important;
+  }
+  /* Solid card backgrounds in light theme for better contrast */
+  [data-theme="light"] .card-futuristic {
+    background: hsl(0 0% 100%) !important;
+    border-color: hsl(220 15% 82%) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  }
+  [data-theme="light"] .glass-float {
+    background: hsl(0 0% 100%) !important;
+    border-color: hsl(220 15% 82%) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
+  }
+  [data-theme="light"] .glass-card {
+    background: hsl(0 0% 100%) !important;
+    border-color: hsl(220 15% 85%) !important;
+  }
   [data-theme="light"] .glass-nav {
-    background: hsl(var(--card) / 0.98);
-    border-bottom-color: hsl(var(--border));
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), 0 0 0 1px hsl(var(--border) / 0.5);
+    background: hsl(0 0% 100%) !important;
+    border-bottom: 1px solid hsl(220 15% 88%);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   }
 
   .glow-purple {
@@ -657,8 +856,11 @@
     line-height: 1.75;
     letter-spacing: 0.01em;
   }
+  [data-hero-section] .hero-subtext {
+    color: hsl(210 5% 95%) !important;
+  }
   [data-theme="light"] [data-hero-section] .hero-subtext {
-    color: hsl(var(--muted-foreground));
+    color: hsl(220 20% 8%) !important;
   }
   [data-hero-section] .hero-cta-primary {
     min-height: 48px;
@@ -698,9 +900,9 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
   [data-theme="light"] .glass-float {
-    background: hsl(var(--card) / 0.5);
-    border-color: hsl(var(--border) / 0.6);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    background: hsl(0 0% 100%) !important;
+    border-color: hsl(220 15% 82%);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   }
 
   .card-futuristic {
@@ -710,19 +912,17 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   }
-
-  [data-theme="light"] .card-futuristic {
-    background: linear-gradient(135deg, hsl(var(--card) / 0.55) 0%, hsl(var(--card) / 0.45) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-color: hsl(var(--border) / 0.6);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  /* Dark theme: solid card background for legible text */
+  [data-theme="dark"] .card-futuristic,
+  [data-theme="dark"] .glass-float {
+    background: hsl(var(--card) / 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.15);
   }
 
   [data-theme="light"] .glass-card {
-    background: hsl(var(--card) / 0.6);
-    border-color: hsl(var(--border) / 0.8);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    background: hsl(0 0% 100%) !important;
+    border-color: hsl(220 15% 85%);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   }
 
   /* FAQ: question bars + 3D asymmetric floating bubble */
@@ -738,8 +938,9 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   }
   [data-theme="light"] .faq-question-bar {
-    border-color: hsl(var(--border) / 0.8);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    background: hsl(0 0% 100%) !important;
+    border-color: hsl(220 15% 85%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   }
   [data-theme="light"] .faq-question-bar:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -797,12 +998,12 @@
     }
   }
   .faq-bubble-text {
-    color: hsl(var(--foreground));
+    color: hsl(210 5% 98%) !important;
     font-size: clamp(0.9375rem, 2vw + 0.75rem, 1rem);
     line-height: 1.6;
   }
   [data-theme="light"] .faq-bubble-text {
-    color: hsl(220 15% 18%);
+    color: hsl(220 25% 6%) !important;
   }
   .faq-bubble-tail {
     position: absolute;
@@ -818,6 +1019,36 @@
   }
   [data-theme="light"] .faq-bubble-tail {
     border-top-color: #ffffff;
+  }
+
+  /* FAQ mobile: inline accordion — answer below question, no floating bubble */
+  .faq-mobile-answer {
+    border-radius: 0 0 0.75rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    background: hsl(220 20% 9% / 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  [data-theme="light"] .faq-mobile-answer {
+    background: hsl(0 0% 100% / 0.96);
+    border-color: hsl(var(--border) / 0.8);
+  }
+  .faq-mobile-answer-text {
+    padding: 1rem 1.25rem 1.25rem;
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: hsl(210 5% 98%) !important;
+  }
+  [data-theme="light"] .faq-mobile-answer-text {
+    color: hsl(220 25% 6%) !important;
+  }
+  @media (min-width: 769px) {
+    .faq-mobile-answer,
+    .faq-mobile-answer-text {
+      display: none !important;
+    }
   }
 
   /* Global Reach: mobile-first, frameless, touch-proof, 60fps */

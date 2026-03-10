@@ -14,10 +14,19 @@ export function OrganizationJsonLd() {
         logo: LOGO_URL,
         description:
           "We craft cutting-edge digital experiences that elevate your brand, drive growth, and push the boundaries of what's possible on the web.",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "2 N Central Ave",
+          addressLocality: "Phoenix",
+          addressRegion: "AZ",
+          postalCode: "85004",
+          addressCountry: "US",
+        },
         contactPoint: {
           "@type": "ContactPoint",
           email: "support@webstudio-ias.com",
           contactType: "customer service",
+          areaServed: "US",
         },
         sameAs: [
           "https://www.linkedin.com/company/webstudio-ias",
@@ -70,6 +79,14 @@ export function ContactPageJsonLd() {
           name: "WebStudio",
           email: "support@webstudio-ias.com",
           url: SITE_URL,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "2 N Central Ave",
+            addressLocality: "Phoenix",
+            addressRegion: "AZ",
+            postalCode: "85004",
+            addressCountry: "US",
+          },
         },
       }),
     []

@@ -1,12 +1,18 @@
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { Globe, FileText, CreditCard, Megaphone, ArrowRight } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { BrowserSimulator } from "@/components/browser-simulator";
 import { DigitalCardPreviewModal } from "@/components/digital-card-preview-modal";
-import { MarketingDetailsModal } from "@/components/marketing-details-modal";
 import { TiltCard } from "@/components/tilt-card";
 import { useState } from "react";
+
+const productToServiceParam: Record<string, string> = {
+  websites: "Ecommerce",
+  landing: "LandingPage",
+  card: "DigitalCards",
+  marketing: "Branding",
+};
 
 const examples = [
   {
@@ -52,9 +58,9 @@ const itemVariants = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 
 
 export function ExamplesShowcase() {
   const { t } = useI18n();
+  const [, setLocation] = useLocation();
   const [openDemo, setOpenDemo] = useState<string | null>(null);
   const [digitalCardModalOpen, setDigitalCardModalOpen] = useState(false);
-  const [marketingDetailsOpen, setMarketingDetailsOpen] = useState(false);
 
   return (
     <section className="section-spacing relative overflow-hidden bg-transparent" data-testid="section-examples">
@@ -94,14 +100,18 @@ export function ExamplesShowcase() {
                   tabIndex={0}
                   onClick={() => {
                     if (item.id === "card") setDigitalCardModalOpen(true);
-                    else if (item.id === "marketing") setMarketingDetailsOpen(true);
-                    else setOpenDemo(item.href);
+                    else if (item.id === "marketing") {
+                      setLocation(`/contact?service=${productToServiceParam.marketing}`);
+                      return;
+                    } else setOpenDemo(item.href);
                   }}
                   onKeyDown={(e) => {
                     if (e.key !== "Enter") return;
                     if (item.id === "card") setDigitalCardModalOpen(true);
-                    else if (item.id === "marketing") setMarketingDetailsOpen(true);
-                    else setOpenDemo(item.href);
+                    else if (item.id === "marketing") {
+                      setLocation(`/contact?service=${productToServiceParam.marketing}`);
+                      return;
+                    } else setOpenDemo(item.href);
                   }}
                   className="group flex flex-col w-full h-full min-h-0"
                 >
@@ -133,7 +143,7 @@ export function ExamplesShowcase() {
                       {item.id === "marketing" ? t("marketing.details.cta") : t("examples.clickForPreview")}
                     </p>
                     <Link
-                      href="/contact"
+                      href={`/contact?service=${productToServiceParam[item.id] ?? productToServiceParam.websites}`}
                       onClick={(e) => e.stopPropagation()}
                       className="inline-flex items-center min-h-[48px] w-fit text-muted-foreground hover:text-primary text-sm font-medium transition-all duration-200 hover:translate-x-0.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background pr-1 -ml-1 py-2"
                       aria-label={t("examples.cta")}
@@ -158,7 +168,6 @@ export function ExamplesShowcase() {
           />
         )}
         <DigitalCardPreviewModal open={digitalCardModalOpen} onClose={() => setDigitalCardModalOpen(false)} />
-        <MarketingDetailsModal open={marketingDetailsOpen} onClose={() => setMarketingDetailsOpen(false)} />
       </div>
     </section>
   );
