@@ -119,7 +119,7 @@ export default function ContactQuestionnaire() {
             <Button
               type="button"
               variant="ghost"
-              className="text-slate-400 hover:text-white mb-8 -ml-2"
+              className="text-muted-foreground hover:text-foreground mb-8 -ml-2"
               onClick={() => setLocation("/contact")}
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
@@ -131,40 +131,32 @@ export default function ContactQuestionnaire() {
               animate={{ opacity: 1, y: 0 }}
               className="glass-card rounded-md p-6 sm:p-8"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-white/[0.08]">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-border">
                 <p className="text-neon-cyan text-sm font-medium uppercase tracking-widest mb-0">
                   {t("questionnaire.service_label")}
                 </p>
-                <div className="flex gap-2" role="group" aria-label="Questionnaire language">
-                  <button
-                    type="button"
-                    onClick={() => setLang("en")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      lang === "en"
-                        ? "bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/40"
-                        : "bg-white/[0.04] text-slate-400 hover:text-white border border-white/[0.08]"
-                    }`}
-                  >
-                    {t("questionnaire.viewInEnglish")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLang("he")}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      lang === "he"
-                        ? "bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/40"
-                        : "bg-white/[0.04] text-slate-400 hover:text-white border border-white/[0.08]"
-                    }`}
-                  >
-                    {t("questionnaire.translateToHebrew")}
-                  </button>
+                <div className="flex flex-wrap gap-2" role="group" aria-label="Questionnaire language">
+                  {(["en", "he", "es", "fr"] as const).map((code) => (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => setLang(code)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        lang === code
+                          ? "bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/40"
+                          : "bg-background/80 text-muted-foreground hover:text-foreground border border-border"
+                      }`}
+                    >
+                      {t("questionnaire.viewIn")} {t(`questionnaire.lang.${code}`)}
+                    </button>
+                  ))}
                 </div>
               </div>
-              <p className="text-xl font-semibold text-white mb-2">
+              <p className="text-xl font-semibold text-foreground mb-2">
                 {t(serviceLabelKey)}
               </p>
 
-              <h2 className="text-lg text-slate-300 mb-6">{t("questionnaire.title")}</h2>
+              <h2 className="text-lg text-muted-foreground mb-6">{t("questionnaire.title")}</h2>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {questions.map((q) => (
@@ -179,25 +171,25 @@ export default function ContactQuestionnaire() {
                 ))}
 
                 <div>
-                  <label className="block text-sm text-slate-300 mb-2">{t("questionnaire.uploadFiles")}</label>
-                  <p className="text-xs text-slate-500 mb-2">{t("questionnaire.uploadFilesHint")}</p>
+                  <label className="block text-sm text-muted-foreground mb-2">{t("questionnaire.uploadFiles")}</label>
+                  <p className="text-xs text-muted-foreground mb-2">{t("questionnaire.uploadFilesHint")}</p>
                   <div className="flex flex-wrap gap-2">
                     {attachmentFiles.map((f, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center gap-1 rounded-md bg-white/[0.06] border border-white/[0.08] px-2 py-1 text-xs text-slate-300"
+                        className="inline-flex items-center gap-1 rounded-md bg-background/80 border border-border px-2 py-1 text-xs text-foreground"
                       >
                         {f.name}
                         <button
                           type="button"
                           onClick={() => setAttachmentFiles((prev) => prev.filter((_, j) => j !== i))}
-                          className="text-slate-400 hover:text-white"
+                          className="text-muted-foreground hover:text-foreground"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
                       </span>
                     ))}
-                    <label className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-white/[0.2] px-3 py-2 text-sm text-slate-400 hover:text-white hover:border-neon-cyan/50 cursor-pointer">
+                    <label className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:border-primary cursor-pointer">
                       <Paperclip className="w-4 h-4" />
                       {t("questionnaire.addFile")}
                       <input
@@ -281,7 +273,7 @@ function QuestionField({
   const label = t(question.labelKey);
   const placeholder = question.placeholderKey ? t(question.placeholderKey) : undefined;
   const labelEl = (
-    <label className="block text-sm text-slate-300 mb-2">
+    <label className="block text-sm text-muted-foreground mb-2">
       {label}
       {required && <span className="text-red-400 ml-0.5" aria-hidden>*</span>}
     </label>
@@ -296,7 +288,7 @@ function QuestionField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={3}
-          className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50 resize-none"
+          className="bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus:border-primary resize-none"
         />
       </div>
     );
@@ -307,12 +299,12 @@ function QuestionField({
       <div>
         {labelEl}
         <Select value={value || undefined} onValueChange={onChange}>
-          <SelectTrigger className="bg-white/[0.03] border-white/[0.08] text-white">
+          <SelectTrigger className="bg-background/80 border-border text-foreground">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
             {(question.options ?? []).map((opt) => (
-              <SelectItem key={opt.value} value={opt.value} className="focus:bg-white/10 focus:text-white">
+              <SelectItem key={opt.value} value={opt.value} className="focus:bg-accent focus:text-foreground">
                 {t(opt.labelKey)}
               </SelectItem>
             ))}
@@ -337,7 +329,7 @@ function QuestionField({
                 onChange={() => onChange(opt.value)}
                 className="accent-neon-purple"
               />
-              <span className="text-white text-sm">{t(opt.labelKey)}</span>
+              <span className="text-foreground text-sm">{t(opt.labelKey)}</span>
             </label>
           ))}
         </div>
@@ -353,7 +345,7 @@ function QuestionField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50"
+        className="bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
       />
     </div>
   );

@@ -58,17 +58,26 @@ export default function Checkout() {
     cvc: "",
   });
   const [processing, setProcessing] = useState(false);
+  const [paymentComplete, setPaymentComplete] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "apple" | "google">("card");
 
   const handleApplePay = () => {
     setPaymentMethod("apple");
     setProcessing(true);
-    setTimeout(() => setProcessing(false), 1500);
+    setPaymentComplete(false);
+    setTimeout(() => {
+      setProcessing(false);
+      setPaymentComplete(true);
+    }, 1500);
   };
   const handleGooglePay = () => {
     setPaymentMethod("google");
     setProcessing(true);
-    setTimeout(() => setProcessing(false), 1500);
+    setPaymentComplete(false);
+    setTimeout(() => {
+      setProcessing(false);
+      setPaymentComplete(true);
+    }, 1500);
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,21 +88,11 @@ export default function Checkout() {
     e.preventDefault();
     if (paymentMethod !== "card") return;
     setProcessing(true);
-    console.log("Order Details:", {
-      plan: selectedPlanId,
-      planName: t(plan.nameKey),
-      customer: {
-        fullName: formData.fullName,
-        company: formData.company,
-        email: formData.email,
-        phone: formData.phone,
-      },
-      payment: {
-        cardNumber: formData.cardNumber ? `****${formData.cardNumber.slice(-4)}` : "",
-        expiry: formData.expiry,
-      },
-    });
-    setTimeout(() => setProcessing(false), 2000);
+    setPaymentComplete(false);
+    setTimeout(() => {
+      setProcessing(false);
+      setPaymentComplete(true);
+    }, 2000);
   };
 
   return (
@@ -121,6 +120,9 @@ export default function Checkout() {
               </h1>
               <p className="text-slate-400 mb-8">{t("checkout.subtitle")}</p>
               <p className="text-sm text-slate-500 mb-6">{t("checkout.depositSubtitle")}</p>
+              <p className="text-sm text-amber-400/90 mb-6 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-2" data-testid="checkout-demo-notice">
+                {t("checkout.demoNotice")}
+              </p>
 
               <div className="mb-6" data-testid="card-order-summary">
                 <h3 className="text-sm text-slate-500 uppercase tracking-wider mb-3">{t("checkout.choosePlan")}</h3>
@@ -327,11 +329,17 @@ export default function Checkout() {
                         {t("checkout.processing")}
                       </span>
                     ) : (
-                      `${t("checkout.pay")} $${DEPOSIT[selectedPlanId]} ${t("checkout.deposit")}`
+                      `${t("checkout.demoSimulatePayment")} $${DEPOSIT[selectedPlanId]} ${t("checkout.deposit")}`
                     )}
                   </Button>
                 </div>
 
+                {paymentComplete && (
+                  <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-emerald-400 text-sm flex items-center gap-2" data-testid="checkout-demo-complete">
+                    <Check className="w-5 h-5 shrink-0" />
+                    {t("checkout.demoCompleteMessage")}
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-2 text-xs text-slate-600">
                   <Lock className="w-3 h-3" />
                   {t("checkout.secure")}

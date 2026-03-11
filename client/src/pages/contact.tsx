@@ -11,13 +11,12 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { ContactPageJsonLd } from "@/components/json-ld";
+import { openLiveChat } from "@/components/live-chat-widget";
 import { useI18n } from "@/lib/i18n";
 
-const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_FORM_ID
-  ? `https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_FORM_ID}`
-  : null;
+const CONTACT_DRAFT_KEY = "contact_draft";
 
-/** Map product param to Formspree Project_Type (service name in email) */
+/** Map product/plan to display label and to questionnaire service type */
 const productToService: Record<string, string> = {
   websites: "Ecommerce",
   landing: "LandingPage",
@@ -30,6 +29,13 @@ const planIdToService: Record<string, string> = {
   pro: "Pro Plan",
   enterprise: "Enterprise Plan",
 };
+
+/** Questionnaire expects service: "websites" | "digital_business_card" | "marketing_ppc" */
+function toQuestionnaireService(projectType: string): string {
+  if (projectType === "DigitalCards") return "digital_business_card";
+  if (projectType === "Branding") return "marketing_ppc";
+  return "websites";
+}
 
 const MARKETING_SECTIONS = [
   { titleKey: "marketing.details.s1.title", descKey: "marketing.details.s1.desc" },
@@ -44,7 +50,6 @@ export default function Contact() {
   const { t } = useI18n();
   const { toast } = useToast();
   const [sending, setSending] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const params = typeof search === "string" && search.startsWith("?") ? new URLSearchParams(search) : null;
   const serviceParam = params?.get("service") ?? null;
   const planParam = params?.get("plan") ?? null;
@@ -69,31 +74,26 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!FORMSPREE_ENDPOINT) {
-      toast({ title: t("contact.error"), description: "Formspree is not configured. Set VITE_FORMSPREE_FORM_ID in .env", variant: "destructive" });
-      return;
-    }
     const form = e.currentTarget;
     const formData = new FormData(form);
     const name = (formData.get("Name") as string)?.trim() || "";
     const email = (formData.get("Email") as string)?.trim() || "";
-    formData.set("_subject", `ליד חדש [${projectType}]: ${name || "לקוח"}`);
-    formData.set("_replyto", email);
+    const message = (formData.get("Message") as string)?.trim() || "";
+    if (!name || !email) {
+      toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
+      return;
+    }
     setSending(true);
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        body: formData,
-        headers: { Accept: "application/json" },
-      });
-      if (response.ok) {
-        setSubmitted(true);
-        form.reset();
-        toast({ title: t("contact.success"), description: t("contact.successDesc") });
-      } else {
-        const data = await response.json().catch(() => ({}));
-        toast({ title: t("contact.error"), description: data.error || t("contact.errorDesc"), variant: "destructive" });
-      }
+      const draft = {
+        name,
+        email,
+        subject: projectType,
+        message: message || t("contact.defaultMessage", "Project inquiry"),
+        service: toQuestionnaireService(projectType),
+      };
+      sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));
+      setLocation("/contact/questionnaire");
     } catch {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
     } finally {
@@ -124,7 +124,7 @@ export default function Contact() {
                 <span className="inline-block text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase text-primary/90 contact-header-label mb-4">
                   {t("contact.label")}
                 </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.03em] text-foreground contact-header-title mb-4" data-testid="text-contact-title">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-foreground contact-header-title mb-4" data-testid="text-contact-title">
                   {headerTitle.split(" ").slice(0, -1).join(" ")}{" "}
                   <span className="gradient-text">{headerTitle.split(" ").pop()}</span>
                 </h1>
@@ -180,20 +180,6 @@ export default function Contact() {
                       )}
                     </div>
                   )}
-                  {submitted ? (
-                    <div
-                      className="rounded-2xl border border-border bg-card/80 contact-form-card p-8 sm:p-10 space-y-6 shadow-lg"
-                      data-testid="contact-success-card"
-                    >
-                      <div className="text-center space-y-5">
-                        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                          <Send className="w-7 h-7 text-primary" />
-                        </div>
-                        <h3 className="text-xl font-bold text-foreground">{t("contact.success")}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{t("contact.successDesc")}</p>
-                      </div>
-                    </div>
-                  ) : (
                   <form
                     onSubmit={handleSubmit}
                     className="rounded-2xl border border-border bg-card/80 contact-form-card p-6 sm:p-8 space-y-6 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/5 focus-within:shadow-xl focus-within:shadow-primary/5"
@@ -232,6 +218,7 @@ export default function Contact() {
                       <Textarea
                         id="contact-message"
                         name="Message"
+                        required
                         placeholder="Tell us about your project..."
                         rows={5}
                         className="min-h-[120px] rounded-xl bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:border-primary resize-none transition-shadow"
@@ -251,7 +238,6 @@ export default function Contact() {
                       </span>
                     </Button>
                   </form>
-                  )}
               </motion.div>
 
               <motion.div
@@ -261,25 +247,48 @@ export default function Contact() {
                 className="lg:col-span-2 space-y-5"
               >
                 {[
-                  { icon: Mail, labelKey: "contact.emailUs", value: "support@webstudio-ias.com", href: "mailto:support@webstudio-ias.com", color: "text-neon-purple", bg: "bg-neon-purple/10" },
-                  { icon: MessageCircle, labelKey: "contact.liveChat", valueKey: "contact.liveChat.value", href: "#", color: "text-neon-cyan", bg: "bg-neon-cyan/10" },
-                  { icon: MapPin, labelKey: "contact.location", valueKey: "contact.location.value", href: "https://maps.google.com/?q=2+N+Central+Ave+Phoenix+AZ+85004", color: "text-neon-pink", bg: "bg-neon-pink/10" },
-                ].map((item) => (
-                  <a
-                    key={item.labelKey}
-                    href={item.href}
-                    className="flex items-center gap-5 p-6 rounded-2xl border border-border bg-card/80 transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-0.5 group"
-                    data-testid={`link-contact-${t(item.labelKey).toLowerCase().replace(/\s/g, "-")}`}
-                  >
-                    <div className={`shrink-0 w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                      <item.icon className={`w-6 h-6 ${item.color}`} />
-                    </div>
-                    <div className="contact-card-inner flex-1 min-w-0 py-0.5 pl-0 rounded-r-xl">
-                      <div className="contact-card-label text-xs uppercase tracking-wider mb-1 font-bold">{t(item.labelKey)}</div>
-                      <div className="contact-card-value text-sm font-medium">{item.value || t(item.valueKey!)}</div>
-                    </div>
-                  </a>
-                ))}
+                  { icon: Mail, labelKey: "contact.emailUs", value: "support@webstudio-ias.com", href: "https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com", color: "text-neon-purple", bg: "bg-neon-purple/10", isExternal: true },
+                  { icon: MessageCircle, labelKey: "contact.liveChat", valueKey: "contact.liveChat.value", href: "#", color: "text-neon-cyan", bg: "bg-neon-cyan/10", openChat: true },
+                  { icon: MapPin, labelKey: "contact.location", valueKey: "contact.location.value", href: "https://maps.google.com/?q=2+N+Central+Ave+Phoenix+AZ+85004", color: "text-neon-pink", bg: "bg-neon-pink/10", isExternal: true },
+                ].map((item) => {
+                  const className = "flex items-center gap-5 p-6 rounded-2xl border border-border bg-card/80 transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-0.5 group";
+                  const content = (
+                    <>
+                      <div className={`shrink-0 w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <item.icon className={`w-6 h-6 ${item.color}`} />
+                      </div>
+                      <div className="contact-card-inner flex-1 min-w-0 py-0.5 pl-0 rounded-r-xl">
+                        <div className="contact-card-label text-xs uppercase tracking-wider mb-1 font-semibold">{t(item.labelKey)}</div>
+                        <div className="contact-card-value text-sm font-medium">{item.value || t(item.valueKey!)}</div>
+                      </div>
+                    </>
+                  );
+                  if ("openChat" in item && item.openChat) {
+                    return (
+                      <button
+                        key={item.labelKey}
+                        type="button"
+                        onClick={openLiveChat}
+                        className={`${className} w-full text-left`}
+                        data-testid={`link-contact-${t(item.labelKey).toLowerCase().replace(/\s/g, "-")}`}
+                      >
+                        {content}
+                      </button>
+                    );
+                  }
+                  return (
+                    <a
+                      key={item.labelKey}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={className}
+                      data-testid={`link-contact-${t(item.labelKey).toLowerCase().replace(/\s/g, "-")}`}
+                    >
+                      {content}
+                    </a>
+                  );
+                })}
               </motion.div>
             </div>
           </div>

@@ -27,7 +27,7 @@ function CardPreview() {
             <p className="text-cyan-300/90 text-sm">Product Designer</p>
             <p className="text-slate-500 text-xs mt-1">WebStudio</p>
             <div className="flex justify-center gap-2 mt-4">
-              <a href="mailto:alex@example.com" className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" aria-label="Email">
+              <a href="https://mail.google.com/mail/?view=cm&to=alex%40example.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" aria-label="Email">
                 <Mail className="w-4 h-4 text-white" />
               </a>
               <a href="tel:+1234567890" className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" aria-label="Phone">

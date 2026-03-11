@@ -58,11 +58,11 @@ export default function Login() {
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="text-center mb-10"
               >
-                <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-2" data-testid="text-login-title">
+                <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-2" data-testid="text-login-title">
                   {t("auth.loginTitle")}
                 </h1>
-                <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-3" />
-                <p className="text-slate-400 text-sm" data-testid="text-login-subtitle">
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mb-3" />
+                <p className="text-muted-foreground text-sm" data-testid="text-login-subtitle">
                   {t("auth.loginSubtitle")}
                 </p>
               </motion.div>
@@ -71,42 +71,42 @@ export default function Login() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8 transition-all duration-300 hover:border-white/[0.08] shadow-xl shadow-black/5"
+                className="rounded-2xl border border-border bg-card/80 p-6 sm:p-8 transition-all duration-300 shadow-xl shadow-black/5"
             >
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="login-email" className="block text-sm text-slate-300 mb-1.5">{t("auth.email")}</label>
+                  <label htmlFor="login-email" className="block text-sm text-muted-foreground mb-1.5">{t("auth.email")}</label>
                   <div className="relative">
-                    <Mail className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Mail className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="login-email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t("auth.emailPlaceholder")}
-                      className="ps-10 bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50"
+                      className="ps-10 bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                       data-testid="input-login-email"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="login-password" className="block text-sm text-slate-300 mb-1.5">{t("auth.password")}</label>
+                  <label htmlFor="login-password" className="block text-sm text-muted-foreground mb-1.5">{t("auth.password")}</label>
                   <div className="relative">
-                    <Lock className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <Lock className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="login-password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder={t("auth.passwordPlaceholder")}
-                      className="ps-10 pe-10 bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50"
+                      className="ps-10 pe-10 bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
                       data-testid="input-login-password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute end-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                      className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       aria-label="Toggle password visibility"
                       data-testid="button-toggle-password"
                     >
@@ -116,7 +116,7 @@ export default function Login() {
                 </div>
 
                 <div className="flex justify-end">
-                  <Link href="/forgot-password" className="text-sm text-slate-400 hover:text-neon-cyan transition-colors" data-testid="link-forgot-password">
+                  <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-primary transition-colors" data-testid="link-forgot-password">
                     Forgot Password?
                   </Link>
                 </div>
@@ -142,7 +142,7 @@ export default function Login() {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-muted-foreground">
                   {t("auth.noAccount")}{" "}
                   <Link href="/register" className="text-neon-purple hover:text-neon-cyan transition-colors" data-testid="link-go-register">
                     {t("auth.registerLink")}

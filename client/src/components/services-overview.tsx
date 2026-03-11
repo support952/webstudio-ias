@@ -28,10 +28,10 @@ export function ServicesOverview() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-12"
         >
-          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-primary">
+          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-foreground">
             {t("servicesOverview.label")}
           </span>
-          <h2 className="text-section-title font-bold tracking-tight text-foreground mt-3 mb-3">
+          <h2 className="text-section-title font-semibold tracking-tight text-foreground mt-3 mb-3">
             {t("servicesOverview.title").split(" ")[0]}{" "}
             <span className="gradient-text">{t("servicesOverview.title").split(" ").slice(1).join(" ")}</span>
           </h2>
@@ -58,7 +58,7 @@ export function ServicesOverview() {
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-5 shadow-[0_0_24px_rgba(6,182,212,0.25)] group-hover:shadow-[0_0_28px_rgba(139,92,246,0.3)] transition-shadow duration-300`}>
                     <service.icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2.5 tracking-tight">{t(service.titleKey)}</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2.5 tracking-tight">{t(service.titleKey)}</h3>
                   <p className="text-sm text-muted-foreground leading-[1.6] mb-5">{t(service.descKey)}</p>
                   <Link href="/services">
                     <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary p-0 min-h-[48px] h-auto text-sm font-medium group-hover:translate-x-1 transition-all duration-200 flex items-center">

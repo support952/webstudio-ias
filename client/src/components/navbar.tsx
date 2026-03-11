@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Globe, LogIn, UserPlus, LogOut, User, LayoutDashboard, PlusCircle, Settings, Sun, Moon, type LucideIcon } from "lucide-react";
+import { Menu, X, ChevronDown, Globe, LogOut, User, LayoutDashboard, PlusCircle, Settings, Sun, Moon, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
@@ -11,6 +11,7 @@ import { useTheme } from "@/lib/theme";
 const guestLinks: { labelKey: string; href: string }[] = [
   { labelKey: "nav.home", href: "/" },
   { labelKey: "nav.services", href: "/services" },
+  { labelKey: "nav.products", href: "/products" },
   { labelKey: "nav.pricing", href: "/pricing" },
   { labelKey: "nav.contact", href: "/contact" },
 ];
@@ -205,31 +206,7 @@ export function Navbar() {
                   )}
                 </AnimatePresence>
               </div>
-            ) : (
-              <div className="hidden sm:flex items-center gap-2">
-                <Link href="/register">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground gap-1.5"
-                    data-testid="button-register"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    {t("nav.register")}
-                  </Button>
-                </Link>
-                <Link href="/login">
-                  <Button
-                    className="bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 no-default-hover-elevate no-default-active-elevate"
-                    size="sm"
-                    data-testid="button-login"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    {t("nav.login")}
-                  </Button>
-                </Link>
-              </div>
-            )}
+            ) : null}
 
             <Button
               size="icon"
@@ -304,29 +281,7 @@ export function Navbar() {
                     {t("nav.logout")}
                   </button>
                 </div>
-              ) : (
-                <div className="pt-2 space-y-1 border-t border-white/[0.06]">
-                  <Link href="/register" onClick={() => setMobileOpen(false)} className="block">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start gap-2 text-muted-foreground min-h-[48px] rounded-lg"
-                      data-testid="button-mobile-register"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      {t("nav.register")}
-                    </Button>
-                  </Link>
-                  <Link href="/login" onClick={() => setMobileOpen(false)} className="block">
-                    <Button
-                      className="w-full min-h-[48px] rounded-lg bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 no-default-hover-elevate no-default-active-elevate"
-                      data-testid="button-mobile-login"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      {t("nav.login")}
-                    </Button>
-                  </Link>
-                </div>
-              )}
+              ) : null}
             </div>
           </motion.div>
         )}

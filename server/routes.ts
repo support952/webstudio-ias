@@ -152,9 +152,9 @@ export async function registerRoutes(
       "/forgot-password",
       "/sitemap",
       "/marketing",
+      "/products",
       "/coming-soon",
       "/privacy-policy",
-      "/refund-policy",
       "/terms-of-service",
       "/cookie-policy",
     ];
@@ -324,7 +324,7 @@ export async function registerRoutes(
 
   app.post("/api/ai-chat", async (req, res) => {
     try {
-      const { messages, clientInfo, questionnaireContext, productType } = req.body;
+      const { messages, clientInfo, questionnaireContext, productType, liveChat, preferredLanguage } = req.body;
 
       if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({ message: "Messages array required" });
@@ -344,12 +344,6 @@ export async function registerRoutes(
         });
       }
 
-      const apiKey = getOpenAIApiKey();
-      const keyLen = apiKey.length;
-      const keyStart = apiKey.slice(0, 12);
-      const keyEnd = keyLen > 16 ? apiKey.slice(-4) : "???";
-      console.log("[AI Chat] Key length:", keyLen, "| starts with:", keyStart, "| ends with:", keyEnd);
-
       const model =
         process.env.OPENAI_MODEL ||
         process.env.AI_INTEGRATIONS_OPENAI_MODEL ||
@@ -359,7 +353,9 @@ export async function registerRoutes(
         process.env.AI_INTEGRATIONS_OPENAI_BASE_URL ||
         ""
       ).trim();
-      console.log("[AI Chat] Model:", model, "| Base URL:", baseURL || "(default api.openai.com)");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[AI Chat] Model:", model, "| Base URL:", baseURL || "(default api.openai.com)");
+      }
 
       let systemPrompt: string;
       type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
@@ -388,7 +384,19 @@ export async function registerRoutes(
           content: normalizeContent(m.content),
         }));
 
-      if (questionnaireContext && typeof questionnaireContext === "object" && Object.keys(questionnaireContext).length > 0) {
+      const langHint =
+        typeof preferredLanguage === "string" && preferredLanguage.length > 0
+          ? ` The user's interface may be in: ${preferredLanguage}. Prefer responding in that language when the user writes in it.`
+          : "";
+
+      if (liveChat) {
+        systemPrompt = `You are WebStudio's friendly live chat assistant. WebStudio is a digital agency offering: custom web development (websites, e-commerce, landing pages), digital business cards, and marketing campaigns (PPC, SEO, social). We have Starter, Pro, and Enterprise plans.
+
+Your role: answer questions about our services, pricing, timelines, technologies (e.g. React, Node.js), support, and process. Be helpful, concise, and professional. Keep replies short (2–5 sentences) unless the user asks for more detail.
+
+CRITICAL: Always respond in the same language the user writes in. If they write in Hebrew, reply in Hebrew. If they write in English, Spanish, French, or any other language, reply in that language. Do not translate the user's message—answer in their language.${langHint}`;
+        chatMessages = [{ role: "system", content: systemPrompt }, ...normalizeMessages(messages)];
+      } else if (questionnaireContext && typeof questionnaireContext === "object" && Object.keys(questionnaireContext).length > 0) {
         const contextLines = Object.entries(questionnaireContext)
           .filter(([, v]) => v != null && String(v).trim() !== "")
           .map(([k, v]) => `  ${k}: ${String(v)}`)
@@ -414,7 +422,9 @@ You need to collect (one at a time): type of project, business name, target audi
         chatMessages = [{ role: "system", content: systemPrompt }, ...normalizeMessages(messages)];
       }
 
-      console.log("[AI Chat] Calling OpenAI API, messages count:", chatMessages.length);
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[AI Chat] Calling OpenAI API, messages count:", chatMessages.length);
+      }
       const completion = await getOpenAI().chat.completions.create({
         model,
         messages: chatMessages as any,
@@ -423,9 +433,11 @@ You need to collect (one at a time): type of project, business name, target audi
 
       const reply = completion.choices[0]?.message?.content || "";
 
-      console.log("[AI Chat] OpenAI response OK, reply length:", reply.length);
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[AI Chat] OpenAI response OK, reply length:", reply.length);
+      }
 
-      if (reply.includes("---SUMMARY---")) {
+      if (!liveChat && reply.includes("---SUMMARY---")) {
         const summary = reply.split("---SUMMARY---")[1]?.trim() ?? "";
         if (summary) {
           sendAiSummaryEmail(summary, clientInfo || {}).catch((err) =>

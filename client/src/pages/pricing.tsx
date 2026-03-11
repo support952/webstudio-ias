@@ -89,9 +89,11 @@ export default function Pricing() {
                   <span className="gradient-text">{t("pricing.title").split(" ").pop()}</span>
                 </h1>
                 <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
-                <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
-                  {t("pricing.subtitle")}
-                </p>
+                {t("pricing.subtitle") && (
+                  <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
+                    {t("pricing.subtitle")}
+                  </p>
+                )}
               </motion.div>
 
               <motion.div

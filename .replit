@@ -48,4 +48,4 @@ SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = "587"
 ADMIN_USERNAME = "web.ias"
 ADMIN_EMAIL = "admin@webstudio-ias.com"
-ADMIN_PASSWORD = "!@#$%^Q"
+# ADMIN_PASSWORD – set via .env or secrets (never commit real passwords)

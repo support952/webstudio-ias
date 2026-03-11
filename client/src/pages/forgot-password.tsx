@@ -49,13 +49,13 @@ export default function ForgotPassword() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8"
+                className="rounded-2xl border border-border bg-card/80 p-6 sm:p-8"
               >
                 <Link href="/login" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-6">
                   <ArrowLeft className="w-4 h-4" />
                   Back to Login
                 </Link>
-                <h1 className="text-2xl font-semibold text-white mb-2">Forgot Password?</h1>
+                <h1 className="text-2xl font-semibold text-foreground mb-2">Forgot Password?</h1>
                 <p className="text-muted-foreground text-sm mb-6">
                   Enter your email and we'll send you instructions to reset your password.
                 </p>
@@ -76,7 +76,7 @@ export default function ForgotPassword() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="you@example.com"
-                          className="ps-10 bg-white/[0.03] border-white/[0.08] text-white"
+                          className="ps-10 bg-background/80 border-border text-foreground placeholder:text-muted-foreground"
                           required
                         />
                       </div>

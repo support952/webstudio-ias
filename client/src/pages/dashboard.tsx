@@ -721,7 +721,7 @@ export default function Dashboard() {
   }
 
   if (!user) {
-    navigate("/login");
+    navigate("/");
     return null;
   }
 

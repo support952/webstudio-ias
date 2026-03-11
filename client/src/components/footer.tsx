@@ -23,25 +23,17 @@ export function Footer() {
       ],
     },
     {
-      title: t("footer.services"),
+      title: t("footer.products"),
       links: [
-        { label: t("footer.webDev"), href: "/services" },
-        { label: t("footer.aiAuto"), href: "/services" },
-        { label: t("footer.uiux"), href: "/services" },
-        { label: t("footer.marketing"), href: "/marketing" },
-      ],
-    },
-    {
-      title: t("footer.resources"),
-      links: [
-        { label: t("footer.sitemap"), href: "/sitemap" },
+        { label: t("footer.productWebsites"), href: "/products" },
+        { label: t("footer.productMarketing"), href: "/products" },
+        { label: t("footer.productCard"), href: "/products" },
       ],
     },
     {
       title: t("footer.legal"),
       links: [
         { label: t("footer.privacy"), href: "/privacy-policy" },
-        { label: t("footer.refund"), href: "/refund-policy" },
         { label: t("footer.terms"), href: "/terms-of-service" },
         { label: t("footer.cookies"), href: "/cookie-policy" },
       ],
@@ -60,7 +52,9 @@ export function Footer() {
               {t("footer.tagline")}
             </p>
             <a
-              href="mailto:support@webstudio-ias.com"
+              href="https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
               data-testid="link-footer-email"
             >
@@ -77,7 +71,7 @@ export function Footer() {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground mb-5">{col.title}</h4>
+              <h4 className="text-xs font-medium tracking-[0.15em] uppercase text-foreground mb-5">{col.title}</h4>
               <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
@@ -101,7 +95,6 @@ export function Footer() {
           </p>
           <div className="flex items-center flex-wrap gap-6 text-xs text-muted-foreground">
             <Link href="/privacy-policy" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-privacy">{t("footer.privacy")}</Link>
-            <Link href="/refund-policy" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-refund">{t("footer.refund")}</Link>
             <Link href="/terms-of-service" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-terms">{t("footer.terms")}</Link>
             <Link href="/cookie-policy" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-cookies">{t("footer.cookies")}</Link>
           </div>

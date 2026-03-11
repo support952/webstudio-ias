@@ -9,6 +9,9 @@ import { ThemeProvider } from "@/lib/theme";
 import { LenisProvider, useLenis } from "@/lib/lenis";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { AnimatePresence } from "framer-motion";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { FlowLine } from "@/components/flow-line";
+import { LiveChatWidget } from "@/components/live-chat-widget";
 
 // Lazy-loaded page components for code splitting
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -22,14 +25,10 @@ const ContactQuestionnaire = lazy(() => import("@/pages/contact-questionnaire"))
 const ContactAIChat = lazy(() => import("@/pages/contact-ai-chat"));
 const Checkout = lazy(() => import("@/pages/checkout"));
 const Marketing = lazy(() => import("@/pages/marketing"));
-const Login = lazy(() => import("@/pages/login"));
-const Register = lazy(() => import("@/pages/register"));
-const ForgotPassword = lazy(() => import("@/pages/forgot-password"));
+const Products = lazy(() => import("@/pages/products"));
 const PrivacyPolicy = lazy(() => import("@/pages/privacy-policy"));
-const RefundPolicy = lazy(() => import("@/pages/refund-policy"));
 const TermsOfService = lazy(() => import("@/pages/terms-of-service"));
 const CookiePolicy = lazy(() => import("@/pages/cookie-policy"));
-const SitemapPage = lazy(() => import("@/pages/sitemap"));
 const ComingSoon = lazy(() => import("@/pages/coming-soon"));
 const Dashboard = lazy(() => import("@/pages/dashboard"));
 const AdminPanel = lazy(() => import("@/pages/admin-panel"));
@@ -73,7 +72,7 @@ function AuthRedirect({ component: Component }: { component: React.ComponentType
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { user, isLoading } = useAuth();
   if (isLoading) return null;
-  if (!user) return <Redirect to="/login" />;
+  if (!user) return <Redirect to="/" />;
   return <Component />;
 }
 
@@ -100,6 +99,7 @@ function Router() {
         <Route path="/contact">{() => <AuthRedirect component={Contact} />}</Route>
         <Route path="/checkout">{() => <AuthRedirect component={Checkout} />}</Route>
         <Route path="/marketing">{() => <AuthRedirect component={Marketing} />}</Route>
+        <Route path="/products">{() => <AuthRedirect component={Products} />}</Route>
         <Route path="/demos/digital-card" component={DemoDigitalCard} />
         <Route path="/demos/landing" component={DemoLanding} />
         <Route path="/demos/ecommerce" component={DemoEcommerce} />
@@ -109,14 +109,9 @@ function Router() {
         <Route path="/preview/websites" component={PreviewWebsites} />
         <Route path="/preview/digital-card" component={PreviewDigitalCard} />
         <Route path="/preview/marketing" component={PreviewMarketing} />
-        <Route path="/login">{() => <AuthRedirect component={Login} />}</Route>
-        <Route path="/register">{() => <AuthRedirect component={Register} />}</Route>
-        <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/privacy-policy" component={PrivacyPolicy} />
-        <Route path="/refund-policy" component={RefundPolicy} />
         <Route path="/terms-of-service" component={TermsOfService} />
         <Route path="/cookie-policy" component={CookiePolicy} />
-        <Route path="/sitemap" component={SitemapPage} />
         <Route path="/coming-soon" component={ComingSoon} />
         <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
         <Route path="/dashboard/:tab">{() => <ProtectedRoute component={Dashboard} />}</Route>
@@ -135,14 +130,18 @@ function App() {
 <I18nProvider>
         <ThemeProvider>
           <AuthProvider>
-            <LenisProvider>
-              <div className="site-canvas" aria-hidden />
-              <div className="relative z-10 min-h-screen min-h-full" data-unified-canvas>
-                <ScrollToTop />
-                <Toaster />
-                <Router />
-              </div>
-            </LenisProvider>
+            <ErrorBoundary>
+              <LenisProvider>
+                <div className="site-canvas" aria-hidden />
+                <FlowLine />
+                <div className="relative z-10 min-h-screen min-h-full" data-unified-canvas>
+                  <ScrollToTop />
+                  <Toaster />
+                  <Router />
+                  <LiveChatWidget />
+                </div>
+              </LenisProvider>
+            </ErrorBoundary>
           </AuthProvider>
         </ThemeProvider>
         </I18nProvider>

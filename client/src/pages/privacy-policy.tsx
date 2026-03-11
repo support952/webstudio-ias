@@ -94,7 +94,9 @@ export default function PrivacyPolicy() {
               <h2 className="text-lg font-semibold text-white mb-2">{t("privacy.contact.title")}</h2>
               <p className="text-slate-400 text-sm mb-4">{t("privacy.contact.description")}</p>
               <a
-                href="mailto:support@webstudio-ias.com"
+                href="https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-neon-cyan hover:underline text-sm font-medium"
                 data-testid="link-privacy-contact-email"
               >

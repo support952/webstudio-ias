@@ -84,7 +84,7 @@ export default function PreviewDigitalCard() {
                 <p className="text-slate-500 text-xs mb-5">WebStudio</p>
                 <div className="w-full h-px bg-white/10 mb-5" />
                 <div className="flex flex-wrap justify-center gap-3 w-full">
-                  <a href="mailto:alex@example.com" className="flex items-center justify-center min-w-[44px] h-11 rounded-xl bg-white/10 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/30 text-white transition-all" aria-label="Email">
+                  <a href="https://mail.google.com/mail/?view=cm&to=alex%40example.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center min-w-[44px] h-11 rounded-xl bg-white/10 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/30 text-white transition-all" aria-label="Email">
                     <Mail className="w-5 h-5" />
                   </a>
                   <a href="tel:+1234567890" className="flex items-center justify-center min-w-[44px] h-11 rounded-xl bg-white/10 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/30 text-white transition-all" aria-label="Phone">

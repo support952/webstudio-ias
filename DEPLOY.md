@@ -77,6 +77,6 @@
    ```
    גלוש ל־http://localhost:5000.
 
-2. **אל תעלה .env ל-repo:** השתמש ב-Environment Variables בפאנל השירות.
+2. **אל תעלה .env ל-repo:** השתמש ב-Environment Variables בפאנל השירות. הגדר `ADMIN_PASSWORD` (ומפתחות אחרים) במשתני סביבה ב-production — לעולם אל תכלול סיסמאות אמיתיות בקוד או ב-repo.
 
 3. אחרי הפריסה תקבל קישור – זה האתר החי.

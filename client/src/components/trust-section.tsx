@@ -77,7 +77,7 @@ export function TrustSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="trust-title-glow text-center text-[11px] font-medium text-primary uppercase tracking-[0.2em] mb-0 relative z-10"
+          className="trust-title-glow text-center text-section-label font-medium text-foreground uppercase tracking-[0.2em] mb-0 relative z-10"
         >
           {t("trust.title")}
         </motion.p>

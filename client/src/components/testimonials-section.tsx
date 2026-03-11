@@ -42,13 +42,13 @@ export function TestimonialsSection() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-primary">
+          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-foreground">
             {t("testimonials.label")}
           </span>
-          <h2 className="text-section-title font-bold tracking-tight text-foreground mt-3 mb-3">
+          <h2 className="text-section-title font-semibold tracking-tight text-foreground mt-3 mb-3">
             {t("testimonials.title")}
           </h2>
-          <p className="text-section-subtitle text-muted-foreground max-w-xl mx-auto">
+          <p className="text-section-subtitle text-foreground/90 max-w-xl mx-auto">
             {t("testimonials.subtitle")}
           </p>
         </motion.div>
@@ -70,12 +70,12 @@ export function TestimonialsSection() {
                       <Star key={j} className="w-5 h-5 fill-amber-400 text-amber-400" aria-hidden />
                     ))}
                   </div>
-                  <blockquote className="text-foreground/90 text-base leading-relaxed flex-1 mb-6">
+                  <blockquote className="text-foreground text-base leading-relaxed flex-1 mb-6">
                     &ldquo;{tst.quote}&rdquo;
                   </blockquote>
                   <footer className="pt-4 border-t border-border">
                     <p className="font-semibold text-foreground">{tst.name}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-foreground">
                       {tst.role}, {tst.company}
                     </p>
                   </footer>

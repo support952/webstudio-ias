@@ -76,13 +76,13 @@ export function FAQSection() {
           viewport={{ once: true }}
           className="text-center mb-8 sm:mb-12"
         >
-          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-primary">
+          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-foreground">
             {t("faq.label")}
           </span>
-          <h2 className="text-section-title font-bold tracking-tight text-foreground mt-3 mb-3">
+          <h2 className="text-section-title font-semibold tracking-tight text-foreground mt-3 mb-3">
             {t("faq.title")}
           </h2>
-          <p className="text-muted-foreground text-base">
+          <p className="text-foreground/90 text-base">
             {t("faq.subtitle")}
           </p>
         </motion.div>

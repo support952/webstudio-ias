@@ -72,10 +72,10 @@ export function ExamplesShowcase() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-12"
         >
-          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-primary">
+          <span className="text-section-label font-medium tracking-[0.2em] uppercase text-foreground">
             {t("examples.label")}
           </span>
-          <h2 className="text-section-title font-bold tracking-tight text-foreground mt-3 mb-3">
+          <h2 className="text-section-title font-semibold tracking-tight text-foreground mt-3 mb-3">
             {t("examples.title").split(" ").slice(0, -1).join(" ")}{" "}
             <span className="gradient-text">{t("examples.title").split(" ").slice(-1)[0]}</span>
           </h2>

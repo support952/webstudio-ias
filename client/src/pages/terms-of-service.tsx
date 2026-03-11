@@ -61,7 +61,7 @@ export default function TermsOfService() {
             >
               <h2 className="text-lg font-semibold text-white mb-2">{t("terms.contact.title")}</h2>
               <p className="text-slate-400 text-sm mb-4">{t("terms.contact.description")}</p>
-              <a href="mailto:support@webstudio-ias.com" className="text-neon-cyan hover:underline text-sm font-medium">
+              <a href="https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline text-sm font-medium">
                 support@webstudio-ias.com
               </a>
             </motion.div>

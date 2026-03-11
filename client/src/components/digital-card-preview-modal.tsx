@@ -157,7 +157,9 @@ export function DigitalCardPreviewModal({ open, onClose }: DigitalCardPreviewMod
                     {/* Contact icons: hover effects */}
                     <div className="flex flex-wrap justify-center gap-3 w-full mb-5">
                       <a
-                        href="mailto:sarah.j@webstudio-ias.com"
+                        href="https://mail.google.com/mail/?view=cm&to=sarah.j%40webstudio-ias.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex items-center justify-center min-w-[44px] h-11 rounded-xl bg-muted/80 hover:bg-primary/20 border border-border hover:border-primary/40 text-foreground hover:text-primary transition-all duration-200 hover:scale-110"
                         aria-label="Email"
                       >

@@ -84,6 +84,12 @@ export default {
           purple: "#8B5CF6",
           cyan: "#06B6D4",
           pink: "#EC4899",
+          indigo: "#6366F1",
+          violet: "#8B5CF6",
+        },
+        flow: {
+          DEFAULT: "hsl(var(--flow-from) / var(--flow-opacity))",
+          to: "hsl(var(--flow-to) / var(--flow-opacity))",
         },
       },
       fontFamily: {
@@ -127,6 +133,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.85" },
         },
+        "flow-dash": {
+          "0%": { strokeDashoffset: "0" },
+          "100%": { strokeDashoffset: "180" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -137,6 +147,7 @@ export default {
         "flags-scroll": "flags-scroll 45s linear infinite",
         "float": "float 3s ease-in-out infinite",
         "pulse-soft": "pulse-soft 2.5s ease-in-out infinite",
+        "flow-dash": "flow-dash 30s linear infinite",
       },
     },
   },
