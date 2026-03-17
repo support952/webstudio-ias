@@ -14,9 +14,9 @@ function HeroMeshBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
       <motion.div style={{ opacity }} className="hero-canvas-mesh absolute inset-0" />
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.03]"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)`,
           backgroundSize: "64px 64px",
         }}
       />
@@ -129,7 +129,7 @@ export function HeroSection() {
           <Link href="/pricing">
             <Button
               size="lg"
-              className="hero-cta-primary rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 px-6 sm:px-8 py-5 sm:py-6 text-sm font-semibold tracking-wide shadow-[0_8px_30px_rgba(139,92,246,0.35)]"
+              className="hero-cta-primary rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 px-6 sm:px-8 py-5 sm:py-6 text-sm font-semibold tracking-wide shadow-[0_8px_32px_rgba(124,58,237,0.4)]"
               data-testid="button-get-started"
             >
               {t("hero.cta1")}
@@ -140,7 +140,7 @@ export function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="hero-cta-secondary glass-float rounded-xl text-foreground px-6 sm:px-8 py-5 sm:py-6"
+              className="hero-cta-secondary rounded-xl border-2 border-violet-500/30 text-foreground px-6 sm:px-8 py-5 sm:py-6 hover:border-violet-500/50 hover:bg-violet-50/50 dark:hover:bg-violet-900/20"
               data-testid="button-contact-hero"
             >
               <Play className="w-4 h-4 me-2" />

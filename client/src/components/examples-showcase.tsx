@@ -17,7 +17,7 @@ const productToServiceParam: Record<string, string> = {
 const examples = [
   {
     id: "websites",
-    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop&fm=webp&q=80",
     icon: Globe,
     titleKey: "examples.websites.title",
     descKey: "examples.websites.desc",
@@ -26,7 +26,7 @@ const examples = [
   },
   {
     id: "landing",
-    imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=500&fit=crop&fm=webp&q=80",
     icon: FileText,
     titleKey: "examples.landing.title",
     descKey: "examples.landing.desc",
@@ -35,7 +35,7 @@ const examples = [
   },
   {
     id: "card",
-    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop&fm=webp&q=80",
     icon: CreditCard,
     titleKey: "examples.card.title",
     descKey: "examples.card.desc",
@@ -44,7 +44,7 @@ const examples = [
   },
   {
     id: "marketing",
-    imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop&fm=webp&q=80",
     icon: Megaphone,
     titleKey: "marketing.banner.title",
     descKey: "marketing.banner.subtitle",
@@ -120,7 +120,10 @@ export function ExamplesShowcase() {
                   <img
                     src={item.imageUrl}
                     alt={t(item.titleKey)}
+                    width={800}
+                    height={500}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
