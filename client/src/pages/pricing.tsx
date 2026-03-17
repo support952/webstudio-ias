@@ -81,16 +81,16 @@ export default function Pricing() {
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="text-center mb-20"
               >
-                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-slate-500">
+                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
                   {t("pricing.title").split(" ")[0]}
                 </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3" data-testid="text-pricing-title">
+                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-foreground mt-3 mb-3" data-testid="text-pricing-title">
                   {t("pricing.title").split(" ").slice(0, -1).join(" ")}{" "}
                   <span className="gradient-text">{t("pricing.title").split(" ").pop()}</span>
                 </h1>
-                <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mb-5" />
                 {t("pricing.subtitle") && (
-                  <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
+                  <p className="text-muted-foreground max-w-xl mx-auto text-base leading-[1.65]">
                     {t("pricing.subtitle")}
                   </p>
                 )}
@@ -104,13 +104,13 @@ export default function Pricing() {
               >
                 {plans.map((plan, idx) => {
                   const isFocused = focusedPlanId === plan.id;
-                  const focusedOrHover = "group-hover:text-slate-900 group-hover:font-medium";
+                  const focusedOrHover = "";
                   return (
                   <motion.div
                     key={plan.id}
                     ref={(el) => { cardRefs.current[idx] = el; }}
                     variants={itemVariants}
-                    className={`group relative rounded-2xl border border-white/[0.06] backdrop-blur-[12px] p-6 sm:p-8 flex flex-col transition-all duration-300 hover:border-white/10 hover:bg-white/[0.08] hover:shadow-xl hover:shadow-black/15 hover:scale-[1.02] hover:backdrop-blur-md ${isFocused ? "bg-white/[0.06]" : plan.popular ? "bg-white/[0.04]" : "bg-white/[0.02]"} ${
+                    className={`group relative rounded-2xl border border-border backdrop-blur-[12px] p-6 sm:p-8 flex flex-col transition-all duration-300 hover:border-primary/30 hover:bg-accent hover:shadow-lg hover:scale-[1.02] hover:backdrop-blur-md ${isFocused ? "bg-card" : plan.popular ? "bg-card/80" : "bg-card/60"} ${
                       plan.popular ? "md:-mt-2 md:mb-[-8px] ring-1 ring-neon-purple/40" : ""
                     }`}
                     data-testid={`card-pricing-${plan.id}`}
@@ -125,18 +125,18 @@ export default function Pricing() {
                     )}
 
                     <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-white mb-1.5 tracking-tight" data-testid={`text-plan-name-${plan.id}`}>
+                      <h3 className="text-lg font-semibold text-foreground mb-1.5 tracking-tight" data-testid={`text-plan-name-${plan.id}`}>
                         {t(plan.nameKey)}
                       </h3>
-                      <p className={`text-sm leading-relaxed transition-colors duration-300 text-slate-200 ${focusedOrHover} ${isFocused ? "text-slate-900 font-medium" : ""}`}>
+                      <p className="text-sm leading-relaxed transition-colors duration-300 text-foreground">
                         {t(plan.descKey)}
                       </p>
                     </div>
 
                     <ul className="space-y-3 mb-8 flex-1">
                       {plan.features.map((fKey) => (
-                        <li key={fKey} className={`flex items-start gap-3 text-sm leading-snug transition-colors duration-300 text-slate-200 ${focusedOrHover} ${isFocused ? "text-slate-900 font-medium" : ""}`}>
-                          <Check className={`w-4 h-4 mt-0.5 shrink-0 transition-colors duration-300 ${plan.popular ? "text-neon-cyan" : "text-slate-400 group-hover:text-slate-600"} ${isFocused && !plan.popular ? "text-slate-600" : ""}`} />
+                        <li key={fKey} className="flex items-start gap-3 text-sm leading-snug transition-colors duration-300 text-foreground">
+                          <Check className={`w-4 h-4 mt-0.5 shrink-0 transition-colors duration-300 ${plan.popular ? "text-neon-cyan" : "text-muted-foreground"}`} />
                           {t(fKey)}
                         </li>
                       ))}
@@ -145,7 +145,7 @@ export default function Pricing() {
                     <Link href={`/contact?plan=${plan.id}`}>
                       {plan.popular ? (
                         <Button
-                          className="w-full rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 py-6 text-sm font-medium shadow-lg hover:shadow-xl transition-shadow duration-300"
+                          className="w-full rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 py-6 text-sm font-medium shadow-lg hover:shadow-xl transition-shadow duration-300"
                           data-testid={`button-plan-${plan.id}`}
                         >
                           {t("pricing.selectPlan")}
@@ -153,7 +153,7 @@ export default function Pricing() {
                       ) : (
                         <Button
                           variant="outline"
-                          className="w-full rounded-xl border-white/15 text-slate-300 py-6 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/20 hover:text-white transition-colors duration-200"
+                          className="w-full rounded-xl border-border text-foreground py-6 bg-card/60 hover:bg-accent hover:border-primary/30 hover:text-foreground transition-colors duration-200"
                           data-testid={`button-plan-${plan.id}`}
                         >
                           {t("pricing.selectPlan")}

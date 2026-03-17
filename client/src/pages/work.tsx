@@ -79,15 +79,15 @@ export default function Work() {
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="text-center mb-20"
               >
-                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-slate-500">
+                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
                   {t("work.label")}
                 </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3" data-testid="text-work-title">
+                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-foreground mt-3 mb-3" data-testid="text-work-title">
                   {t("work.title").split(" ")[0]}{" "}
                   <span className="gradient-text">{t("work.title").split(" ").slice(1).join(" ")}</span>
                 </h1>
-                <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
-                <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mb-5" />
+                <p className="text-muted-foreground max-w-xl mx-auto text-base leading-[1.65]">
                   {t("work.subtitle")}
                 </p>
               </motion.div>
@@ -102,19 +102,19 @@ export default function Work() {
                   <motion.div
                     key={project.title}
                     variants={itemVariants}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden flex flex-col transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04] hover:shadow-xl hover:shadow-black/15"
+                    className="rounded-2xl border border-border bg-card/60 overflow-hidden flex flex-col transition-all duration-300 hover:border-primary/20 hover:bg-accent/50 hover:shadow-lg"
                     data-testid={`card-project-${idx}`}
                   >
-                    <div className={`h-36 bg-gradient-to-br ${project.gradient} flex items-center justify-center border-b border-white/[0.06]`}>
-                      <div className="text-4xl font-bold text-white/10 select-none">0{idx + 1}</div>
+                    <div className={`h-36 bg-gradient-to-br ${project.gradient} flex items-center justify-center border-b border-border`}>
+                      <div className="text-4xl font-bold text-foreground/10 select-none">0{idx + 1}</div>
                     </div>
                     <div className="p-6 flex-1 flex flex-col">
                       <span className="text-[11px] font-medium text-neon-cyan uppercase tracking-wider mb-2">{project.category}</span>
-                      <h3 className="text-lg font-semibold text-white mb-2 tracking-tight">{project.title}</h3>
-                      <p className="text-sm text-slate-400 leading-[1.6] mb-4 flex-1">{project.description}</p>
+                      <h3 className="text-lg font-semibold text-foreground mb-2 tracking-tight">{project.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-[1.6] mb-4 flex-1">{project.description}</p>
                       <div className="flex flex-wrap gap-2 mb-4">
                         {project.tech.map((tag) => (
-                          <span key={tag} className="text-xs px-2.5 py-1 rounded-lg bg-white/[0.04] text-slate-400 border border-white/[0.06]">
+                          <span key={tag} className="text-xs px-2.5 py-1 rounded-lg bg-muted text-muted-foreground border border-border">
                             {tag}
                           </span>
                         ))}
@@ -122,7 +122,7 @@ export default function Work() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-slate-300 hover:text-neon-cyan p-0 h-auto w-fit text-sm font-medium transition-colors"
+                        className="text-muted-foreground hover:text-neon-cyan p-0 h-auto w-fit text-sm font-medium transition-colors"
                       >
                         {t("work.viewProject")}
                         <ExternalLink className="w-3.5 h-3.5 ms-1.5 opacity-80" />

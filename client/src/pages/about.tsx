@@ -34,15 +34,15 @@ export default function About() {
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="text-center mb-20"
               >
-                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-slate-500">
+                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
                   {t("about.label")}
                 </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3" data-testid="text-about-title">
+                <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-foreground mt-3 mb-3" data-testid="text-about-title">
                   {t("about.title").split(" ")[0]}{" "}
                   <span className="gradient-text">{t("about.title").split(" ").slice(1).join(" ")}</span>
                 </h1>
-                <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
-                <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mb-5" />
+                <p className="text-muted-foreground max-w-xl mx-auto text-base leading-[1.65]">
                   {t("about.subtitle")}
                 </p>
               </motion.div>
@@ -53,11 +53,11 @@ export default function About() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8 transition-all duration-300 hover:border-white/[0.08] hover:shadow-xl hover:shadow-black/10"
+                  className="rounded-2xl border border-border bg-card/60 p-6 sm:p-8 transition-all duration-300 hover:border-primary/20 hover:shadow-lg"
                 >
-                  <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">{t("about.story.title")}</h2>
-                  <p className="text-slate-400 leading-[1.65] mb-4">{t("about.story.p1")}</p>
-                  <p className="text-slate-400 leading-[1.65]">{t("about.story.p2")}</p>
+                  <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">{t("about.story.title")}</h2>
+                  <p className="text-muted-foreground leading-[1.65] mb-4">{t("about.story.p1")}</p>
+                  <p className="text-muted-foreground leading-[1.65]">{t("about.story.p2")}</p>
                 </motion.div>
 
                 <motion.div
@@ -65,10 +65,10 @@ export default function About() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8 flex flex-col justify-center transition-all duration-300 hover:border-white/[0.08] hover:shadow-xl hover:shadow-black/10"
+                  className="rounded-2xl border border-border bg-card/60 p-6 sm:p-8 flex flex-col justify-center transition-all duration-300 hover:border-primary/20 hover:shadow-lg"
                 >
-                  <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">{t("about.mission.title")}</h2>
-                  <p className="text-slate-400 leading-[1.65]">{t("about.mission.text")}</p>
+                  <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">{t("about.mission.title")}</h2>
+                  <p className="text-muted-foreground leading-[1.65]">{t("about.mission.text")}</p>
                   <div className="mt-6 grid grid-cols-2 gap-3">
                     {[
                       { valKey: "about.mission.stat1.val", labKey: "about.mission.stat1.lab" },
@@ -78,9 +78,9 @@ export default function About() {
                       { valKey: "about.mission.stat5.val", labKey: "about.mission.stat5.lab" },
                       { valKey: "about.mission.stat6.val", labKey: "about.mission.stat6.lab" },
                     ].map((s) => (
-                      <div key={s.labKey} className="text-center p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+                      <div key={s.labKey} className="text-center p-4 rounded-xl border border-border bg-card/60">
                         <div className="text-lg font-semibold gradient-text">{t(s.valKey)}</div>
-                        <div className="text-xs text-slate-500 mt-1">{t(s.labKey)}</div>
+                        <div className="text-xs text-muted-foreground mt-1">{t(s.labKey)}</div>
                       </div>
                     ))}
                   </div>
@@ -93,8 +93,8 @@ export default function About() {
                 viewport={{ once: true }}
                 className="text-center mb-12"
               >
-                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">{t("about.values.title")}</h2>
-                <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mt-3" />
+                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">{t("about.values.title")}</h2>
+                <div className="w-10 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mt-3" />
               </motion.div>
 
               <motion.div
@@ -108,14 +108,14 @@ export default function About() {
                   <motion.div
                     key={v.titleKey}
                     variants={itemVariants}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 text-center transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04] hover:shadow-xl hover:shadow-black/10"
+                    className="rounded-2xl border border-border bg-card/60 p-6 text-center transition-all duration-300 hover:border-primary/20 hover:bg-accent/50 hover:shadow-lg"
                     data-testid={`card-value-${v.titleKey}`}
                   >
                     <div className={`w-12 h-12 rounded-xl ${v.bg} flex items-center justify-center mx-auto mb-4 shadow-md`}>
                       <v.icon className={`w-6 h-6 ${v.color}`} />
                     </div>
-                    <h3 className="text-base font-semibold text-white mb-2 tracking-tight">{t(v.titleKey)}</h3>
-                    <p className="text-sm text-slate-400 leading-[1.6]">{t(v.descKey)}</p>
+                    <h3 className="text-base font-semibold text-foreground mb-2 tracking-tight">{t(v.titleKey)}</h3>
+                    <p className="text-sm text-muted-foreground leading-[1.6]">{t(v.descKey)}</p>
                   </motion.div>
                 ))}
               </motion.div>

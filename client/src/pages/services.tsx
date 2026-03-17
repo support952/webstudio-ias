@@ -39,20 +39,20 @@ export default function Services() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="text-center mb-20 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-[12px] px-6 py-12 sm:py-14 shadow-none"
+                className="text-center mb-20 rounded-2xl border border-border bg-card/60 backdrop-blur-[12px] px-6 py-12 sm:py-14 shadow-none"
               >
-                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-cyan-400/90">
+                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-primary">
                   {t("services.page.label")}
                 </span>
                 <h1
-                  className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3"
+                  className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-foreground mt-3 mb-3"
                   data-testid="text-services-title"
                 >
                   {t("services.page.title").split(" ")[0]}{" "}
                   <span className="gradient-text">{t("services.page.title").split(" ").slice(1).join(" ")}</span>
                 </h1>
                 <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent mx-auto mb-5" />
-                <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">
+                <p className="text-muted-foreground max-w-xl mx-auto text-base leading-[1.65]">
                   {t("services.page.subtitle")}
                 </p>
               </motion.div>
@@ -67,7 +67,7 @@ export default function Services() {
                   <motion.div
                     key={service.titleKey}
                     variants={itemVariants}
-                    className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-[12px] p-6 sm:p-8 md:p-10 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04] hover:shadow-xl hover:shadow-black/15"
+                    className="group rounded-2xl border border-border bg-card/60 backdrop-blur-[12px] p-6 sm:p-8 md:p-10 transition-all duration-300 hover:border-primary/20 hover:bg-accent/50 hover:shadow-lg"
                     data-testid={`card-service-detail-${idx}`}
                   >
                     <div
@@ -81,16 +81,16 @@ export default function Services() {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-white mb-3">
+                        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-3">
                           {t(service.titleKey)}
                         </h2>
-                        <p className="text-slate-400 text-sm sm:text-base leading-[1.65] mb-6">
+                        <p className="text-muted-foreground text-sm sm:text-base leading-[1.65] mb-6">
                           {t(service.longKey)}
                         </p>
                         <Link href={service.serviceParam ? `/contact?service=${service.serviceParam}` : "/contact"}>
                           <Button
                             size="sm"
-                            className="rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate px-6 py-5 text-sm font-medium tracking-wide shadow-lg hover:shadow-xl transition-shadow duration-300"
+                            className="rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 no-default-hover-elevate no-default-active-elevate px-6 py-5 text-sm font-medium tracking-wide shadow-lg hover:shadow-xl transition-shadow duration-300"
                             data-testid={`button-service-cta-${idx}`}
                           >
                             {t("nav.getStarted")}
