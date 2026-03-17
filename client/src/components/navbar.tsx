@@ -10,6 +10,7 @@ import { useTheme } from "@/lib/theme";
 
 const guestLinks: { labelKey: string; href: string }[] = [
   { labelKey: "nav.home", href: "/" },
+  { labelKey: "nav.about", href: "/about" },
   { labelKey: "nav.services", href: "/services" },
   { labelKey: "nav.products", href: "/products" },
   { labelKey: "nav.pricing", href: "/pricing" },
@@ -58,7 +59,7 @@ export function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-nav" : "bg-transparent"
+        scrolled ? "glass-nav backdrop-blur-md border-b border-border/40" : "bg-transparent border-b border-transparent"
       }`}
       data-testid="header-navbar"
     >
@@ -79,7 +80,7 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3.5 py-2.5 text-sm font-medium tracking-wide transition-colors duration-200 rounded-lg flex items-center gap-1.5 ${
+                  className={`nav-link-hover relative px-3.5 py-2.5 text-sm font-medium tracking-wide transition-colors duration-200 rounded-lg flex items-center gap-1.5 ${
                     isActive
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -91,6 +92,9 @@ export function Navbar() {
                     return <Icon className="w-4 h-4" />;
                   })()}
                   {t(link.labelKey)}
+                  {isActive && !("icon" in link) && (
+                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                  )}
                 </Link>
               );
             })}

@@ -1,78 +1,76 @@
 "use client";
 
-import { useRef } from "react";
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { Building2, Cloud, Cpu, Zap, Shield, Hexagon } from "lucide-react";
-import { TiltCard } from "@/components/tilt-card";
-import {
-  useOrbitConstellation,
-  useIsMobile,
-  type OrbitParams,
-} from "@/lib/use-orbit-constellation";
 
 const clients = [
-  { name: "TechCorp", icon: Building2, iconAnim: null as string | null },
-  { name: "InnovateLabs", icon: Cpu, iconAnim: "trust-icon-rotate" },
-  { name: "CloudBase", icon: Cloud, iconAnim: null },
-  { name: "DataFlow", icon: Shield, iconAnim: "trust-icon-pulse" },
-  { name: "NexGen", icon: Zap, iconAnim: null },
-  { name: "QuantumAI", icon: Hexagon, iconAnim: "trust-icon-rotate" },
+  { name: "TechCorp", icon: Building2 },
+  { name: "InnovateLabs", icon: Cpu },
+  { name: "CloudBase", icon: Cloud },
+  { name: "DataFlow", icon: Shield },
+  { name: "NexGen", icon: Zap },
+  { name: "QuantumAI", icon: Hexagon },
 ];
 
-/** Unique orbital params per card: elliptical path, speed, phase, depth (scale/opacity). */
-const ORBIT_PARAMS: OrbitParams[] = [
-  { radiusX: 140, radiusY: 98, speed: 0.36, phase: 0, depth: 0.92 },
-  { radiusX: 118, radiusY: 128, speed: -0.3, phase: 1.6, depth: 0.58 },
-  { radiusX: 155, radiusY: 88, speed: 0.42, phase: 3.2, depth: 0.78 },
-  { radiusX: 98, radiusY: 148, speed: -0.38, phase: 4.8, depth: 0.52 },
-  { radiusX: 148, radiusY: 108, speed: 0.32, phase: 2.1, depth: 1 },
-  { radiusX: 128, radiusY: 118, speed: -0.34, phase: 5.2, depth: 0.68 },
+/** Each card gets unique position, rotation, animation delay for scattered 3D floating */
+const CARD_POSITIONS = [
+  { top: "8%",  left: "5%",  rotate: -3,  delay: 0,    duration: 5   },
+  { top: "15%", left: "65%", rotate: 2,   delay: 0.8,  duration: 6   },
+  { top: "45%", left: "10%", rotate: -1,  delay: 1.5,  duration: 5.5 },
+  { top: "50%", left: "72%", rotate: 3,   delay: 0.4,  duration: 6.5 },
+  { top: "75%", left: "25%", rotate: -2,  delay: 1.2,  duration: 5.8 },
+  { top: "70%", left: "55%", rotate: 1.5, delay: 2,    duration: 6.2 },
 ];
 
-function TrustCardContent({
+function FloatingCard({
   name,
   icon: Icon,
-  iconAnim,
+  position,
+  index,
 }: {
   name: string;
   icon: typeof Building2;
-  iconAnim: string | null;
+  position: (typeof CARD_POSITIONS)[number];
+  index: number;
 }) {
   return (
-    <div
-      className="trust-constellation-card select-none flex items-center gap-3 px-4 py-3 rounded-xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-constellation"
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      className="trust-floating-card absolute"
+      style={{
+        top: position.top,
+        left: position.left,
+        transform: `rotate(${position.rotate}deg)`,
+        animationDelay: `${position.delay}s`,
+        animationDuration: `${position.duration}s`,
+      }}
       data-testid={`text-client-${name.toLowerCase()}`}
     >
-      <div
-        className={`w-9 h-9 rounded-lg bg-gradient-to-br from-neon-cyan/25 to-neon-purple/25 flex items-center justify-center shrink-0 ${iconAnim ?? ""}`}
-      >
-        <Icon className="w-4 h-4 text-neon-cyan/90" aria-hidden />
+      <div className="trust-floating-pill select-none flex items-center gap-2.5 rounded-xl border border-border/60 bg-card/80 backdrop-blur-xl px-5 py-3 shadow-lg">
+        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-neon-cyan/25 to-neon-purple/25 flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4 text-neon-cyan/90" aria-hidden />
+        </div>
+        <span className="font-semibold text-sm sm:text-base tracking-tight text-foreground whitespace-nowrap">
+          {name}
+        </span>
       </div>
-      <span className="font-semibold text-sm sm:text-base tracking-tight text-foreground whitespace-nowrap">
-        {name}
-      </span>
-    </div>
+    </motion.div>
   );
 }
 
 export function TrustSection() {
   const { t } = useI18n();
-  const isMobile = useIsMobile(768);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>(Array(6).fill(null) as (HTMLDivElement | null)[]);
-  useOrbitConstellation(cardRefs, ORBIT_PARAMS, !isMobile);
-
-  const setRef = (i: number) => (el: HTMLDivElement | null) => {
-    cardRefs.current[i] = el;
-  };
 
   return (
     <section
-      className="trust-galaxy section-spacing relative overflow-hidden bg-transparent"
+      className="section-spacing relative overflow-hidden bg-transparent"
       data-testid="section-trust"
     >
-      <div className="absolute inset-0 pointer-events-none" />
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -82,45 +80,17 @@ export function TrustSection() {
           {t("trust.title")}
         </motion.p>
 
-        {isMobile ? (
-          <div className="trust-mobile-stream w-full max-w-xs mx-auto mt-8 space-y-4">
-            {clients.map((client, i) => (
-              <motion.div
-                key={client.name}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-                className="trust-mobile-card"
-              >
-                <TrustCardContent
-                  name={client.name}
-                  icon={client.icon}
-                  iconAnim={client.iconAnim}
-                />
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="trust-orbit-zone relative w-full max-w-4xl mx-auto h-[380px] sm:h-[420px] lg:h-[460px]">
-            {clients.map((client, i) => (
-              <div
-                key={client.name}
-                ref={setRef(i)}
-                className="trust-orbit-card absolute left-1/2 top-1/2 w-max"
-                style={{ willChange: "transform" }}
-              >
-                <TiltCard maxTilt={10} className="w-full" stiffness={180} damping={22}>
-                  <TrustCardContent
-                    name={client.name}
-                    icon={client.icon}
-                    iconAnim={client.iconAnim}
-                  />
-                </TiltCard>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="relative w-full h-[400px] sm:h-[450px] lg:h-[500px]">
+          {clients.map((client, i) => (
+            <FloatingCard
+              key={client.name}
+              name={client.name}
+              icon={client.icon}
+              position={CARD_POSITIONS[i]}
+              index={i}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

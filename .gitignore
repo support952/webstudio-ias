@@ -9,4 +9,4 @@ vite.config.ts.*
 .env
 .env.local
 .env.*
-!.env.example
+!.env.examplewebstudio-ias/

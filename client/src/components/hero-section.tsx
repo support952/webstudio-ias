@@ -14,12 +14,16 @@ function HeroMeshBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
       <motion.div style={{ opacity }} className="hero-canvas-mesh absolute inset-0" />
       <div
-        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.03] hero-grid-overlay"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)`,
           backgroundSize: "64px 64px",
         }}
       />
+      {/* Animated gradient blobs */}
+      <div className="hero-blob hero-blob-purple absolute w-[500px] h-[500px] rounded-full blur-3xl" />
+      <div className="hero-blob hero-blob-cyan absolute w-[400px] h-[400px] rounded-full blur-3xl" />
+      <div className="hero-blob hero-blob-pink absolute w-[350px] h-[350px] rounded-full blur-3xl" />
     </div>
   );
 }
@@ -101,6 +105,33 @@ export function HeroSection() {
           <br className="hidden sm:block" />
           {t("hero.title2")}{" "}
           <span className="hero-gradient-text hero-headline-shimmer">{t("hero.title3")}</span>
+            <svg
+              className="hero-lightning-bolt inline-block align-middle ms-2"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M13 2L4.09 12.64a1 1 0 0 0 .78 1.63H11l-1 7.27a.5.5 0 0 0 .86.42L19.91 11.36a1 1 0 0 0-.78-1.63H13l1-7.27a.5.5 0 0 0-.86-.42z"
+                fill="url(#bolt-gradient)"
+                stroke="url(#bolt-stroke-gradient)"
+                strokeWidth="0.5"
+              />
+              <defs>
+                <linearGradient id="bolt-gradient" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#67e8f9" />
+                  <stop offset="50%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#f472b6" />
+                </linearGradient>
+                <linearGradient id="bolt-stroke-gradient" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#22d3ee" />
+                  <stop offset="100%" stopColor="#c084fc" />
+                </linearGradient>
+              </defs>
+            </svg>
         </motion.h1>
 
         <motion.div
@@ -129,7 +160,7 @@ export function HeroSection() {
           <Link href="/pricing">
             <Button
               size="lg"
-              className="hero-cta-primary rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 px-6 sm:px-8 py-5 sm:py-6 text-sm font-semibold tracking-wide shadow-[0_8px_32px_rgba(124,58,237,0.4)]"
+              className="hero-cta-primary rounded-xl bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 px-6 sm:px-8 py-5 sm:py-6 text-sm font-semibold tracking-wide shadow-[0_8px_30px_rgba(139,92,246,0.35)]"
               data-testid="button-get-started"
             >
               {t("hero.cta1")}
@@ -140,7 +171,7 @@ export function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="hero-cta-secondary rounded-xl border-2 border-violet-500/30 text-foreground px-6 sm:px-8 py-5 sm:py-6 hover:border-violet-500/50 hover:bg-violet-50/50 dark:hover:bg-violet-900/20"
+              className="hero-cta-secondary glass-float rounded-xl text-foreground px-6 sm:px-8 py-5 sm:py-6"
               data-testid="button-contact-hero"
             >
               <Play className="w-4 h-4 me-2" />

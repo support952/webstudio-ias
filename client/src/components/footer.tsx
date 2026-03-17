@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Mail, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Logo } from "@/components/logo";
 import { CtaBanner } from "@/components/cta-banner";
@@ -25,9 +25,10 @@ export function Footer() {
     {
       title: t("footer.products"),
       links: [
-        { label: t("footer.productWebsites"), href: "/products" },
-        { label: t("footer.productMarketing"), href: "/products" },
-        { label: t("footer.productCard"), href: "/products" },
+        { label: t("footer.productWebsites"), href: "/preview/websites" },
+        { label: t("footer.productMarketing"), href: "/marketing" },
+        { label: t("footer.productCard"), href: "/preview/digital-card" },
+        { label: t("products.landing") || "Landing Pages", href: "/preview/landing" },
       ],
     },
     {
@@ -61,6 +62,12 @@ export function Footer() {
               <Mail className="w-4 h-4 opacity-80" />
               support@webstudio-ias.com
             </a>
+            <div className="flex items-center gap-3 mt-4" aria-label="Social media links">
+              <a href="https://www.linkedin.com/company/webstudio-ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="LinkedIn"><Linkedin className="w-5 h-5" /></a>
+              <a href="https://twitter.com/webstudio_ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Twitter"><Twitter className="w-5 h-5" /></a>
+              <a href="https://www.instagram.com/webstudio_ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Instagram"><Instagram className="w-5 h-5" /></a>
+              <a href="https://www.facebook.com/webstudio.ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Facebook"><Facebook className="w-5 h-5" /></a>
+            </div>
           </div>
 
           {columns.map((col) => (
@@ -83,15 +90,10 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="py-6 flex items-center justify-center">
           <p className="text-xs text-muted-foreground tracking-wide" data-testid="text-footer-copyright">
             © {new Date().getFullYear()} {t("footer.copyrightCompany")}
           </p>
-          <div className="flex items-center flex-wrap gap-6 text-xs text-muted-foreground">
-            <Link href="/privacy-policy" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-privacy">{t("footer.privacy")}</Link>
-            <Link href="/terms-of-service" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-terms">{t("footer.terms")}</Link>
-            <Link href="/cookie-policy" className="hover:text-foreground transition-colors duration-200" data-testid="link-footer-bottom-cookies">{t("footer.cookies")}</Link>
-          </div>
           </div>
         </div>
       </div>

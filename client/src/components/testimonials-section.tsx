@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, CheckCircle2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { TiltCard } from "@/components/tilt-card";
 
@@ -26,6 +26,25 @@ const testimonials = [
     rating: 5,
   },
 ];
+
+/** Deterministic gradient from name hash */
+const GRADIENTS = [
+  "from-neon-purple to-neon-cyan",
+  "from-neon-pink to-neon-purple",
+  "from-neon-cyan to-emerald-500",
+  "from-amber-400 to-orange-500",
+  "from-rose-500 to-pink-500",
+];
+
+function nameToGradient(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return GRADIENTS[Math.abs(hash) % GRADIENTS.length];
+}
+
+function getInitials(name: string) {
+  return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+}
 
 const containerVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.12 } } };
 const itemVariants = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
@@ -60,7 +79,7 @@ export function TestimonialsSection() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
         >
-          {testimonials.map((tst, i) => (
+          {testimonials.map((tst) => (
             <motion.div key={tst.name} variants={itemVariants}>
               <TiltCard className="h-full" maxTilt={5}>
                 <div className="glass-card rounded-2xl p-6 sm:p-8 hover:border-primary/30 transition-colors flex flex-col h-full">
@@ -73,11 +92,19 @@ export function TestimonialsSection() {
                   <blockquote className="text-foreground text-base leading-relaxed flex-1 mb-6">
                     &ldquo;{tst.quote}&rdquo;
                   </blockquote>
-                  <footer className="pt-4 border-t border-border">
-                    <p className="font-semibold text-foreground">{tst.name}</p>
-                    <p className="text-sm text-foreground">
-                      {tst.role}, {tst.company}
-                    </p>
+                  <footer className="pt-4 border-t border-border flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${nameToGradient(tst.name)} flex items-center justify-center shrink-0`}>
+                      <span className="text-sm font-bold text-white leading-none">{getInitials(tst.name)}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-foreground flex items-center gap-1.5">
+                        {tst.name}
+                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-label="Verified" />
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {tst.role}, {tst.company}
+                      </p>
+                    </div>
                   </footer>
                 </div>
               </TiltCard>

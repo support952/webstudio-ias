@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Globe, Megaphone, CreditCard, ArrowRight } from "lucide-react";
+import { Globe, Megaphone, CreditCard, FileText, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Navbar } from "@/components/navbar";
@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
+import { TiltCard } from "@/components/tilt-card";
 
 const products = [
   {
@@ -38,6 +39,16 @@ const products = [
     ctaHref: "/contact?service=DigitalCards",
     gradient: "from-neon-pink to-rose-500",
     imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
+  },
+  {
+    id: "landing",
+    icon: FileText,
+    titleKey: "products.landing",
+    descKey: "products.landingDesc",
+    href: "/preview/landing",
+    ctaHref: "/contact?service=LandingPage",
+    gradient: "from-neon-cyan to-emerald-500",
+    imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=500&fit=crop",
   },
 ];
 
@@ -79,13 +90,16 @@ export default function Products() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
             >
               {products.map((product) => (
                 <motion.div
                   key={product.id}
                   variants={itemVariants}
-                  className="group rounded-2xl overflow-hidden border border-border bg-card/80 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
+                >
+                <TiltCard className="h-full" maxTilt={8}>
+                <div
+                  className="group rounded-2xl overflow-hidden border border-border bg-card/80 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 h-full"
                   data-testid={`card-product-${product.id}`}
                 >
                   <Link href={product.href} className="block">
@@ -130,6 +144,8 @@ export default function Products() {
                       </Link>
                     </div>
                   </div>
+                </div>
+                </TiltCard>
                 </motion.div>
               ))}
             </motion.div>

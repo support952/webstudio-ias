@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FlowLine } from "@/components/flow-line";
 import { LiveChatWidget } from "@/components/live-chat-widget";
+import { ScrollProgress } from "@/components/scroll-progress";
 
 // Lazy-loaded page components for code splitting
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -133,6 +134,7 @@ function App() {
             <ErrorBoundary>
               <LenisProvider>
                 <div className="site-canvas" aria-hidden />
+                <ScrollProgress />
                 <FlowLine />
                 <div className="relative z-10 min-h-screen min-h-full" data-unified-canvas>
                   <ScrollToTop />

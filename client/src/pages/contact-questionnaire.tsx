@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { ChevronLeft, Paperclip, X, Check } from "lucide-react";
+import { ChevronLeft, Paperclip, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +33,6 @@ export default function ContactQuestionnaire() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [attachmentFiles, setAttachmentFiles] = useState<Array<{ name: string; type: string; base64: string }>>([]);
   const [sending, setSending] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     try {
@@ -53,44 +52,7 @@ export default function ContactQuestionnaire() {
     return (
       <PageWrapper>
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-          <span className="text-muted-foreground">...</span>
-        </div>
-      </PageWrapper>
-    );
-  }
-
-  if (submitted) {
-    return (
-      <PageWrapper>
-        <SEOHead title="Thank You" path="/contact/questionnaire" />
-        <div className="min-h-screen bg-background text-foreground">
-          <Navbar />
-          <section className="pt-32 pb-24 sm:pt-40 sm:pb-32 relative">
-            <div className="max-w-lg mx-auto px-4 sm:px-6 text-center">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="glass-card rounded-2xl p-8 sm:p-12"
-              >
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center mx-auto mb-6">
-                  <Check className="w-8 h-8 text-white" />
-                </div>
-                <h2 className="text-2xl font-semibold text-foreground mb-3">
-                  {t("contact.success")}
-                </h2>
-                <p className="text-muted-foreground mb-8">
-                  {t("contact.successDesc")}
-                </p>
-                <Link href="/">
-                  <Button className="bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 shadow-[0_6px_24px_rgba(124,58,237,0.35)]">
-                    {t("questionnaire.back")}
-                  </Button>
-                </Link>
-              </motion.div>
-            </div>
-          </section>
-          <Footer />
+          <span className="text-slate-400">...</span>
         </div>
       </PageWrapper>
     );
@@ -124,7 +86,8 @@ export default function ContactQuestionnaire() {
       });
       sessionStorage.removeItem(CONTACT_DRAFT_KEY);
       sessionStorage.removeItem(CONTACT_FOR_AI_KEY);
-      setSubmitted(true);
+      toast({ title: t("contact.success"), description: t("contact.successDesc") });
+      setLocation("/contact");
     } catch {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
     } finally {
@@ -269,16 +232,11 @@ export default function ContactQuestionnaire() {
                 <Button
                   type="submit"
                   disabled={sending}
-                  className="w-full bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 shadow-[0_6px_24px_rgba(124,58,237,0.35)]"
+                  className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0"
                 >
-                  {sending ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                      {t("questionnaire.sending")}
-                    </>
-                  ) : t("questionnaire.submit")}
+                  {sending ? t("questionnaire.sending") : t("questionnaire.submit")}
                 </Button>
-                <p className="text-center text-muted-foreground text-sm">{t("questionnaire.or")}</p>
+                <p className="text-center text-slate-400 text-sm">{t("questionnaire.or")}</p>
                 <Button
                   type="button"
                   variant="outline"

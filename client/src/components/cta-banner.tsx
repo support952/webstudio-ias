@@ -19,7 +19,7 @@ export function CtaBanner() {
             </p>
           </div>
           <Link href="/contact" className="shrink-0">
-            <Button className="bg-gradient-to-r from-violet-600 via-purple-500 to-cyan-500 text-white border-0 gap-2 shadow-[0_6px_24px_rgba(124,58,237,0.35)]">
+            <Button className="bg-gradient-to-r from-neon-purple to-neon-cyan text-primary-foreground border-0 gap-2">
               {t("ctaBanner.button")}
               <ArrowRight className="w-4 h-4" aria-hidden />
             </Button>

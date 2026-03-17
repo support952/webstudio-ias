@@ -59,11 +59,6 @@ export const QUESTIONNAIRE_BY_SERVICE: Record<ServiceType, QuestionDef[]> = {
     { id: "business_hours", type: "text", labelKey: "questionnaire.business_hours", placeholderKey: "questionnaire.business_hours_placeholder" },
     { id: "phone", type: "text", labelKey: "questionnaire.phone", placeholderKey: "questionnaire.phone_placeholder", required: true },
     { id: "phone_2", type: "text", labelKey: "questionnaire.phone_2", placeholderKey: "questionnaire.phone_2_placeholder" },
-    { id: "budget_range", type: "select", labelKey: "questionnaire.budget_range", required: true, options: [
-      { value: "2000-5000", labelKey: "questionnaire.budget_2k_5k" },
-      { value: "5000-10000", labelKey: "questionnaire.budget_5k_10k" },
-      { value: "10000+", labelKey: "questionnaire.budget_10k_plus" },
-    ]},
     { id: "timeline", type: "select", labelKey: "questionnaire.timeline", options: [
       { value: "asap", labelKey: "questionnaire.options.asap" },
       { value: "1m", labelKey: "questionnaire.options.1m" },
@@ -91,11 +86,6 @@ export const QUESTIONNAIRE_BY_SERVICE: Record<ServiceType, QuestionDef[]> = {
     ]},
     { id: "preferred_colors", type: "text", labelKey: "questionnaire.planning.preferred_colors", placeholderKey: "questionnaire.planning.preferred_colors_placeholder" },
     { id: "business_hours", type: "text", labelKey: "questionnaire.business_hours", placeholderKey: "questionnaire.business_hours_placeholder" },
-    { id: "budget_range", type: "select", labelKey: "questionnaire.budget_range", required: true, options: [
-      { value: "2000-5000", labelKey: "questionnaire.budget_2k_5k" },
-      { value: "5000-10000", labelKey: "questionnaire.budget_5k_10k" },
-      { value: "10000+", labelKey: "questionnaire.budget_10k_plus" },
-    ]},
     { id: "timeline", type: "select", labelKey: "questionnaire.timeline", options: [
       { value: "asap", labelKey: "questionnaire.options.asap" },
       { value: "1m", labelKey: "questionnaire.options.1m" },
@@ -106,10 +96,10 @@ export const QUESTIONNAIRE_BY_SERVICE: Record<ServiceType, QuestionDef[]> = {
   marketing_ppc: [
     { id: "campaign_goal", type: "textarea", labelKey: "questionnaire.ppc.campaign_goal", placeholderKey: "questionnaire.ppc.campaign_goal_placeholder" },
     { id: "target_audience", type: "textarea", labelKey: "questionnaire.ppc.target_audience", placeholderKey: "questionnaire.ppc.target_audience_placeholder" },
-    { id: "budget_range", type: "select", labelKey: "questionnaire.budget_range", required: true, options: [
-      { value: "2000-5000", labelKey: "questionnaire.budget_2k_5k" },
-      { value: "5000-10000", labelKey: "questionnaire.budget_5k_10k" },
-      { value: "10000+", labelKey: "questionnaire.budget_10k_plus" },
+    { id: "budget_range", type: "select", labelKey: "questionnaire.ppc.budget_range", options: [
+      { value: "low", labelKey: "questionnaire.ppc.budget_low" },
+      { value: "medium", labelKey: "questionnaire.ppc.budget_medium" },
+      { value: "high", labelKey: "questionnaire.ppc.budget_high" },
     ]},
     { id: "platforms", type: "textarea", labelKey: "questionnaire.ppc.platforms", placeholderKey: "questionnaire.ppc.platforms_placeholder" },
     { id: "geo_target", type: "text", labelKey: "questionnaire.ppc.geo_target", placeholderKey: "questionnaire.ppc.geo_target_placeholder" },
