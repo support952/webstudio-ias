@@ -104,7 +104,6 @@ export default function Pricing() {
               >
                 {plans.map((plan, idx) => {
                   const isFocused = focusedPlanId === plan.id;
-                  const focusedOrHover = "";
                   return (
                   <motion.div
                     key={plan.id}

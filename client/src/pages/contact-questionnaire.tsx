@@ -53,7 +53,7 @@ export default function ContactQuestionnaire() {
     return (
       <PageWrapper>
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-          <span className="text-slate-400">...</span>
+          <span className="text-muted-foreground">...</span>
         </div>
       </PageWrapper>
     );
@@ -278,7 +278,7 @@ export default function ContactQuestionnaire() {
                     </>
                   ) : t("questionnaire.submit")}
                 </Button>
-                <p className="text-center text-slate-400 text-sm">{t("questionnaire.or")}</p>
+                <p className="text-center text-muted-foreground text-sm">{t("questionnaire.or")}</p>
                 <Button
                   type="button"
                   variant="outline"
