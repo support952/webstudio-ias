@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 const faqKeys = [
@@ -12,29 +12,8 @@ const faqKeys = [
   { q: "faq.q6", a: "faq.a6" },
 ] as const;
 
-const MOBILE_BREAKPOINT = 768;
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return isMobile;
-}
-
-const springBubbleIn = {
-  type: "spring",
-  stiffness: 380,
-  damping: 24,
-  mass: 0.9,
-};
-
 const springChevron = {
-  type: "spring",
+  type: "spring" as const,
   stiffness: 500,
   damping: 35,
 };
@@ -42,27 +21,10 @@ const springChevron = {
 export function FAQSection() {
   const { t } = useI18n();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const bubbleRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
 
   const handleToggle = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
-
-  const closeBubble = () => setOpenIndex(null);
-
-  useEffect(() => {
-    if (openIndex === null || isMobile) return;
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (bubbleRef.current?.contains(target)) return;
-      const trigger = document.getElementById(`faq-trigger-${openIndex}`);
-      if (trigger?.contains(target)) return;
-      closeBubble();
-    };
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, [openIndex, isMobile]);
 
   return (
     <section
@@ -93,80 +55,40 @@ export function FAQSection() {
           viewport={{ once: true }}
           className="space-y-3"
         >
-          {faqKeys.map(({ q, a }, i) => (
-            <div key={q} className="relative faq-item">
-              {/* Desktop: floating bubble above */}
-              {!isMobile && (
-                <AnimatePresence mode="wait">
-                  {openIndex === i && (
-                    <motion.div
-                      ref={bubbleRef}
-                      id={`faq-bubble-${i}`}
-                      role="region"
-                      aria-labelledby={`faq-trigger-${i}`}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.85 }}
-                      transition={springBubbleIn}
-                      className="faq-bubble-3d absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-[100] w-[95%] max-w-full sm:w-full sm:left-0 sm:right-0 sm:translate-x-0 lg:max-w-[800px]"
-                    >
-                      <div className="faq-bubble-inner relative text-left p-6 sm:p-8 min-h-[44px]">
-                        <button
-                          type="button"
-                          onClick={closeBubble}
-                          className="faq-bubble-close absolute top-3 right-3 sm:top-4 sm:right-4 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors z-10"
-                          aria-label={t("faq.close")}
-                        >
-                          <X className="w-5 h-5" aria-hidden />
-                        </button>
-                        <div className="faq-bubble-safe pt-14 sm:pt-16">
-                          <p className="faq-bubble-text text-foreground">
-                            {t(a)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="faq-bubble-tail" aria-hidden />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
-
-              <motion.button
-                type="button"
-                onClick={() => handleToggle(i)}
-                className={`faq-question-bar w-full flex items-center justify-between gap-4 rounded-xl px-4 py-4 sm:px-6 sm:py-4 text-left glass-float min-h-[52px] sm:min-h-[48px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.99] touch-manipulation ${isMobile && openIndex === i ? "rounded-b-none border-b-0" : ""}`}
-                whileHover={isMobile ? undefined : { y: -2 }}
-                whileTap={{ scale: 0.998 }}
-                animate={
-                  isMobile
-                    ? {}
-                    : {
-                        opacity: 1,
-                        scale: openIndex === null ? 1 : openIndex === i ? 0.99 : 1,
-                      }
-                }
-                transition={{ duration: 0.2 }}
-                aria-expanded={openIndex === i}
-                aria-controls={isMobile ? `faq-answer-${i}` : `faq-bubble-${i}`}
-                id={`faq-trigger-${i}`}
-              >
-                <span className="font-semibold text-foreground text-[15px] sm:text-base pr-2 text-left">
-                  {t(q)}
-                </span>
-                <motion.span
-                  animate={{ rotate: openIndex === i ? 180 : 0 }}
-                  transition={springChevron}
-                  className={`shrink-0 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors duration-200 ${openIndex === i ? "text-primary" : "text-muted-foreground"}`}
-                  aria-hidden
+          {faqKeys.map(({ q, a }, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div key={q} className="faq-item">
+                <motion.button
+                  type="button"
+                  onClick={() => handleToggle(i)}
+                  className={`faq-question-bar w-full flex items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-4 text-left glass-float min-h-[52px] sm:min-h-[48px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.99] touch-manipulation ${
+                    isOpen ? "rounded-t-xl rounded-b-none" : "rounded-xl"
+                  }`}
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.998 }}
+                  transition={{ duration: 0.2 }}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${i}`}
+                  id={`faq-trigger-${i}`}
                 >
-                  <ChevronDown className="w-5 h-5" />
-                </motion.span>
-              </motion.button>
+                  <span className="font-semibold text-foreground text-[15px] sm:text-base pr-2 text-left">
+                    {t(q)}
+                  </span>
+                  <motion.span
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={springChevron}
+                    className={`shrink-0 min-w-[28px] min-h-[28px] flex items-center justify-center transition-colors duration-200 ${
+                      isOpen ? "text-primary" : "text-muted-foreground"
+                    }`}
+                    aria-hidden
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </motion.span>
+                </motion.button>
 
-              {/* Mobile: inline accordion — answer expands below the question */}
-              {isMobile && (
-                <AnimatePresence>
-                  {openIndex === i && (
+                <AnimatePresence initial={false}>
+                  {isOpen && (
                     <motion.div
                       id={`faq-answer-${i}`}
                       role="region"
@@ -175,15 +97,19 @@ export function FAQSection() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      className="faq-mobile-answer overflow-hidden"
+                      className="overflow-hidden"
                     >
-                      <p className="faq-mobile-answer-text">{t(a)}</p>
+                      <div className="faq-answer-content glass-float rounded-t-none rounded-b-xl border-t-0 px-4 py-4 sm:px-6 sm:py-5">
+                        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                          {t(a)}
+                        </p>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

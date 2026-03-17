@@ -15,12 +15,12 @@ const clients = [
 
 /** Each card gets unique position, rotation, animation delay for scattered 3D floating */
 const CARD_POSITIONS = [
-  { top: "8%",  left: "5%",  rotate: -3,  delay: 0,    duration: 5   },
-  { top: "15%", left: "65%", rotate: 2,   delay: 0.8,  duration: 6   },
-  { top: "45%", left: "10%", rotate: -1,  delay: 1.5,  duration: 5.5 },
-  { top: "50%", left: "72%", rotate: 3,   delay: 0.4,  duration: 6.5 },
-  { top: "75%", left: "25%", rotate: -2,  delay: 1.2,  duration: 5.8 },
-  { top: "70%", left: "55%", rotate: 1.5, delay: 2,    duration: 6.2 },
+  { top: "8%",  left: "5%",  rotate: -2,  delay: 0,   duration: 3.8 },
+  { top: "15%", left: "65%", rotate: 1.5, delay: 0.7, duration: 4.2 },
+  { top: "45%", left: "10%", rotate: -1,  delay: 1.4, duration: 3.5 },
+  { top: "50%", left: "72%", rotate: 2,   delay: 2.1, duration: 4.5 },
+  { top: "75%", left: "25%", rotate: -1.5,delay: 2.8, duration: 4   },
+  { top: "70%", left: "55%", rotate: 1,   delay: 3.5, duration: 3.6 },
 ];
 
 function FloatingCard({
