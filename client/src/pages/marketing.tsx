@@ -7,7 +7,6 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
-import { splitTitle } from "@/lib/utils";
 
 const services = [
   { icon: Search, titleKey: "marketing.detail.s1.title", descKey: "marketing.detail.s1.desc", color: "from-neon-purple to-neon-cyan" },
@@ -45,8 +44,8 @@ export default function Marketing() {
                 {t("marketing.banner.label")}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 mb-4" data-testid="text-marketing-title">
-                {splitTitle(t("marketing.detail.title")).main}{" "}
-                <span className="gradient-text">{splitTitle(t("marketing.detail.title")).highlight}</span>
+                {t("marketing.detail.title").split(" ").slice(0, -1).join(" ")}{" "}
+                <span className="gradient-text">{t("marketing.detail.title").split(" ").pop()}</span>
               </h1>
               <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
                 {t("marketing.detail.subtitle")}

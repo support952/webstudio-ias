@@ -25,7 +25,7 @@ const products = [
     icon: Megaphone,
     titleKey: "products.marketing",
     descKey: "products.marketingDesc",
-    href: "/marketing",
+    href: "/preview/marketing",
     ctaHref: "/contact?service=Branding",
     gradient: "from-neon-pink to-neon-purple",
     imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop",

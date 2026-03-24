@@ -30,7 +30,7 @@ export const contactSubmissions = pgTable("contact_submissions", {
 
 export const projectUpdates = pgTable("project_updates", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull(),
   title: text("title").notNull(),
   status: text("status").notNull().default("in_progress"),
   progressPercent: integer("progress_percent").notNull().default(0),
@@ -40,7 +40,7 @@ export const projectUpdates = pgTable("project_updates", {
 
 export const projectMessages = pgTable("project_messages", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull(),
   projectUpdateId: varchar("project_update_id"),
   message: text("message").notNull(),
   senderType: text("sender_type").notNull().default("client"),
@@ -51,7 +51,7 @@ export const projectMessages = pgTable("project_messages", {
 
 export const clientRequests = pgTable("client_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull(),
   subject: text("subject").notNull(),
   message: text("message").notNull(),
   status: text("status").notNull().default("open"),

@@ -6,13 +6,25 @@ import { Link } from "wouter";
 import { useI18n } from "@/lib/i18n";
 import { HeroLogoParallax } from "@/components/hero-logo-parallax";
 import { useCountUp } from "@/lib/use-count-up";
+import { useTheme } from "@/lib/theme";
 
-function HeroMeshBackground() {
+function HeroMeshBackground({ isLight }: { isLight: boolean }) {
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 300], [1, 0.4]);
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
       <motion.div style={{ opacity }} className="hero-canvas-mesh absolute inset-0" />
+      {isLight ? (
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            opacity,
+            background:
+              "radial-gradient(ellipse 55% 40% at 50% 20%, rgba(168,85,247,0.30), transparent 70%), radial-gradient(ellipse 50% 35% at 80% 35%, rgba(6,182,212,0.24), transparent 72%), radial-gradient(ellipse 45% 32% at 20% 45%, rgba(99,102,241,0.22), transparent 72%)",
+            mixBlendMode: "screen",
+          }}
+        />
+      ) : null}
       <div
         className="absolute inset-0 opacity-[0.03] hero-grid-overlay"
         style={{
@@ -54,6 +66,8 @@ function HeroStat({ valueKey, labelKey, accent, statsRef }: {
 
 export function HeroSection() {
   const { t } = useI18n();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const statsRef = useRef<HTMLDivElement>(null);
 
@@ -75,7 +89,7 @@ export function HeroSection() {
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
-      <HeroMeshBackground />
+      <HeroMeshBackground isLight={isLight} />
       <HeroLogoParallax mousePosition={mousePosition} />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24 flex flex-col items-center text-center">

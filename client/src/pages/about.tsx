@@ -5,7 +5,6 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
-import { splitTitle } from "@/lib/utils";
 
 const values = [
   { icon: Lightbulb, titleKey: "about.values.v1.title", descKey: "about.values.v1.desc", color: "text-neon-cyan", bg: "bg-neon-cyan/10" },
@@ -39,8 +38,8 @@ export default function About() {
                   {t("about.label")}
                 </span>
                 <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3" data-testid="text-about-title">
-                  {splitTitle(t("about.title"), "rest").main}{" "}
-                  <span className="gradient-text">{splitTitle(t("about.title"), "rest").highlight}</span>
+                  {t("about.title").split(" ")[0]}{" "}
+                  <span className="gradient-text">{t("about.title").split(" ").slice(1).join(" ")}</span>
                 </h1>
                 <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
                 <p className="text-slate-400 max-w-xl mx-auto text-base leading-[1.65]">

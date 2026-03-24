@@ -116,7 +116,7 @@ function Router() {
         <Route path="/coming-soon" component={ComingSoon} />
         <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
         <Route path="/dashboard/:tab">{() => <ProtectedRoute component={Dashboard} />}</Route>
-        <Route path="/ws-panel-9x7k">{() => <ProtectedRoute component={AdminPanel} />}</Route>
+        <Route path="/ws-panel-9x7k" component={AdminPanel} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>

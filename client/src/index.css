@@ -223,7 +223,7 @@
     background: transparent !important;
   }
   [data-theme="light"] html {
-    background: #ffffff !important;
+    background: #edf2f9 !important;
   }
   body {
     @apply font-sans antialiased text-foreground;
@@ -698,9 +698,9 @@
     border: none !important;
   }
   [data-theme="light"] .glass-nav {
-    background: rgba(248, 249, 250, 0.92) !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    background: rgba(211, 222, 240, 0.72) !important;
+    border-bottom: 1px solid rgba(120, 138, 170, 0.28);
+    box-shadow: 0 8px 28px rgba(99, 102, 241, 0.08), 0 0 0 1px rgba(255,255,255,0.35) inset;
   }
 
   .glow-purple {
@@ -793,13 +793,25 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
-  /* Light mode: hide the hero dark mesh — it creates a hard edge at viewport bottom */
+  /* Light mode: keep hero mesh visible (same depth model as dark) */
   [data-theme="light"] .hero-canvas-mesh {
-    display: none !important;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% 0%, hsl(263 88% 78% / 0.34) 0%, transparent 52%),
+      radial-gradient(ellipse 80% 100% at 80% 50%, rgba(6, 182, 212, 0.26) 0%, transparent 48%),
+      radial-gradient(ellipse 90% 70% at 20% 80%, hsl(240 65% 82% / 0.28) 0%, transparent 48%),
+      radial-gradient(ellipse 70% 80% at 50% 50%, hsl(263 58% 80% / 0.24) 0%, transparent 56%);
+    opacity: 1 !important;
+    mix-blend-mode: screen;
+    filter: saturate(1.2) contrast(1.03);
   }
-  /* Light mode: hide the grid overlay inside hero (white lines on white = artifacts) */
+  /* Light mode: keep hero overlay layer visible for glow depth */
   [data-theme="light"] [data-hero-section] > div:first-child {
-    display: none !important;
+    display: block !important;
+    opacity: 1 !important;
+  }
+  [data-theme="light"] .hero-grid-overlay {
+    opacity: 0.08 !important;
+    mix-blend-mode: soft-light;
   }
   /* Light mode: hero section should not clip — let content flow seamlessly */
   [data-theme="light"] [data-hero-section] {
@@ -807,11 +819,13 @@
   }
   /* Light mode: hero logo parallax should be very subtle */
   [data-theme="light"] .hero-logo-bg {
-    opacity: 0.03 !important;
+    opacity: 0.14 !important;
+    color: rgba(88, 28, 185, 0.30) !important;
+    filter: drop-shadow(0 0 40px rgba(88, 28, 185, 0.20)) drop-shadow(0 0 80px rgba(6, 152, 190, 0.14));
   }
-  /* Light mode: reduce hero min-height so stats flow directly into features strip */
+  /* Keep hero spatial depth in light mode as well */
   [data-theme="light"] [data-hero-section] {
-    min-height: auto !important;
+    min-height: 100vh !important;
   }
   /* Light mode: remove all divider lines between sections */
   [data-theme="light"] [data-unified-canvas] .w-16.h-0\.5,
@@ -864,8 +878,8 @@
     100% { transform: translate(40px, -60px) scale(1.2); }
   }
   [data-theme="light"] .hero-blob {
-    opacity: 0.15;
-    mix-blend-mode: multiply;
+    opacity: 0.3;
+    mix-blend-mode: screen;
   }
 
   /* Hero: boutique full-screen canvas, mesh, typography, CTA */
@@ -904,11 +918,8 @@
   }
   [data-theme="light"] .site-canvas {
     background:
-      radial-gradient(ellipse 120% 60% at 50% 0%, rgba(237, 233, 246, 0.4) 0%, transparent 50%),
-      radial-gradient(ellipse 100% 50% at 80% 30%, rgba(6, 182, 212, 0.04) 0%, transparent 60%),
-      radial-gradient(ellipse 100% 50% at 20% 60%, rgba(139, 92, 246, 0.03) 0%, transparent 60%),
-      radial-gradient(ellipse 130% 70% at 50% 100%, rgba(240, 237, 247, 0.3) 0%, transparent 50%),
-      linear-gradient(180deg, #ffffff 0%, #FAFBFC 30%, #F9F9FC 60%, #FAFBFC 100%);
+      radial-gradient(ellipse 100% 80% at 80% 20%, hsl(263 70% 72% / 0.20) 0%, transparent 52%),
+      radial-gradient(ellipse 120% 90% at 50% 0%, #f1f5fb 0%, #dbe4f2 72%);
   }
   @media (max-width: 767px) {
     .site-canvas {
@@ -935,7 +946,13 @@
     66% { background-position: 50% 100%; }
   }
   [data-theme="light"] .site-canvas::after {
-    opacity: 0.7;
+    opacity: 1;
+    background-image:
+      radial-gradient(circle 180px at 18% 24%, rgba(139, 92, 246, 0.18) 0%, transparent 100%),
+      radial-gradient(circle 150px at 82% 28%, rgba(6, 182, 212, 0.16) 0%, transparent 100%),
+      radial-gradient(circle 220px at 50% 58%, rgba(236, 72, 153, 0.10) 0%, transparent 100%);
+    background-size: 160% 160%;
+    filter: saturate(1.08);
   }
 
   /* Noise/grain texture overlay for premium editorial feel */
@@ -951,7 +968,7 @@
     background-size: 256px 256px;
   }
   [data-theme="light"] .site-canvas::before {
-    opacity: 0.03;
+    opacity: 0.04;
   }
 
   .hero-logo-bg {
@@ -1043,6 +1060,29 @@
     70% { opacity: 0.88; }
     80% { opacity: 1; }
     90% { opacity: 0.94; }
+  }
+  /* Lightning bolt glow for light mode — deeper, darker shadows for visibility on bright bg */
+  [data-theme="light"] .hero-lightning-bolt {
+    filter: drop-shadow(0 0 10px rgba(88, 28, 185, 0.8)) drop-shadow(0 0 25px rgba(6, 152, 190, 0.6));
+    animation: bolt-electric-glow-light 2s ease-in-out infinite, bolt-flicker 0.15s ease-in-out infinite;
+  }
+  @keyframes bolt-electric-glow-light {
+    0%, 100% {
+      filter: drop-shadow(0 0 8px rgba(88, 28, 185, 0.9)) drop-shadow(0 0 22px rgba(6, 152, 190, 0.7)) drop-shadow(0 0 45px rgba(88, 28, 185, 0.4));
+      transform: scale(1);
+    }
+    25% {
+      filter: drop-shadow(0 0 14px rgba(67, 56, 202, 1)) drop-shadow(0 0 35px rgba(88, 28, 185, 0.9)) drop-shadow(0 0 65px rgba(6, 152, 190, 0.5));
+      transform: scale(1.05);
+    }
+    50% {
+      filter: drop-shadow(0 0 10px rgba(124, 58, 237, 1)) drop-shadow(0 0 28px rgba(6, 152, 190, 0.8)) drop-shadow(0 0 55px rgba(88, 28, 185, 0.45));
+      transform: scale(1.02);
+    }
+    75% {
+      filter: drop-shadow(0 0 16px rgba(6, 152, 190, 1)) drop-shadow(0 0 40px rgba(219, 39, 119, 0.7)) drop-shadow(0 0 60px rgba(88, 28, 185, 0.5));
+      transform: scale(1.06);
+    }
   }
 
   [data-hero-section] .hero-subtext {
@@ -1197,6 +1237,59 @@
   }
   [data-theme="light"] .digital-card-preview-card {
     box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px hsl(var(--border) / 0.6);
+  }
+
+  /* Preview pages: force coherent light/dark palettes (no mixed tones) */
+  .preview-page {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+  }
+  [data-theme="dark"] .preview-page [class*="text-slate-"] {
+    color: hsl(220 8% 78%) !important;
+  }
+  [data-theme="dark"] .preview-page .text-white,
+  [data-theme="dark"] .preview-page h1,
+  [data-theme="dark"] .preview-page h2,
+  [data-theme="dark"] .preview-page h3 {
+    color: hsl(0 0% 100%) !important;
+  }
+  [data-theme="light"] .preview-page [class*="text-slate-"],
+  [data-theme="light"] .preview-page .text-white,
+  [data-theme="light"] .preview-page h1,
+  [data-theme="light"] .preview-page h2,
+  [data-theme="light"] .preview-page h3 {
+    color: hsl(220 20% 10%) !important;
+  }
+  [data-theme="light"] .preview-page [class*="border-white/"],
+  [data-theme="light"] .preview-page [class*="border-slate-"] {
+    border-color: hsl(var(--border)) !important;
+  }
+
+  /* Strong normalization to prevent mixed light/dark inside previews */
+  .preview-page.preview-light,
+  .preview-page.preview-light * {
+    color-scheme: light;
+  }
+  .preview-page.preview-dark,
+  .preview-page.preview-dark * {
+    color-scheme: dark;
+  }
+  .preview-page.preview-light [class*="text-white"],
+  .preview-page.preview-light [class*="text-slate-"],
+  .preview-page.preview-light [class*="text-gray-"],
+  .preview-page.preview-light [class*="text-zinc-"],
+  .preview-page.preview-light p,
+  .preview-page.preview-light span,
+  .preview-page.preview-light h1,
+  .preview-page.preview-light h2,
+  .preview-page.preview-light h3,
+  .preview-page.preview-light h4 {
+    color: hsl(220 20% 10%) !important;
+  }
+  .preview-page.preview-light [class*="border-white/"],
+  .preview-page.preview-light [class*="border-slate-"],
+  .preview-page.preview-light [class*="border-zinc-"] {
+    border-color: hsl(var(--border)) !important;
   }
 
   .gradient-border {

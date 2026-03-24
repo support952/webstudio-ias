@@ -1,4 +1,4 @@
-import { Mail, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Logo } from "@/components/logo";
 import { CtaBanner } from "@/components/cta-banner";
@@ -62,12 +62,6 @@ export function Footer() {
               <Mail className="w-4 h-4 opacity-80" />
               support@webstudio-ias.com
             </a>
-            <div className="flex items-center gap-3 mt-4" aria-label="Social media links">
-              <a href="https://www.linkedin.com/company/webstudio-ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="LinkedIn"><Linkedin className="w-5 h-5" /></a>
-              <a href="https://twitter.com/webstudio_ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Twitter"><Twitter className="w-5 h-5" /></a>
-              <a href="https://www.instagram.com/webstudio_ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Instagram"><Instagram className="w-5 h-5" /></a>
-              <a href="https://www.facebook.com/webstudio.ias" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label="Facebook"><Facebook className="w-5 h-5" /></a>
-            </div>
           </div>
 
           {columns.map((col) => (

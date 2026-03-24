@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { useI18n } from "@/lib/i18n";
 import { Layout, Zap, Globe, ShoppingCart, Star, X, Minus, Plus, Check, Send } from "lucide-react";
 import { SEOHead } from "@/components/seo-head";
+import { PreviewPageControls } from "@/components/preview-page-controls";
+import { useTheme } from "@/lib/theme";
 
 const PRODUCTS = [
   { id: "1", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=400&fit=crop", keyName: "product1", keyDesc: "product1Desc", price: "$99", priceNum: 99, badge: "Popular" },
@@ -23,6 +25,8 @@ type CartItem = {
 
 export default function PreviewWebsites() {
   const { t } = useI18n();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [addedId, setAddedId] = useState<string | null>(null);
@@ -66,14 +70,17 @@ export default function PreviewWebsites() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className={theme === "light" ? "preview-page preview-light min-h-screen bg-background text-foreground" : "preview-page preview-dark min-h-screen bg-slate-950 text-white"}>
       <SEOHead title="Websites Preview" path="/preview/websites" />
+      <PreviewPageControls />
       {typeof window !== "undefined" && window.self !== window.top && (
-        <div className="fixed top-0 left-0 right-0 z-[60] h-9 bg-black/60 backdrop-blur-sm border-b border-white/5 flex items-center justify-end px-4">
+        <div className={`fixed top-0 left-0 right-0 z-[60] h-9 backdrop-blur-sm border-b flex items-center justify-end px-4 ${
+          isLight ? "bg-white/80 border-slate-200" : "bg-black/60 border-white/5"
+        }`}>
           <button
             type="button"
             onClick={() => window.parent?.postMessage?.({ type: "webstudio-close-demo" }, "*")}
-            className="text-xs text-slate-400 hover:text-cyan-400 transition-colors"
+            className={`text-xs transition-colors ${isLight ? "text-slate-600 hover:text-cyan-700" : "text-slate-400 hover:text-cyan-400"}`}
           >
             {t("demo.backToExamples")}
           </button>
@@ -92,8 +99,8 @@ export default function PreviewWebsites() {
             cartOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="p-6 border-b border-white/10 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <div className={`p-6 border-b flex items-center justify-between ${isLight ? "border-slate-200 bg-white" : "border-white/10"}`}>
+            <h2 className={`text-xl font-bold flex items-center gap-2 ${isLight ? "text-slate-900" : "text-white"}`}>
               <ShoppingCart className="w-5 h-5 text-cyan-400" />
               {t("demo.ecommerce.cart")}
               {cartCount > 0 && (
@@ -105,24 +112,26 @@ export default function PreviewWebsites() {
             <button
               type="button"
               onClick={() => setCartOpen(false)}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${isLight ? "text-slate-500 hover:text-slate-900 hover:bg-slate-100" : "text-slate-400 hover:text-white hover:bg-white/10"}`}
               aria-label="Close cart"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className={`flex-1 overflow-y-auto p-6 ${isLight ? "bg-white" : ""}`}>
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${isLight ? "bg-slate-100" : "bg-white/5"}`}>
                   <ShoppingCart className="w-8 h-8 text-slate-500" />
                 </div>
                 <p className="text-slate-500 font-medium">{t("demo.ecommerce.cartEmpty")}</p>
-                <p className="text-slate-600 text-sm mt-1">Add products from the store to get started.</p>
+                <p className={`text-sm mt-1 ${isLight ? "text-slate-600" : "text-slate-600"}`}>Add products from the store to get started.</p>
                 <button
                   type="button"
                   onClick={() => { setCartOpen(false); scrollTo("products"); }}
-                  className="mt-6 px-6 py-3 rounded-xl bg-cyan-500/20 text-cyan-300 font-semibold hover:bg-cyan-500/30 border border-cyan-500/30 transition-colors"
+                    className={`mt-6 px-6 py-3 rounded-xl font-semibold border transition-colors ${
+                      isLight ? "bg-cyan-500/15 text-cyan-700 hover:bg-cyan-500/25 border-cyan-500/30" : "bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border-cyan-500/30"
+                    }`}
                 >
                   Browse products
                 </button>
@@ -132,7 +141,7 @@ export default function PreviewWebsites() {
                 {cart.map((item) => (
                   <li
                     key={item.id}
-                    className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10"
+                    className={`flex gap-4 p-4 rounded-2xl border ${isLight ? "bg-slate-50 border-slate-200" : "bg-white/5 border-white/10"}`}
                   >
                     <img
                       src={item.img}
@@ -141,21 +150,25 @@ export default function PreviewWebsites() {
                       className="w-20 h-20 rounded-xl object-cover shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white truncate">{t(`demo.ecommerce.${item.keyName}`)}</p>
+                      <p className={`font-semibold truncate ${isLight ? "text-slate-900" : "text-white"}`}>{t(`demo.ecommerce.${item.keyName}`)}</p>
                       <p className="text-cyan-400 font-bold mt-0.5">{item.price}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, -1)}
-                          className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                            isLight ? "bg-slate-100 hover:bg-slate-200 text-slate-800" : "bg-white/10 hover:bg-white/20 text-white"
+                          }`}
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
-                        <span className="w-8 text-center text-sm font-medium text-white">{item.quantity}</span>
+                        <span className={`w-8 text-center text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>{item.quantity}</span>
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, 1)}
-                          className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                            isLight ? "bg-slate-100 hover:bg-slate-200 text-slate-800" : "bg-white/10 hover:bg-white/20 text-white"
+                          }`}
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -174,7 +187,7 @@ export default function PreviewWebsites() {
             )}
           </div>
           {cart.length > 0 && (
-            <div className="p-6 border-t border-white/10 bg-slate-900/95">
+            <div className={`p-6 border-t ${isLight ? "border-slate-200 bg-white" : "border-white/10 bg-slate-900/95"}`}>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-slate-400 font-medium">{t("demo.ecommerce.total")}</span>
                 <span className="text-2xl font-bold text-cyan-400">${cartTotal}</span>
@@ -183,7 +196,9 @@ export default function PreviewWebsites() {
                 <button
                   type="button"
                   onClick={() => { setShowCheckoutMessage(true); setTimeout(() => setShowCheckoutMessage(false), 4000); }}
-                  className="w-full py-3.5 rounded-xl bg-[#000] text-white font-semibold text-sm flex items-center justify-center gap-2 border border-white/20 hover:bg-slate-800 transition-colors"
+                  className={`w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 border transition-colors ${
+                    isLight ? "bg-slate-900 text-[#f8fafc] border-slate-700 hover:bg-slate-800" : "bg-[#000] text-white border-white/20 hover:bg-slate-800"
+                  }`}
                 >
                   {t("demo.ecommerce.applePay")}
                 </button>
@@ -209,34 +224,44 @@ export default function PreviewWebsites() {
 
       {/* Checkout demo message */}
       {showCheckoutMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-6 py-4 rounded-2xl bg-slate-800 border border-cyan-500/30 shadow-2xl shadow-cyan-500/20 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-6 py-4 rounded-2xl border shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+          isLight ? "bg-white border-cyan-500/30 shadow-cyan-500/15" : "bg-slate-800 border-cyan-500/30 shadow-cyan-500/20"
+        }`}>
           <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
             <Check className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <p className="font-semibold text-white">Demo store</p>
+            <p className={`font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>Demo store</p>
             <p className="text-slate-400 text-sm">This is a preview. Want a real store like this? We build it for you.</p>
           </div>
         </div>
       )}
 
-      <header className="sticky top-0 z-30 pt-12 pb-5 px-4 sm:px-6 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl">
+      <header className={`sticky top-0 z-30 pt-12 pb-5 px-4 sm:px-6 border-b backdrop-blur-xl ${
+        isLight ? "bg-white/85 border-slate-200" : "bg-slate-950/90 border-white/10"
+      }`}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button type="button" onClick={() => scrollTo("hero")} className="font-bold text-2xl text-white tracking-tight hover:text-cyan-400 transition-colors text-left">
+          <button type="button" onClick={() => scrollTo("hero")} className={`font-bold text-2xl tracking-tight transition-colors text-left ${
+            isLight ? "text-slate-900 hover:text-cyan-700" : "text-white hover:text-cyan-400"
+          }`}>
             {t("demo.websites.brand")}
           </button>
-          <nav className="hidden sm:flex gap-6 text-sm font-medium text-slate-400">
-            <button type="button" onClick={() => scrollTo("hero")} className="hover:text-white transition-colors">Home</button>
-            <button type="button" onClick={() => scrollTo("products")} className="hover:text-white transition-colors">Products</button>
-            <button type="button" onClick={() => scrollTo("about")} className="hover:text-white transition-colors">About</button>
-            <button type="button" onClick={() => scrollTo("testimonials")} className="hover:text-white transition-colors">Testimonials</button>
-            <button type="button" onClick={() => scrollTo("blog")} className="hover:text-white transition-colors">Blog</button>
-            <button type="button" onClick={() => scrollTo("contact")} className="hover:text-white transition-colors">Contact</button>
+          <nav className={`hidden sm:flex gap-6 text-sm font-medium ${isLight ? "text-slate-600" : "text-slate-400"}`}>
+            <button type="button" onClick={() => scrollTo("hero")} className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Home</button>
+            <button type="button" onClick={() => scrollTo("products")} className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Products</button>
+            <button type="button" onClick={() => scrollTo("about")} className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>About</button>
+            <button type="button" onClick={() => scrollTo("testimonials")} className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Testimonials</button>
+            <button type="button" onClick={() => scrollTo("blog")} className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Blog</button>
+            <button type="button" onClick={() => scrollTo("contact")} className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Contact</button>
           </nav>
           <button
             type="button"
             onClick={() => setCartOpen(true)}
-            className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-sm font-medium transition-colors"
+            className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
+              isLight
+                ? "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"
+                : "bg-white/10 hover:bg-white/15 border-white/10 text-slate-200"
+            }`}
           >
             <ShoppingCart className="w-4 h-4" />
             {t("demo.ecommerce.cart")}
@@ -251,8 +276,8 @@ export default function PreviewWebsites() {
 
       {/* Hero */}
       <section id="hero" className="relative py-20 sm:py-28 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-rose-500/10" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(6,182,212,0.2),transparent)]" />
+        <div className={`absolute inset-0 ${isLight ? "bg-gradient-to-br from-cyan-500/5 via-violet-500/5 to-rose-500/5" : "bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-rose-500/10"}`} />
+        <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(6,182,212,0.1),transparent)]" : "bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(6,182,212,0.2),transparent)]"}`} />
         <div className="absolute top-10 right-10 w-64 h-64 bg-violet-500/15 rounded-full blur-3xl" />
         <div className="absolute bottom-10 left-10 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl" />
         <div className="relative max-w-6xl mx-auto text-center">
@@ -275,12 +300,12 @@ export default function PreviewWebsites() {
       </section>
 
       {/* Products */}
-      <section id="products" className="py-20 px-4 border-t border-white/10 bg-white/[0.02]">
+      <section id="products" className={`py-20 px-4 border-t ${isLight ? "border-slate-200 bg-white/70" : "border-white/10 bg-white/[0.02]"}`}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-white">
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>
             {t("demo.ecommerce.title")}
           </h2>
-          <p className="text-slate-500 text-center mb-14 max-w-xl mx-auto">Hand-picked for you. Fast shipping and easy returns.</p>
+          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>Hand-picked for you. Fast shipping and easy returns.</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {PRODUCTS.map((p, idx) => {
               const accents = [
@@ -295,7 +320,9 @@ export default function PreviewWebsites() {
               return (
               <div
                 key={p.id}
-                className={`group rounded-3xl overflow-hidden border border-white/10 bg-slate-900/80 ${acc.border} hover:shadow-xl ${acc.shadow} transition-all duration-300`}
+                className={`group rounded-3xl overflow-hidden border transition-all duration-300 hover:shadow-xl ${acc.border} ${acc.shadow} ${
+                  isLight ? "border-slate-300 bg-white" : "border-white/10 bg-slate-900/80"
+                }`}
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {p.badge && (
@@ -309,20 +336,22 @@ export default function PreviewWebsites() {
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity ${
+                    isLight ? "bg-gradient-to-t from-white/45 to-transparent" : "bg-gradient-to-t from-slate-900/60 to-transparent"
+                  }`} />
                 </div>
                 <div className="p-6">
-                  <h3 className="font-bold text-white text-lg mb-1">{t(`demo.ecommerce.${p.keyName}`)}</h3>
-                  <p className="text-slate-400 text-sm mb-4">{t(`demo.ecommerce.${p.keyDesc}`)}</p>
+                  <h3 className={`font-bold text-lg mb-1 ${isLight ? "text-slate-900" : "text-white"}`}>{t(`demo.ecommerce.${p.keyName}`)}</h3>
+                  <p className={`text-sm mb-4 ${isLight ? "text-slate-600" : "text-slate-400"}`}>{t(`demo.ecommerce.${p.keyDesc}`)}</p>
                   <div className="flex items-center justify-between">
-                    <span className={`text-xl font-bold ${acc.price}`}>{p.price}</span>
+                    <span className={`text-xl font-bold ${isLight ? "text-slate-900" : acc.price}`}>{p.price}</span>
                     <button
                       type="button"
                       onClick={() => addToCart(p)}
                       className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-300 ${
                         addedId === p.id
-                          ? "bg-emerald-500/30 text-emerald-300 border-emerald-500/50"
-                          : acc.btn
+                          ? (isLight ? "bg-emerald-500/18 text-emerald-700 border-emerald-500/35" : "bg-emerald-500/30 text-emerald-300 border-emerald-500/50")
+                          : (isLight ? "bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200" : acc.btn)
                       }`}
                     >
                       {addedId === p.id ? <Check className="w-4 h-4" /> : null}
@@ -339,10 +368,10 @@ export default function PreviewWebsites() {
       {/* About / Why us */}
       <section id="about" className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-white">
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>
             {t("demo.websites.whatWeBuild")}
           </h2>
-          <p className="text-slate-500 text-center max-w-2xl mx-auto mb-14">
+          <p className={`text-center max-w-2xl mx-auto mb-14 ${isLight ? "text-slate-600" : "text-slate-500"}`}>
             {t("demo.websites.body")}
           </p>
           <div className="grid sm:grid-cols-3 gap-6">
@@ -355,10 +384,10 @@ export default function PreviewWebsites() {
                 key={titleKey}
                 className={`rounded-2xl bg-gradient-to-br ${gradient} border ${border} p-6 flex items-start gap-4 hover:scale-[1.02] transition-transform`}
               >
-                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${isLight ? "bg-white/70" : "bg-white/10"}`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-white font-semibold leading-snug">{t(titleKey)}</p>
+                <p className={`${isLight ? "text-slate-900" : "text-white"} font-semibold leading-snug`}>{t(titleKey)}</p>
               </div>
             ))}
           </div>
@@ -366,25 +395,25 @@ export default function PreviewWebsites() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-20 px-4 border-t border-white/10 bg-white/[0.02]">
+      <section id="testimonials" className={`py-20 px-4 border-t ${isLight ? "border-slate-200 bg-white/60" : "border-white/10 bg-white/[0.02]"}`}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-white">What our customers say</h2>
-          <p className="text-slate-500 text-center mb-14 max-w-xl mx-auto">Real stories from real people.</p>
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>What our customers say</h2>
+          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>Real stories from real people.</p>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               { quote: "Best purchase I've made this year. Fast shipping and the product exceeded expectations.", name: "Jordan M.", role: "Designer" },
               { quote: "Quality is outstanding. Customer support was super helpful when I had questions.", name: "Sam L.", role: "Developer" },
               { quote: "Simple, elegant, and exactly what I needed. Will order again.", name: "Alex K.", role: "Founder" },
             ].map((item, i) => (
-              <div key={i} className="rounded-2xl bg-slate-900/80 border border-white/10 p-6">
+              <div key={i} className={`rounded-2xl border p-6 ${isLight ? "bg-white border-slate-300" : "bg-slate-900/80 border-white/10"}`}>
                 <div className="flex gap-1 mb-4">
                   {[1, 2, 3, 4, 5].map((j) => (
                     <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="text-slate-300 text-sm leading-relaxed mb-4">&ldquo;{item.quote}&rdquo;</p>
-                <p className="text-white font-semibold">{item.name}</p>
-                <p className="text-slate-500 text-xs">{item.role}</p>
+                <p className={`text-sm leading-relaxed mb-4 ${isLight ? "text-slate-700" : "text-slate-300"}`}>&ldquo;{item.quote}&rdquo;</p>
+                <p className={`${isLight ? "text-slate-900" : "text-white"} font-semibold`}>{item.name}</p>
+                <p className={`text-xs ${isLight ? "text-slate-600" : "text-slate-500"}`}>{item.role}</p>
               </div>
             ))}
           </div>
@@ -392,24 +421,24 @@ export default function PreviewWebsites() {
       </section>
 
       {/* Blog preview */}
-      <section id="blog" className="py-20 px-4 border-t border-white/10">
+      <section id="blog" className={`py-20 px-4 border-t ${isLight ? "border-slate-200" : "border-white/10"}`}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-white">From the blog</h2>
-          <p className="text-slate-500 text-center mb-14 max-w-xl mx-auto">Tips, updates, and inspiration.</p>
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>From the blog</h2>
+          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>Tips, updates, and inspiration.</p>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               { img: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&h=300&fit=crop", title: "10 tips for better product photos", excerpt: "How to showcase your products in the best light." },
               { img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop", title: "Building a brand that lasts", excerpt: "Strategy and design for long-term growth." },
               { img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500&h=300&fit=crop", title: "Why customer experience matters", excerpt: "Small improvements that make a big difference." },
             ].map((post, i) => (
-              <article key={i} className="group rounded-2xl overflow-hidden border border-white/10 bg-slate-900/80 hover:border-cyan-500/30 transition-colors">
+              <article key={i} className={`group rounded-2xl overflow-hidden border transition-colors ${isLight ? "border-slate-300 bg-white hover:border-cyan-400/50" : "border-white/10 bg-slate-900/80 hover:border-cyan-500/30"}`}>
                 <div className="aspect-video overflow-hidden">
                   <img src={post.img} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-5">
-                  <h3 className="font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
-                  <p className="text-slate-400 text-sm mb-3">{post.excerpt}</p>
-                  <span className="text-cyan-400 text-sm font-medium">Read more →</span>
+                  <h3 className={`font-bold mb-2 transition-colors ${isLight ? "text-slate-900 group-hover:text-cyan-700" : "text-white group-hover:text-cyan-400"}`}>{post.title}</h3>
+                  <p className={`text-sm mb-3 ${isLight ? "text-slate-600" : "text-slate-400"}`}>{post.excerpt}</p>
+                  <span className={`text-sm font-medium ${isLight ? "text-cyan-700" : "text-cyan-400"}`}>Read more →</span>
                 </div>
               </article>
             ))}
@@ -418,11 +447,11 @@ export default function PreviewWebsites() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="py-20 px-4 border-t border-white/10 bg-white/[0.02]">
+      <section id="contact" className={`py-20 px-4 border-t ${isLight ? "border-slate-200 bg-white/60" : "border-white/10 bg-white/[0.02]"}`}>
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-white">Get in touch</h2>
-          <p className="text-slate-500 text-center mb-10">Have a question? We’d love to hear from you.</p>
-          <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8">
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>Get in touch</h2>
+          <p className={`text-center mb-10 ${isLight ? "text-slate-600" : "text-slate-500"}`}>Have a question? We’d love to hear from you.</p>
+          <div className={`rounded-3xl border p-6 sm:p-8 ${isLight ? "border-slate-300 bg-white" : "border-white/10 bg-slate-900/80"}`}>
             {contactSuccess ? (
               <div className="text-center py-8">
                 <p className="text-emerald-400 font-semibold mb-2">{t("demo.previewSuccess")}</p>
@@ -437,16 +466,16 @@ export default function PreviewWebsites() {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">Name</label>
-                  <input type="text" placeholder="Your name" value={contactName} onChange={(e) => setContactName(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none" />
+                  <label className={`block text-sm font-medium mb-2 ${isLight ? "text-slate-700" : "text-slate-400"}`}>Name</label>
+                  <input type="text" placeholder="Your name" value={contactName} onChange={(e) => setContactName(e.target.value)} className={`w-full px-4 py-3 rounded-xl border focus:border-cyan-500/50 focus:outline-none ${isLight ? "bg-white border-slate-300 text-slate-900 placeholder-slate-400" : "bg-white/5 border-white/10 text-white placeholder-slate-500"}`} />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">Email</label>
-                  <input type="email" placeholder="you@example.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none" />
+                  <label className={`block text-sm font-medium mb-2 ${isLight ? "text-slate-700" : "text-slate-400"}`}>Email</label>
+                  <input type="email" placeholder="you@example.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} className={`w-full px-4 py-3 rounded-xl border focus:border-cyan-500/50 focus:outline-none ${isLight ? "bg-white border-slate-300 text-slate-900 placeholder-slate-400" : "bg-white/5 border-white/10 text-white placeholder-slate-500"}`} />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">Message</label>
-                  <textarea rows={4} placeholder="Your message..." value={contactMessage} onChange={(e) => setContactMessage(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:border-cyan-500/50 focus:outline-none resize-none" />
+                  <label className={`block text-sm font-medium mb-2 ${isLight ? "text-slate-700" : "text-slate-400"}`}>Message</label>
+                  <textarea rows={4} placeholder="Your message..." value={contactMessage} onChange={(e) => setContactMessage(e.target.value)} className={`w-full px-4 py-3 rounded-xl border focus:border-cyan-500/50 focus:outline-none resize-none ${isLight ? "bg-white border-slate-300 text-slate-900 placeholder-slate-400" : "bg-white/5 border-white/10 text-white placeholder-slate-500"}`} />
                 </div>
                 <button type="submit" className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2">
                   <Send className="w-4 h-4" />
@@ -459,8 +488,8 @@ export default function PreviewWebsites() {
       </section>
 
       {/* Trust strip */}
-      <section className="py-12 px-4 border-y border-white/10 bg-white/[0.02]">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-x-12 gap-y-4 text-slate-500 text-sm">
+      <section className={`py-12 px-4 border-y ${isLight ? "border-slate-200 bg-white/60" : "border-white/10 bg-white/[0.02]"}`}>
+        <div className={`max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-x-12 gap-y-4 text-sm ${isLight ? "text-slate-600" : "text-slate-500"}`}>
           <span className="flex items-center gap-2">
             <Star className="w-4 h-4 fill-amber-400 text-amber-400" /> 4.9/5 from 2,000+ reviews
           </span>
@@ -470,13 +499,13 @@ export default function PreviewWebsites() {
         </div>
       </section>
 
-      <footer className="py-12 px-4 border-t border-white/10">
+      <footer className={`py-12 px-4 border-t ${isLight ? "border-slate-200" : "border-white/10"}`}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-slate-500 text-sm font-medium">© Demo — {t("demo.websites.brand")}</span>
-          <div className="flex gap-8 text-sm text-slate-400">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Contact</a>
+          <span className={`text-sm font-medium ${isLight ? "text-slate-600" : "text-slate-500"}`}>© Demo — {t("demo.websites.brand")}</span>
+          <div className={`flex gap-8 text-sm ${isLight ? "text-slate-600" : "text-slate-400"}`}>
+            <a href="#" className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Privacy</a>
+            <a href="#" className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Terms</a>
+            <a href="#" className={`transition-colors ${isLight ? "hover:text-slate-900" : "hover:text-white"}`}>Contact</a>
           </div>
         </div>
       </footer>

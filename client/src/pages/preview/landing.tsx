@@ -2,9 +2,13 @@ import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { ArrowRight, Zap, Shield, Headphones, Quote, Mail } from "lucide-react";
 import { SEOHead } from "@/components/seo-head";
+import { PreviewPageControls } from "@/components/preview-page-controls";
+import { useTheme } from "@/lib/theme";
 
 export default function PreviewLanding() {
   const { t } = useI18n();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
   const [ctaSuccess, setCtaSuccess] = useState(false);
@@ -16,8 +20,9 @@ export default function PreviewLanding() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden font-sans antialiased">
+    <div className={`preview-page ${theme === "light" ? "preview-light bg-background text-foreground" : "preview-dark bg-slate-950 text-white"} min-h-screen overflow-x-hidden font-sans antialiased`}>
       <SEOHead title="Landing Preview" path="/preview/landing" />
+      <PreviewPageControls />
       {ctaSuccess && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-xl shadow-emerald-500/20 backdrop-blur-sm">
           {t("demo.previewSuccess")}
@@ -25,11 +30,13 @@ export default function PreviewLanding() {
       )}
       {/* Back bar */}
       {typeof window !== "undefined" && window.self !== window.top && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-9 bg-slate-950/80 backdrop-blur-md border-b border-white/5 flex items-center justify-end px-4">
+        <div className={`fixed top-0 left-0 right-0 z-50 h-9 backdrop-blur-md border-b flex items-center justify-end px-4 ${
+          isLight ? "bg-white/80 border-slate-200" : "bg-slate-950/80 border-white/5"
+        }`}>
           <button
             type="button"
             onClick={() => window.parent?.postMessage?.({ type: "webstudio-close-demo" }, "*")}
-            className="text-xs text-slate-400 hover:text-cyan-400 transition-colors"
+            className={`text-xs transition-colors ${isLight ? "text-slate-600 hover:text-cyan-700" : "text-slate-400 hover:text-cyan-400"}`}
           >
             {t("demo.backToExamples")}
           </button>
@@ -38,10 +45,10 @@ export default function PreviewLanding() {
 
       {/* Hero */}
       <section className="relative pt-28 pb-0 px-4 sm:pt-36 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_80%_at_50%_-30%,rgba(6,182,212,0.2),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(139,92,246,0.12),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_20%_80%,rgba(244,63,94,0.08),transparent)]" />
+        <div className={`absolute inset-0 ${isLight ? "bg-gradient-to-b from-white via-slate-100/70 to-white" : "bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950"}`} />
+        <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_100%_80%_at_50%_-30%,rgba(6,182,212,0.1),transparent_55%)]" : "bg-[radial-gradient(ellipse_100%_80%_at_50%_-30%,rgba(6,182,212,0.2),transparent_50%)]"}`} />
+        <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(139,92,246,0.06),transparent)]" : "bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(139,92,246,0.12),transparent)]"}`} />
+        <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_50%_40%_at_20%_80%,rgba(244,63,94,0.04),transparent)]" : "bg-[radial-gradient(ellipse_50%_40%_at_20%_80%,rgba(244,63,94,0.08),transparent)]"}`} />
         <div className="relative max-w-4xl mx-auto text-center pb-16">
           <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-sm font-medium mb-10 shadow-lg backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
@@ -81,7 +88,7 @@ export default function PreviewLanding() {
               loading="lazy"
               className="w-full h-auto aspect-[2/1] object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+            <div className={`absolute inset-0 pointer-events-none ${isLight ? "bg-gradient-to-t from-white/20 via-transparent to-transparent" : "bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"}`} />
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
@@ -89,7 +96,7 @@ export default function PreviewLanding() {
 
       {/* Stats */}
       <section className="relative py-16 px-4">
-        <div className="absolute inset-0 bg-slate-900/50" />
+        <div className={isLight ? "absolute inset-0 bg-white/20" : "absolute inset-0 bg-slate-900/50"} />
         <div className="relative max-w-4xl mx-auto grid grid-cols-3 gap-6 sm:gap-8">
           <div className="rounded-2xl py-8 px-6 bg-gradient-to-b from-cyan-500/15 to-cyan-500/5 border border-cyan-500/20 shadow-xl shadow-cyan-500/5 hover:shadow-cyan-500/10 transition-shadow duration-300">
             <p className="text-3xl sm:text-4xl font-bold text-cyan-400">{t("demo.landing.stats1")}</p>
@@ -139,7 +146,7 @@ export default function PreviewLanding() {
             loading="lazy"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/50" />
+          <div className={isLight ? "absolute inset-0 bg-white/8" : "absolute inset-0 bg-slate-950/50"} />
           <div className="absolute inset-0 flex items-center justify-center">
             <p className="text-white/90 text-lg sm:text-xl font-medium tracking-wide">Built for growth</p>
           </div>
@@ -341,7 +348,7 @@ export default function PreviewLanding() {
       <section className="py-0">
         <div className="relative w-full aspect-[16/6] max-h-[380px] overflow-hidden">
           <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1400&h=520&fit=crop" alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-slate-950/40" />
+          <div className={isLight ? "absolute inset-0 bg-white/8" : "absolute inset-0 bg-slate-950/40"} />
         </div>
       </section>
 
@@ -441,7 +448,7 @@ export default function PreviewLanding() {
             <p className="text-slate-500 text-sm">Pay with Apple Pay or Google Pay.</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-slate-800/50 p-8 space-y-4 shadow-xl">
-            <button type="button" onClick={handleCtaClick} className="w-full py-4 rounded-xl bg-[#000] text-white font-semibold flex items-center justify-center hover:bg-slate-800 transition-colors border border-white/20">
+            <button type="button" onClick={handleCtaClick} className="w-full py-4 rounded-xl bg-[#000] text-[#f8fafc] font-semibold flex items-center justify-center hover:bg-slate-800 transition-colors border border-white/20">
               Apple Pay
             </button>
             <button type="button" onClick={handleCtaClick} className="w-full py-4 rounded-xl bg-white text-slate-800 font-semibold flex items-center justify-center hover:bg-slate-100 transition-colors border border-slate-200">
