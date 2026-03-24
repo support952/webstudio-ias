@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: ["selector", "[data-theme='dark']"],
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
@@ -85,7 +85,6 @@ export default {
           cyan: "#06B6D4",
           pink: "#EC4899",
           indigo: "#6366F1",
-          violet: "#8B5CF6",
         },
         flow: {
           DEFAULT: "hsl(var(--flow-from) / var(--flow-opacity))",

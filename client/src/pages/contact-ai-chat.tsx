@@ -64,7 +64,7 @@ export default function ContactAIChat() {
       initialSentRef.current = true;
       sendInitialGreeting();
     }
-  }, [data]);
+  }, [data, loading]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -245,7 +245,7 @@ export default function ContactAIChat() {
                       {msg.content}
                       {msg.imageDataUrl && (
                         <div className="mt-2">
-                          <img src={msg.imageDataUrl} alt="" className="max-w-full max-h-40 rounded object-contain" />
+                          <img src={msg.imageDataUrl} alt="User uploaded image" className="max-w-full max-h-40 rounded object-contain" />
                         </div>
                       )}
                     </div>
@@ -282,7 +282,7 @@ export default function ContactAIChat() {
               <div className="p-3 border-t border-white/[0.08] space-y-3">
                 {pendingImage && (
                   <div className="flex items-center gap-2">
-                    <img src={pendingImage} alt="" className="h-12 w-12 rounded object-cover" />
+                    <img src={pendingImage} alt="Pending upload preview" className="h-12 w-12 rounded object-cover" />
                     <Button type="button" variant="ghost" size="sm" onClick={() => setPendingImage(null)} className="text-slate-400 hover:text-white">
                       <X className="w-4 h-4" />
                     </Button>

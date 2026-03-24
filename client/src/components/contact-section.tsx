@@ -35,7 +35,7 @@ export function ContactSection() {
         name,
         email,
         subject,
-        message: message || t("contact.defaultMessage", "Project inquiry"),
+        message: message || t("contact.defaultMessage") || "Project inquiry",
         service: "websites" as const,
       };
       sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));

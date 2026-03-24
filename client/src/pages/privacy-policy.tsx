@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
+import { splitTitle } from "@/lib/utils";
 
 const sections = [
   { icon: Eye, titleKey: "privacy.section1.title", contentKey: "privacy.section1.content", color: "text-neon-cyan", bg: "bg-neon-cyan/10" },
@@ -41,8 +42,8 @@ export default function PrivacyPolicy() {
                 {t("privacy.label")}
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 mb-4" data-testid="text-privacy-title">
-                {t("privacy.title").split(" ")[0]}{" "}
-                <span className="gradient-text">{t("privacy.title").split(" ").slice(1).join(" ")}</span>
+                {splitTitle(t("privacy.title"), "rest").main}{" "}
+                <span className="gradient-text">{splitTitle(t("privacy.title"), "rest").highlight}</span>
               </h1>
               <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg" data-testid="text-privacy-subtitle">
                 {t("privacy.subtitle")}

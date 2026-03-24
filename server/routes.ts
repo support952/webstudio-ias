@@ -87,10 +87,30 @@ function hasOpenAIKey(): boolean {
   return getOpenAIApiKey().length > 0;
 }
 
-// Basic in-memory rate limiting for login endpoints (per IP)
+// In-memory rate limiting (per IP)
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_MAX_ATTEMPTS = 10;
 const loginAttempts = new Map<string, { count: number; since: number }>();
+
+const API_WINDOW_MS = 15 * 60 * 1000;
+const API_MAX_CONTACT = 5;       // contact form: 5 per 15 min
+const API_MAX_REGISTER = 5;      // registration: 5 per 15 min
+const API_MAX_AI_CHAT = 30;      // AI chat: 30 per 15 min
+const apiAttempts = new Map<string, Map<string, { count: number; since: number }>>();
+
+// Cleanup stale rate-limit entries every 30 minutes
+setInterval(() => {
+  const now = Date.now();
+  loginAttempts.forEach((entry, ip) => {
+    if (now - entry.since > LOGIN_WINDOW_MS) loginAttempts.delete(ip);
+  });
+  apiAttempts.forEach((endpoints, ip) => {
+    endpoints.forEach((entry, ep) => {
+      if (now - entry.since > API_WINDOW_MS) endpoints.delete(ep);
+    });
+    if (endpoints.size === 0) apiAttempts.delete(ip);
+  });
+}, 30 * 60 * 1000);
 
 function getClientIp(req: any): string {
   const xfwd = req.headers?.["x-forwarded-for"];
@@ -101,6 +121,26 @@ function getClientIp(req: any): string {
     return String(xfwd[0]).split(",")[0]!.trim();
   }
   return req.ip || req.connection?.remoteAddress || "unknown";
+}
+
+function rateLimit(endpoint: string, maxAttempts: number) {
+  return (req: any, res: any, next: any) => {
+    const ip = getClientIp(req);
+    const now = Date.now();
+    if (!apiAttempts.has(ip)) apiAttempts.set(ip, new Map());
+    const ipMap = apiAttempts.get(ip)!;
+    const existing = ipMap.get(endpoint) || { count: 0, since: now };
+    if (now - existing.since > API_WINDOW_MS) {
+      existing.count = 0;
+      existing.since = now;
+    }
+    existing.count += 1;
+    ipMap.set(endpoint, existing);
+    if (existing.count > maxAttempts) {
+      return res.status(429).json({ message: "Too many requests. Please try again later." });
+    }
+    next();
+  };
 }
 
 function rateLimitLogin(req: any, res: any, next: any) {
@@ -172,7 +212,7 @@ export async function registerRoutes(
     );
   });
 
-  app.post("/api/auth/register", async (req, res) => {
+  app.post("/api/auth/register", rateLimit("register", API_MAX_REGISTER), async (req, res) => {
     try {
       const { username, email, password, fullName } = registerSchema.parse(req.body);
 
@@ -273,7 +313,7 @@ export async function registerRoutes(
     });
   });
 
-  app.post("/api/contact", async (req, res) => {
+  app.post("/api/contact", rateLimit("contact", API_MAX_CONTACT), async (req, res) => {
     try {
       const body = req.body as Record<string, unknown>;
       const questionnaireAnswers =
@@ -322,7 +362,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/ai-chat", async (req, res) => {
+  app.post("/api/ai-chat", rateLimit("ai-chat", API_MAX_AI_CHAT), async (req, res) => {
     try {
       const { messages, clientInfo, questionnaireContext, productType, liveChat, preferredLanguage } = req.body;
 
@@ -378,8 +418,10 @@ export async function registerRoutes(
         return String(raw ?? "");
       };
 
+      const MAX_CHAT_MESSAGES = 20;
+
       const normalizeMessages = (msgs: unknown[]): Array<{ role: "user" | "assistant"; content: string | ContentPart[] }> =>
-        msgs.map((m: any) => ({
+        msgs.slice(-MAX_CHAT_MESSAGES).map((m: any) => ({
           role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
           content: normalizeContent(m.content),
         }));

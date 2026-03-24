@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
+import { splitTitle } from "@/lib/utils";
 import { useRef, useState, useEffect } from "react";
 
 const plans = [
@@ -82,11 +83,11 @@ export default function Pricing() {
                 className="text-center mb-20"
               >
                 <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-slate-500">
-                  {t("pricing.title").split(" ")[0]}
+                  {splitTitle(t("pricing.title"), "rest").main}
                 </span>
                 <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.02em] text-white mt-3 mb-3" data-testid="text-pricing-title">
-                  {t("pricing.title").split(" ").slice(0, -1).join(" ")}{" "}
-                  <span className="gradient-text">{t("pricing.title").split(" ").pop()}</span>
+                  {splitTitle(t("pricing.title")).main}{" "}
+                  <span className="gradient-text">{splitTitle(t("pricing.title")).highlight}</span>
                 </h1>
                 <div className="w-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-auto mb-5" />
                 {t("pricing.subtitle") && (

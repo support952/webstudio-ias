@@ -17,6 +17,10 @@ const SERVICE_LABELS: Record<string, string> = {
   other: "Other",
 };
 
+function escHtml(s: string): string {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 function serviceDisplay(service?: string | null): string {
   if (!service) return "";
   return SERVICE_LABELS[service] || service;
@@ -58,7 +62,7 @@ export async function sendContactEmail(data: {
     return false;
   }
 
-  const esc = (s: string) => String(s).replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&/g, "&amp;");
+  const esc = (s: string) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   const serviceLabel = data.service ? serviceDisplay(data.service) : "";
 
   let questionnaireSection = "";
@@ -230,11 +234,11 @@ export async function sendAiSummaryEmail(summary: string, clientInfo: {
     subject: `AI Agent Summary - ${clientInfo.name || "Client"}`,
     html: `
       <h2>AI Agent Client Summary</h2>
-      ${clientInfo.name ? `<p><strong>Client Name:</strong> ${clientInfo.name}</p>` : ""}
-      ${clientInfo.email ? `<p><strong>Client Email:</strong> ${clientInfo.email}</p>` : ""}
+      ${clientInfo.name ? `<p><strong>Client Name:</strong> ${escHtml(clientInfo.name)}</p>` : ""}
+      ${clientInfo.email ? `<p><strong>Client Email:</strong> ${escHtml(clientInfo.email)}</p>` : ""}
       <hr/>
       <h3>Generated Prompt / Summary:</h3>
-      <pre style="white-space: pre-wrap; font-family: sans-serif;">${summary}</pre>
+      <pre style="white-space: pre-wrap; font-family: sans-serif;">${escHtml(summary)}</pre>
     `,
   });
   return true;

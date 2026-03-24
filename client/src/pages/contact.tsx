@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { splitTitle } from "@/lib/utils";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
@@ -89,7 +90,7 @@ export default function Contact() {
         name,
         email,
         subject: projectType,
-        message: message || t("contact.defaultMessage", "Project inquiry"),
+        message: message || t("contact.defaultMessage") || "Project inquiry",
         service: toQuestionnaireService(projectType),
       };
       sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));
@@ -125,8 +126,8 @@ export default function Contact() {
                   {t("contact.label")}
                 </span>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] text-foreground contact-header-title mb-4" data-testid="text-contact-title">
-                  {headerTitle.split(" ").slice(0, -1).join(" ")}{" "}
-                  <span className="gradient-text">{headerTitle.split(" ").pop()}</span>
+                  {splitTitle(headerTitle).main}{" "}
+                  <span className="gradient-text">{splitTitle(headerTitle).highlight}</span>
                 </h1>
                 <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent mx-auto mb-6" />
                 <p className="text-base sm:text-lg text-muted-foreground contact-header-subtitle max-w-2xl mx-auto leading-[1.7]">
