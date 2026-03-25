@@ -70,11 +70,15 @@ export default function PreviewWebsites() {
   };
 
   return (
-    <div className={theme === "light" ? "preview-page preview-light min-h-screen bg-background text-foreground" : "preview-page preview-dark min-h-screen bg-slate-950 text-white"}>
+    <div
+      dir="ltr"
+      lang="en"
+      className={theme === "light" ? "preview-page preview-light min-h-screen bg-background text-foreground" : "preview-page preview-dark min-h-screen bg-slate-950 text-white"}
+    >
       <SEOHead title="Websites Preview" path="/preview/websites" />
       <PreviewPageControls />
       {typeof window !== "undefined" && window.self !== window.top && (
-        <div className={`fixed top-0 left-0 right-0 z-[60] h-9 backdrop-blur-sm border-b flex items-center justify-end px-4 ${
+        <div className={`fixed top-0 inset-x-0 z-[60] h-9 backdrop-blur-sm border-b flex items-center justify-end px-4 ${
           isLight ? "bg-white/80 border-slate-200" : "bg-black/60 border-white/5"
         }`}>
           <button
@@ -95,8 +99,8 @@ export default function PreviewWebsites() {
           aria-hidden
         />
         <div
-          className={`fixed top-0 right-0 z-50 w-full max-w-md h-full bg-slate-900 border-l border-white/10 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
-            cartOpen ? "translate-x-0" : "translate-x-full"
+          className={`fixed top-0 end-0 z-50 w-full max-w-md h-full bg-slate-900 border-s border-white/10 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+            cartOpen ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"
           }`}
         >
           <div className={`p-6 border-b flex items-center justify-between ${isLight ? "border-slate-200 bg-white" : "border-white/10"}`}>
@@ -113,7 +117,7 @@ export default function PreviewWebsites() {
               type="button"
               onClick={() => setCartOpen(false)}
               className={`p-2 rounded-lg transition-colors ${isLight ? "text-slate-500 hover:text-slate-900 hover:bg-slate-100" : "text-slate-400 hover:text-white hover:bg-white/10"}`}
-              aria-label="Close cart"
+              aria-label={t("demo.closeCart")}
             >
               <X className="w-5 h-5" />
             </button>
@@ -175,7 +179,7 @@ export default function PreviewWebsites() {
                         <button
                           type="button"
                           onClick={() => removeFromCart(item.id)}
-                          className="ml-2 text-slate-500 hover:text-red-400 text-xs font-medium transition-colors"
+                          className="ms-2 text-slate-500 hover:text-red-400 text-xs font-medium transition-colors"
                         >
                           Remove
                         </button>
@@ -241,7 +245,7 @@ export default function PreviewWebsites() {
         isLight ? "bg-white/85 border-slate-200" : "bg-slate-950/90 border-white/10"
       }`}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button type="button" onClick={() => scrollTo("hero")} className={`font-bold text-2xl tracking-tight transition-colors text-left ${
+          <button type="button" onClick={() => scrollTo("hero")} className={`font-bold text-2xl tracking-tight transition-colors text-start ${
             isLight ? "text-slate-900 hover:text-cyan-700" : "text-white hover:text-cyan-400"
           }`}>
             {t("demo.websites.brand")}
@@ -266,7 +270,7 @@ export default function PreviewWebsites() {
             <ShoppingCart className="w-4 h-4" />
             {t("demo.ecommerce.cart")}
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-cyan-500 text-white text-xs font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -end-1 min-w-[18px] h-[18px] rounded-full bg-cyan-500 text-white text-xs font-bold flex items-center justify-center">
                 {cartCount}
               </span>
             )}
@@ -278,8 +282,8 @@ export default function PreviewWebsites() {
       <section id="hero" className="relative py-20 sm:py-28 px-4 overflow-hidden">
         <div className={`absolute inset-0 ${isLight ? "bg-gradient-to-br from-cyan-500/5 via-violet-500/5 to-rose-500/5" : "bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-rose-500/10"}`} />
         <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(6,182,212,0.1),transparent)]" : "bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(6,182,212,0.2),transparent)]"}`} />
-        <div className="absolute top-10 right-10 w-64 h-64 bg-violet-500/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl" />
+        <div className="absolute top-10 end-10 w-64 h-64 bg-violet-500/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 start-10 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl" />
         <div className="relative max-w-6xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
             <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
@@ -326,7 +330,7 @@ export default function PreviewWebsites() {
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {p.badge && (
-                    <span className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full ${acc.badge} text-white text-xs font-semibold`}>
+                    <span className={`absolute top-4 start-4 z-10 px-3 py-1 rounded-full ${acc.badge} text-white text-xs font-semibold`}>
                       {p.badge}
                     </span>
                   )}

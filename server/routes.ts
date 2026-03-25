@@ -4,7 +4,12 @@ import { storage } from "./storage";
 import { insertContactSchema, insertUserSchema, insertClientRequestSchema, insertProjectUpdateSchema } from "@shared/schema";
 import { z, ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
-import { sendContactEmail, sendAiSummaryEmail } from "./email";
+import {
+  sendContactEmail,
+  sendAiSummaryEmail,
+  sendContactStageEmail,
+  contactStageSummaryHebrew,
+} from "./email";
 import bcrypt from "bcryptjs";
 import OpenAI from "openai";
 
@@ -288,6 +293,10 @@ export async function registerRoutes(
             ? body.chatTranscript
             : JSON.stringify(body.chatTranscript)
           : undefined;
+      const aiSummary =
+        typeof body.aiSummary === "string" && body.aiSummary.trim() !== ""
+          ? body.aiSummary.trim()
+          : undefined;
       const data = insertContactSchema.parse({
         ...body,
         questionnaireAnswers,
@@ -296,7 +305,11 @@ export async function registerRoutes(
       const submission = await storage.createContactSubmission(data);
 
       // Send email for every contact (with or without questionnaire)
-      const emailSent = await sendContactEmail({ ...data, service: data.service ?? undefined }).catch((err) => {
+      const emailSent = await sendContactEmail({
+        ...data,
+        service: data.service ?? undefined,
+        aiSummary,
+      }).catch((err) => {
         console.error("[Email] Failed to send contact email:", err);
         return false;
       });
@@ -308,6 +321,66 @@ export async function registerRoutes(
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
+    }
+  });
+
+  app.post("/api/contact/stage-transition", async (req, res) => {
+    try {
+      const schema = z.object({
+        stage: z.string().min(1),
+        name: z.string().min(1),
+        email: z.string().email(),
+        subject: z.string().optional(),
+        message: z.string().optional(),
+        service: z.string().optional(),
+        questionnaireAnswers: z
+          .union([z.string(), z.record(z.string(), z.unknown())])
+          .optional(),
+        chatTranscript: z.union([z.string(), z.array(z.unknown())]).optional(),
+        aiSummary: z.string().optional(),
+      });
+
+      const payload = schema.parse(req.body);
+      const questionnaireAnswers =
+        payload.questionnaireAnswers == null
+          ? undefined
+          : typeof payload.questionnaireAnswers === "string"
+            ? payload.questionnaireAnswers
+            : JSON.stringify(payload.questionnaireAnswers);
+      const chatTranscriptStage =
+        payload.chatTranscript == null
+          ? undefined
+          : typeof payload.chatTranscript === "string"
+            ? payload.chatTranscript
+            : JSON.stringify(payload.chatTranscript);
+
+      const stageSummary = contactStageSummaryHebrew(payload.name, payload.stage);
+
+      if (
+        process.env.NODE_ENV !== "production" &&
+        payload.stage === "step_3_ai_to_completed" &&
+        !chatTranscriptStage
+      ) {
+        console.warn(
+          "[Contact] step_3_ai_to_completed without chatTranscript — check client is sending messages."
+        );
+      }
+
+      const emailSent = await sendContactStageEmail({
+        ...payload,
+        questionnaireAnswers,
+        chatTranscript: chatTranscriptStage,
+      }).catch((err) => {
+        console.error("[Email] Failed to send stage transition email:", err);
+        return false;
+      });
+
+      res.status(200).json({ ok: true, emailSent, stageSummary });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).message });
+      }
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 

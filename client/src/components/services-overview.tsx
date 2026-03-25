@@ -59,11 +59,11 @@ export function ServicesOverview() {
                     <service.icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2.5 tracking-tight">{t(service.titleKey)}</h3>
-                  <p className="text-sm text-muted-foreground leading-[1.6] mb-5">{t(service.descKey)}</p>
+                  <p className="text-sm text-muted-foreground leading-[1.6] mb-5 text-start">{t(service.descKey)}</p>
                   <Link href="/services">
-                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary p-0 min-h-[48px] h-auto text-sm font-medium group-hover:translate-x-1 transition-all duration-200 flex items-center">
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary p-0 min-h-[48px] h-auto text-sm font-medium group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-all duration-200 flex items-center">
                       {t("servicesOverview.learnMore")}
-                      <ArrowRight className="w-3.5 h-3.5 ms-1.5" />
+                      <ArrowRight className="w-3.5 h-3.5 ms-1.5 rtl:rotate-180" aria-hidden />
                     </Button>
                   </Link>
                 </div>

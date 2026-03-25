@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useI18n } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export type DemoProductId = "websites" | "landing" | "digital-card" | "marketing";
 
@@ -48,6 +49,10 @@ export function ProductContactForm({ productId, subjectKey }: ProductContactForm
         service: toQuestionnaireService(productId),
       };
       sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));
+      await apiRequest("POST", "/api/contact/stage-transition", {
+        stage: "step_1_to_step_2",
+        ...draft,
+      }).catch(() => null);
       setLocation("/contact/questionnaire");
     } catch (err) {
       toast({ title: t("demo.form.error"), description: (err as Error).message || t("contact.errorDesc"), variant: "destructive" });

@@ -70,9 +70,9 @@ export default function Pricing() {
         <Navbar />
 
         <main id="main-content">
-          <section className="pt-28 pb-20 sm:pt-36 sm:pb-28 relative" data-testid="section-pricing">
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-neon-cyan/8 blur-[100px] pointer-events-none" />
-            <div className="absolute top-1/4 right-0 w-[300px] h-[300px] rounded-full bg-neon-purple/6 blur-[80px] pointer-events-none" />
+          <section className="pt-safe-md pb-20 sm:pb-28 relative" data-testid="section-pricing">
+            <div className="absolute bottom-0 start-0 w-[400px] h-[400px] rounded-full bg-neon-cyan/8 blur-[100px] pointer-events-none" />
+            <div className="absolute top-1/4 end-0 w-[300px] h-[300px] rounded-full bg-neon-purple/6 blur-[80px] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
               <motion.div
@@ -116,7 +116,7 @@ export default function Pricing() {
                     data-testid={`card-pricing-${plan.id}`}
                   >
                     {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <div className="absolute -top-3 start-1/2 -translate-x-1/2">
                         <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-neon-purple to-neon-cyan text-white shadow-lg">
                           <Star className="w-3.5 h-3.5" />
                           {t("pricing.popular")}

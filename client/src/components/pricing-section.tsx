@@ -70,10 +70,16 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
+const planToQueryParam: Record<string, string> = {
+  starter: "starter",
+  pro: "pro",
+  enterprise: "enterprise",
+};
+
 export function PricingSection() {
   return (
     <section id="pricing" className="relative py-24 sm:py-32" data-testid="section-pricing">
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-neon-cyan/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 start-0 w-[500px] h-[500px] rounded-full bg-neon-cyan/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div
@@ -99,7 +105,9 @@ export function PricingSection() {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch"
         >
-          {plans.map((plan) => (
+          {plans.map((plan) => {
+            const planParam = planToQueryParam[plan.name.toLowerCase()] ?? plan.name.toLowerCase();
+            return (
             <motion.div
               key={plan.name}
               variants={itemVariants}
@@ -109,7 +117,7 @@ export function PricingSection() {
               data-testid={`card-pricing-${plan.name.toLowerCase()}`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <div className="absolute -top-3 start-1/2 -translate-x-1/2">
                   <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-neon-purple to-neon-cyan text-white">
                     <Star className="w-3 h-3" />
                     Most Popular
@@ -128,7 +136,7 @@ export function PricingSection() {
                 <span className="text-4xl font-bold text-white" data-testid={`text-plan-price-${plan.name.toLowerCase()}`}>
                   {plan.price}
                 </span>
-                <span className="text-slate-500 ml-2 text-sm">/{plan.period}</span>
+                <span className="text-slate-500 ms-2 text-sm">/{plan.period}</span>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
@@ -140,7 +148,7 @@ export function PricingSection() {
                 ))}
               </ul>
 
-              <a href="#contact">
+              <a href={`/contact?plan=${planParam}`}>
                 {plan.popular ? (
                   <Button
                     className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
@@ -159,7 +167,7 @@ export function PricingSection() {
                 )}
               </a>
             </motion.div>
-          ))}
+          )})}
         </motion.div>
       </div>
     </section>

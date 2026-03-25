@@ -10,6 +10,9 @@ const faqKeys = [
   { q: "faq.q4", a: "faq.a4" },
   { q: "faq.q5", a: "faq.a5" },
   { q: "faq.q6", a: "faq.a6" },
+  { q: "faq.q7", a: "faq.a7" },
+  { q: "faq.q8", a: "faq.a8" },
+  { q: "faq.q9", a: "faq.a9" },
 ] as const;
 
 const springChevron = {
@@ -62,7 +65,7 @@ export function FAQSection() {
                 <motion.button
                   type="button"
                   onClick={() => handleToggle(i)}
-                  className={`faq-question-bar w-full flex items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-4 text-left glass-float min-h-[52px] sm:min-h-[48px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.99] touch-manipulation ${
+                  className={`faq-question-bar w-full flex items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-4 text-start glass-float min-h-[52px] sm:min-h-[48px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.99] touch-manipulation ${
                     isOpen ? "rounded-t-xl rounded-b-none" : "rounded-xl"
                   }`}
                   whileHover={{ y: -1 }}
@@ -72,7 +75,7 @@ export function FAQSection() {
                   aria-controls={`faq-answer-${i}`}
                   id={`faq-trigger-${i}`}
                 >
-                  <span className="font-semibold text-foreground text-[15px] sm:text-base pr-2 text-left">
+                  <span className="font-semibold text-foreground text-[15px] sm:text-base pe-2 text-start">
                     {t(q)}
                   </span>
                   <motion.span
@@ -100,7 +103,7 @@ export function FAQSection() {
                       className="overflow-hidden"
                     >
                       <div className="faq-answer-content glass-float rounded-t-none rounded-b-xl border-t-0 px-4 py-4 sm:px-6 sm:py-5">
-                        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed text-start">
                           {t(a)}
                         </p>
                       </div>

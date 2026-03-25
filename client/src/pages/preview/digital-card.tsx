@@ -24,16 +24,20 @@ export default function PreviewDigitalCard() {
   };
 
   return (
-    <div className={`preview-page ${isLight ? "preview-light bg-background text-foreground" : "preview-dark bg-gradient-to-br from-slate-950 via-violet-950/30 to-slate-950"} min-h-screen flex flex-col items-stretch p-4 py-12 sm:p-6 gap-6 max-w-3xl mx-auto`}>
+    <div
+      dir="ltr"
+      lang="en"
+      className={`preview-page ${isLight ? "preview-light bg-background text-foreground" : "preview-dark bg-gradient-to-br from-slate-950 via-violet-950/30 to-slate-950"} min-h-screen flex flex-col items-stretch p-4 py-12 sm:p-6 gap-6 max-w-3xl mx-auto`}
+    >
       <SEOHead title="Digital Card Preview" path="/preview/digital-card" />
       <PreviewPageControls />
       {actionSuccess && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-lg">
+        <div className="fixed bottom-6 start-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-lg">
           {t("demo.previewSuccess")}
         </div>
       )}
       {typeof window !== "undefined" && window.self !== window.top && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-9 bg-black/60 backdrop-blur-sm border-b border-white/5 flex items-center justify-end px-4">
+        <div className="fixed top-0 inset-x-0 z-50 h-9 bg-black/60 backdrop-blur-sm border-b border-white/5 flex items-center justify-end px-4">
           <button
             type="button"
             onClick={() => window.parent?.postMessage?.({ type: "webstudio-close-demo" }, "*")}

@@ -71,7 +71,7 @@ export default function Work() {
         <Navbar />
 
         <main id="main-content">
-          <section className="pt-28 pb-20 sm:pt-36 sm:pb-28">
+          <section className="pt-safe-md pb-20 sm:pb-28">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}

@@ -61,7 +61,7 @@ const itemVariants = {
 export function WhyUsSection() {
   return (
     <section id="why-us" className="relative py-24 sm:py-32" data-testid="section-why-us">
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 end-0 w-[400px] h-[400px] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div

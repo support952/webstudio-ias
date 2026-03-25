@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
-import { openLiveChat } from "@/components/live-chat-widget";
+import { openLiveChat } from "@/lib/live-chat-events";
+import { apiRequest } from "@/lib/queryClient";
 
 const CONTACT_DRAFT_KEY = "contact_draft";
 
@@ -35,10 +36,14 @@ export function ContactSection() {
         name,
         email,
         subject,
-        message: message || t("contact.defaultMessage", "Project inquiry"),
+        message: message || t("contact.defaultMessage"),
         service: "websites" as const,
       };
       sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));
+      await apiRequest("POST", "/api/contact/stage-transition", {
+        stage: "step_1_to_step_2",
+        ...draft,
+      }).catch(() => null);
       setLocation("/contact/questionnaire");
     } catch {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
@@ -49,7 +54,7 @@ export function ContactSection() {
 
   return (
     <section id="contact" className="section-spacing relative bg-transparent" data-testid="section-contact">
-      <div className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-neon-pink/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 end-0 w-[400px] h-[400px] rounded-full bg-neon-pink/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <motion.div
@@ -128,7 +133,6 @@ export function ContactSection() {
                 <Textarea
                   id="contact-section-message"
                   name="Message"
-                  required
                   placeholder="Tell us about your project..."
                   rows={5}
                   className="bg-background/80 border-border text-foreground placeholder-contrast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:border-primary resize-none"
@@ -173,6 +177,7 @@ export function ContactSection() {
                 color: "text-neon-purple",
                 bg: "bg-neon-purple/10",
                 openChat: false,
+                valueLtr: true,
               },
               {
                 icon: MessageCircle,
@@ -182,6 +187,7 @@ export function ContactSection() {
                 color: "text-neon-cyan",
                 bg: "bg-neon-cyan/10",
                 openChat: true,
+                valueLtr: false,
               },
               {
                 icon: MapPin,
@@ -191,6 +197,7 @@ export function ContactSection() {
                 color: "text-neon-pink",
                 bg: "bg-neon-pink/10",
                 openChat: false,
+                valueLtr: true,
               },
             ].map((item) => {
               const content = (
@@ -198,20 +205,25 @@ export function ContactSection() {
                   <div className={`shrink-0 w-12 h-12 rounded-md ${item.bg} flex items-center justify-center`}>
                     <item.icon className={`w-5 h-5 ${item.color}`} />
                   </div>
-                  <div className="contact-card-inner flex-1 min-w-0 py-4 pl-2 pr-5 rounded-r-md">
+                  <div className="contact-card-inner flex-1 min-w-0 py-4 ps-2 pe-5 rounded-e-md text-start">
                     <div className="contact-card-label text-xs uppercase tracking-wider mb-0.5 font-semibold">{item.label}</div>
-                    <div className="contact-card-value text-sm font-medium">{item.value}</div>
+                    <div
+                      className="contact-card-value text-sm font-medium"
+                      dir={item.valueLtr ? "ltr" : undefined}
+                    >
+                      {item.value}
+                    </div>
                   </div>
                 </>
               );
-              const className = "flex items-center gap-4 p-5 glass-card rounded-md transition-all duration-300 gradient-border group";
+              const className = "flex items-center gap-4 p-5 glass-card rounded-md transition-all duration-300 gradient-border group text-start";
               if (item.openChat) {
                 return (
                   <button
                     key={item.label}
                     type="button"
                     onClick={openLiveChat}
-                    className={`${className} w-full text-left`}
+                    className={`${className} w-full`}
                     data-testid={`link-contact-${item.label.toLowerCase().replace(/\s/g, "-")}`}
                   >
                     {content}

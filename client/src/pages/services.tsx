@@ -34,7 +34,7 @@ export default function Services() {
         <Navbar />
 
         <main id="main-content">
-          <section className="pt-28 pb-20 sm:pt-36 sm:pb-28 relative">
+          <section className="pt-safe-md pb-20 sm:pb-28 relative">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
@@ -98,7 +98,7 @@ export default function Services() {
                             data-testid={`button-service-cta-${idx}`}
                           >
                             {"detailHref" in service && service.detailHref ? t("products.cta") : t("nav.getStarted")}
-                            <ArrowRight className="w-4 h-4 ms-2 opacity-90" />
+                            <ArrowRight className="w-4 h-4 ms-2 opacity-90 rtl:rotate-180" aria-hidden />
                           </Button>
                         </Link>
                       </div>

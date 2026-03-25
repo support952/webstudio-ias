@@ -12,7 +12,7 @@ export function FlowLine() {
         style={{
           position: "fixed",
           top: 0,
-          right: 0,
+          insetInlineEnd: 0,
           width: 120,
           height: "100vh",
           minHeight: "100dvh",
@@ -65,7 +65,7 @@ export function FlowLine() {
             top: 0,
             left: "50%",
             transform: "translateX(-50%)",
-            width: "min(100vw, 400px)",
+            width: "min(100%, 400px)",
             height: 200,
             background: "radial-gradient(ellipse 80% 60% at 50% 0%, hsl(var(--flow-from) / 0.12) 0%, hsl(var(--flow-to) / 0.06) 40%, transparent 70%)",
           }}
@@ -77,7 +77,7 @@ export function FlowLine() {
             top: "45%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "min(100vw, 300px)",
+            width: "min(100%, 300px)",
             height: 150,
             background: "radial-gradient(ellipse 70% 50% at 50% 50%, hsl(var(--flow-from) / 0.08) 0%, hsl(var(--flow-to) / 0.04) 50%, transparent 80%)",
           }}

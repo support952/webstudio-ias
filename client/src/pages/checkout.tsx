@@ -101,7 +101,7 @@ export default function Checkout() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <section id="main-content" className="pt-32 pb-24 sm:pt-40 sm:pb-32">
+        <section id="main-content" className="pt-safe-lg pb-24 sm:pb-32">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

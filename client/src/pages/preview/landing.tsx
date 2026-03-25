@@ -20,17 +20,21 @@ export default function PreviewLanding() {
   };
 
   return (
-    <div className={`preview-page ${theme === "light" ? "preview-light bg-background text-foreground" : "preview-dark bg-slate-950 text-white"} min-h-screen overflow-x-hidden font-sans antialiased`}>
+    <div
+      dir="ltr"
+      lang="en"
+      className={`preview-page ${theme === "light" ? "preview-light bg-background text-foreground" : "preview-dark bg-slate-950 text-white"} min-h-screen overflow-x-hidden font-sans antialiased`}
+    >
       <SEOHead title="Landing Preview" path="/preview/landing" />
       <PreviewPageControls />
       {ctaSuccess && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-xl shadow-emerald-500/20 backdrop-blur-sm">
+        <div className="fixed bottom-6 start-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-xl shadow-emerald-500/20 backdrop-blur-sm">
           {t("demo.previewSuccess")}
         </div>
       )}
       {/* Back bar */}
       {typeof window !== "undefined" && window.self !== window.top && (
-        <div className={`fixed top-0 left-0 right-0 z-50 h-9 backdrop-blur-md border-b flex items-center justify-end px-4 ${
+        <div className={`fixed top-0 inset-x-0 z-50 h-9 backdrop-blur-md border-b flex items-center justify-end px-4 ${
           isLight ? "bg-white/80 border-slate-200" : "bg-slate-950/80 border-white/5"
         }`}>
           <button
@@ -44,7 +48,7 @@ export default function PreviewLanding() {
       )}
 
       {/* Hero */}
-      <section className="relative pt-28 pb-0 px-4 sm:pt-36 overflow-hidden">
+      <section className="relative pt-safe-md pb-0 px-4 overflow-hidden">
         <div className={`absolute inset-0 ${isLight ? "bg-gradient-to-b from-white via-slate-100/70 to-white" : "bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950"}`} />
         <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_100%_80%_at_50%_-30%,rgba(6,182,212,0.1),transparent_55%)]" : "bg-[radial-gradient(ellipse_100%_80%_at_50%_-30%,rgba(6,182,212,0.2),transparent_50%)]"}`} />
         <div className={`absolute inset-0 ${isLight ? "bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(139,92,246,0.06),transparent)]" : "bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(139,92,246,0.12),transparent)]"}`} />
@@ -69,7 +73,7 @@ export default function PreviewLanding() {
               className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold shadow-xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-[1.02] transition-all duration-300 border border-cyan-400/20"
             >
               {t("demo.landing.ctaStart")}
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform rtl:rotate-180" aria-hidden />
             </button>
             <a
               href="#features"
@@ -91,7 +95,7 @@ export default function PreviewLanding() {
             <div className={`absolute inset-0 pointer-events-none ${isLight ? "bg-gradient-to-t from-white/20 via-transparent to-transparent" : "bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"}`} />
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
       </section>
 
       {/* Stats */}
@@ -222,7 +226,7 @@ export default function PreviewLanding() {
       {/* How it works — עם תמונות */}
       <section className="relative py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-slate-900/50" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">{t("demo.landing.howTitle")}</h2>
@@ -237,7 +241,7 @@ export default function PreviewLanding() {
               <div key={num} className="flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-slate-800/30 hover:border-violet-500/20 transition-colors">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img src={img} alt="" className="w-full h-full object-cover" />
-                  <div className="absolute top-4 left-4 w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold bg-slate-900/80 backdrop-blur-sm text-white">{num}</div>
+                  <div className="absolute top-4 start-4 w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold bg-slate-900/80 backdrop-blur-sm text-white">{num}</div>
                 </div>
                 <div className="p-6 text-center">
                   <h3 className="font-bold text-white mb-2">{t(titleKey)}</h3>
@@ -325,7 +329,7 @@ export default function PreviewLanding() {
       <section className="py-24 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="relative rounded-3xl bg-gradient-to-br from-cyan-500/10 via-slate-800/50 to-violet-500/10 border border-cyan-500/20 p-10 sm:p-14 shadow-2xl shadow-cyan-500/5">
-            <Quote className="absolute top-8 left-8 w-12 h-12 text-cyan-500/20" />
+            <Quote className="absolute top-8 start-8 w-12 h-12 text-cyan-500/20" />
             <div className="flex gap-1 mb-6">
               {[1, 2, 3, 4, 5].map((i) => (
                 <span key={i} className="text-amber-400 text-xl">★</span>
@@ -356,7 +360,7 @@ export default function PreviewLanding() {
       <section className="py-20 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="relative rounded-3xl bg-gradient-to-br from-rose-500/10 via-slate-800/50 to-amber-500/10 border border-rose-500/20 p-10 sm:p-14 shadow-2xl shadow-rose-500/5">
-            <Quote className="absolute top-8 right-8 w-12 h-12 text-rose-500/20" />
+            <Quote className="absolute top-8 end-8 w-12 h-12 text-rose-500/20" />
             <div className="flex gap-1 mb-6">
               {[1, 2, 3, 4, 5].map((i) => (
                 <span key={i} className="text-amber-400 text-xl">★</span>
@@ -495,7 +499,7 @@ export default function PreviewLanding() {
             className="inline-flex items-center gap-2 px-12 py-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-bold text-lg shadow-xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-[1.02] transition-all duration-300 border border-cyan-400/20"
           >
             {t("demo.landing.ctaStart")}
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5 rtl:rotate-180" aria-hidden />
           </button>
         </div>
       </section>

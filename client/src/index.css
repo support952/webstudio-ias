@@ -49,7 +49,7 @@
   --chart-3: 328 70% 55%;
   --chart-4: 220 15% 55%;
   --chart-5: 40 85% 55%;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Inter";
   --font-serif: Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius: .5rem;
@@ -230,6 +230,8 @@
     background: transparent !important;
     background-color: transparent !important;
     min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: clip;
     letter-spacing: 0.02em;
   }
   /* Clear, readable headings — moderate letter-spacing */
@@ -361,6 +363,19 @@
   /* Smooth scroll is handled by Lenis; avoid conflict with native smooth */
   html {
     scroll-behavior: auto;
+    overflow-x: clip;
+    scroll-padding-top: calc(4rem + env(safe-area-inset-top, 0px));
+  }
+  @media (min-width: 640px) {
+    html {
+      scroll-padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+    }
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: clip;
   }
 
   /* Mobile: safe area for notched devices, touch-friendly defaults */
@@ -452,6 +467,48 @@
   .touch-target {
     min-height: 48px;
     min-width: 48px;
+  }
+}
+
+@layer utilities {
+  /* Top padding under fixed navbar + iOS/Android safe-area (notch / island) */
+  .pt-safe-nav {
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+  }
+  .pt-safe-page {
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+  }
+  @media (min-width: 640px) {
+    .pt-safe-page {
+      padding-top: calc(6rem + env(safe-area-inset-top, 0px));
+    }
+  }
+  .pt-safe-contact {
+    padding-top: calc(6rem + env(safe-area-inset-top, 0px));
+  }
+  @media (min-width: 640px) {
+    .pt-safe-contact {
+      padding-top: calc(8rem + env(safe-area-inset-top, 0px));
+    }
+  }
+  .pt-safe-lg {
+    padding-top: calc(8rem + env(safe-area-inset-top, 0px));
+  }
+  @media (min-width: 640px) {
+    .pt-safe-lg {
+      padding-top: calc(10rem + env(safe-area-inset-top, 0px));
+    }
+  }
+  .pt-safe-md {
+    padding-top: calc(7rem + env(safe-area-inset-top, 0px));
+  }
+  @media (min-width: 640px) {
+    .pt-safe-md {
+      padding-top: calc(9rem + env(safe-area-inset-top, 0px));
+    }
+  }
+  .pt-safe-centered {
+    padding-top: calc(6rem + env(safe-area-inset-top, 0px));
   }
 }
 
@@ -1207,6 +1264,10 @@
     font-size: clamp(0.8125rem, 2vw + 0.5rem, 1rem);
     line-height: 1.4;
   }
+  /* Marquee math (translate -50%) must match DOM order; page RTL would reverse flex and break the loop */
+  .global-reach-track-wrap {
+    direction: ltr;
+  }
   .global-reach-track-wrap,
   .global-reach-banner .carousel-track,
   .global-reach-banner .flag-item,
@@ -1326,9 +1387,6 @@
     animation: global-reach-scroll 80s linear infinite;
     will-change: transform;
     backface-visibility: hidden;
-  }
-  .global-reach-banner .carousel-track.reverse {
-    animation-direction: reverse;
   }
 
   /* Trust section: floating scattered cards */

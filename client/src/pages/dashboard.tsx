@@ -191,7 +191,7 @@ function ProfileTab() {
         </div>
         {!editing && (
           <Button variant="outline" size="sm" onClick={startEdit} data-testid="button-edit-profile">
-            <Edit3 className="w-4 h-4 mr-1.5" />
+            <Edit3 className="w-4 h-4 me-1.5" />
             {t("dashboard.edit")}
           </Button>
         )}
@@ -220,7 +220,7 @@ function ProfileTab() {
             ))}
             <div className="flex items-center gap-2 pt-2">
               <Button onClick={() => mutation.mutate(formData)} disabled={mutation.isPending} data-testid="button-save-profile">
-                <Save className="w-4 h-4 mr-1.5" />
+                <Save className="w-4 h-4 me-1.5" />
                 {t("dashboard.save")}
               </Button>
               <Button variant="ghost" onClick={() => setEditing(false)} data-testid="button-cancel-edit">
@@ -334,7 +334,7 @@ function SettingsTab() {
             />
           </div>
           <Button type="submit" disabled={mutation.isPending} data-testid="button-change-password">
-            <Lock className="w-4 h-4 mr-1.5" />
+            <Lock className="w-4 h-4 me-1.5" />
             {t("dashboard.updatePassword")}
           </Button>
         </form>
@@ -475,7 +475,7 @@ function ProgressTab() {
               onClick={() => document.getElementById("file-upload")?.click()}
               data-testid="button-attach-file"
             >
-              <ImagePlus className="w-4 h-4 mr-1.5" />
+              <ImagePlus className="w-4 h-4 me-1.5" />
               {t("dashboard.attachFile")}
             </Button>
             <input
@@ -498,7 +498,7 @@ function ProgressTab() {
               disabled={(!newMessage.trim() && !attachmentPreview) || sendMutation.isPending}
               data-testid="button-send-message"
             >
-              <Send className="w-4 h-4 mr-1.5" />
+              <Send className="w-4 h-4 me-1.5" />
               {t("dashboard.send")}
             </Button>
           </div>
@@ -509,7 +509,7 @@ function ProgressTab() {
             <div className="space-y-2 pt-4 border-t border-white/[0.06]">
               <p className="text-xs text-slate-500 font-medium mb-2">{t("dashboard.previousMessages")}</p>
               {messages.map((msg: any) => (
-                <div key={msg.id} className={`p-3 rounded-lg text-sm ${msg.senderType === "client" ? "bg-neon-purple/10 text-slate-200 ml-6" : "bg-white/[0.03] text-slate-300 mr-6"}`}>
+                <div key={msg.id} className={`p-3 rounded-lg text-sm ${msg.senderType === "client" ? "bg-neon-purple/10 text-slate-200 ms-6" : "bg-white/[0.03] text-slate-300 me-6"}`}>
                   <p>{msg.message}</p>
                   <p className="text-xs text-slate-500 mt-1">{new Date(msg.createdAt).toLocaleString()}</p>
                 </div>
@@ -570,7 +570,7 @@ function RequestsTab() {
           className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white border-0 no-default-hover-elevate no-default-active-elevate"
           data-testid="button-new-request"
         >
-          <MessageSquarePlus className="w-4 h-4 mr-1.5" />
+          <MessageSquarePlus className="w-4 h-4 me-1.5" />
           {t("dashboard.newRequest")}
         </Button>
       </div>
@@ -618,7 +618,7 @@ function RequestsTab() {
                 disabled={!subject.trim() || !message.trim() || mutation.isPending}
                 data-testid="button-submit-request"
               >
-                <Send className="w-4 h-4 mr-1.5" />
+                <Send className="w-4 h-4 me-1.5" />
                 {t("dashboard.submit")}
               </Button>
               <Button variant="ghost" onClick={() => setShowForm(false)}>{t("dashboard.cancel")}</Button>
@@ -737,7 +737,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-deep-900">
       <SEOHead title="Dashboard" path="/dashboard" />
       <Navbar />
-      <div id="main-content" className="pt-20 sm:pt-24 pb-16">
+      <div id="main-content" className="pt-safe-page pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 12 }}

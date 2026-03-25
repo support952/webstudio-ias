@@ -26,7 +26,7 @@ export default function About() {
         <Navbar />
 
         <main id="main-content">
-          <section className="pt-28 pb-16 sm:pt-36 sm:pb-20">
+          <section className="pt-safe-md pb-16 sm:pb-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}

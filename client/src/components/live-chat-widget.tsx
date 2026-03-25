@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import type { Language } from "@/lib/i18n";
+import { OPEN_LIVE_CHAT_EVENT } from "@/lib/live-chat-events";
 
 const FAQ_KEYS = [
   { q: "faq.q1", a: "faq.a1" },
@@ -31,14 +32,8 @@ interface ChatMessage {
   content: string;
 }
 
-const OPEN_LIVE_CHAT_EVENT = "openLiveChat";
-
-/** Call from anywhere to open the live chat (e.g. LIVE CHAT button). */
-export function openLiveChat() {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(OPEN_LIVE_CHAT_EVENT));
-  }
-}
+/** Re-export so existing `import { openLiveChat } from "@/components/live-chat-widget"` keeps working. Prefer `@/lib/live-chat-events` for smaller bundles. */
+export { openLiveChat } from "@/lib/live-chat-events";
 
 export function LiveChatWidget() {
   const { t, lang } = useI18n();
@@ -145,7 +140,7 @@ export function LiveChatWidget() {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-0">
+      <div className="fixed z-50 flex flex-col items-end gap-0 bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] end-[max(1.5rem,env(safe-area-inset-right,0px))] rtl:end-auto rtl:start-[max(1.5rem,env(safe-area-inset-left,0px))]">
         <AnimatePresence>
           {open && (
             <motion.div
@@ -244,7 +239,7 @@ export function LiveChatWidget() {
                         type="button"
                         onClick={() => handleQuestionClick(q, a)}
                         disabled={typing}
-                        className="text-left text-xs px-3 py-2 rounded-xl bg-card border border-border text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors disabled:opacity-60"
+                        className="text-start text-xs px-3 py-2 rounded-xl bg-card border border-border text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors disabled:opacity-60"
                       >
                         {t(q)}
                       </button>

@@ -17,13 +17,35 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
-import { getQuestionsForService, type QuestionDef } from "@/lib/questionnaireConfig";
+import {
+  getQuestionsForService,
+  getMissingRequiredFieldIds,
+  isQuestionRequired,
+  type QuestionDef,
+} from "@/lib/questionnaireConfig";
 import type { InsertContact } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const CONTACT_DRAFT_KEY = "contact_draft";
 const CONTACT_FOR_AI_KEY = "contact_for_ai";
+
+const QUESTION_FIELD_ID_PREFIX = "questionnaire-field-";
+
+/** Scroll to the first invalid question and move keyboard focus into its control (after smooth scroll). */
+function scrollToAndFocusQuestionField(questionId: string) {
+  const root = document.getElementById(`${QUESTION_FIELD_ID_PREFIX}${questionId}`);
+  if (!root) return;
+  root.scrollIntoView({ behavior: "smooth", block: "center" });
+  window.setTimeout(() => {
+    const focusable =
+      root.querySelector<HTMLElement>("textarea") ||
+      root.querySelector<HTMLElement>("input:not([type='hidden']):not([type='file'])") ||
+      root.querySelector<HTMLElement>("button");
+    focusable?.focus({ preventScroll: true });
+  }, 350);
+}
 
 export default function ContactQuestionnaire() {
   const [, setLocation] = useLocation();
@@ -33,6 +55,7 @@ export default function ContactQuestionnaire() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [attachmentFiles, setAttachmentFiles] = useState<Array<{ name: string; type: string; base64: string }>>([]);
   const [sending, setSending] = useState(false);
+  const [validationHighlightId, setValidationHighlightId] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -63,15 +86,18 @@ export default function ContactQuestionnaire() {
   const serviceLabelKey = `contact.serviceOptions.${service}`;
 
   const handleChange = (questionId: string, value: string) => {
+    setValidationHighlightId(null);
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const requiredIds = questions.filter((q) => (q as { required?: boolean }).required).map((q) => q.id);
-    const missing = requiredIds.filter((id) => !String(answers[id] ?? "").trim());
+    const missing = getMissingRequiredFieldIds(questions, answers);
     if (missing.length > 0) {
+      const first = missing[0]!;
+      setValidationHighlightId(first);
       toast({ title: t("questionnaire.requiredError"), description: t("questionnaire.fillRequired"), variant: "destructive" });
+      window.setTimeout(() => scrollToAndFocusQuestionField(first), 0);
       return;
     }
     setSending(true);
@@ -80,6 +106,15 @@ export default function ContactQuestionnaire() {
       if (attachmentFiles.length > 0) {
         (payloadAnswers as Record<string, unknown>)._attachments = attachmentFiles;
       }
+      await apiRequest("POST", "/api/contact/stage-transition", {
+        stage: "step_2_to_completed",
+        name: draft.name,
+        email: draft.email,
+        subject: draft.subject,
+        message: draft.message,
+        service: draft.service,
+        questionnaireAnswers: payloadAnswers,
+      }).catch(() => null);
       await apiRequest("POST", "/api/contact", {
         ...draft,
         questionnaireAnswers: payloadAnswers,
@@ -96,11 +131,28 @@ export default function ContactQuestionnaire() {
   };
 
   const handleContinueToAi = () => {
+    const missing = getMissingRequiredFieldIds(questions, answers);
+    if (missing.length > 0) {
+      const first = missing[0]!;
+      setValidationHighlightId(first);
+      toast({ title: t("questionnaire.requiredError"), description: t("questionnaire.fillRequired"), variant: "destructive" });
+      window.setTimeout(() => scrollToAndFocusQuestionField(first), 0);
+      return;
+    }
     try {
       const payloadAnswers = { ...answers };
       if (attachmentFiles.length > 0) {
         (payloadAnswers as Record<string, unknown>)._attachments = attachmentFiles;
       }
+      apiRequest("POST", "/api/contact/stage-transition", {
+        stage: "step_2_to_step_3_ai",
+        name: draft.name,
+        email: draft.email,
+        subject: draft.subject,
+        message: draft.message,
+        service: draft.service,
+        questionnaireAnswers: payloadAnswers,
+      }).catch(() => null);
       sessionStorage.setItem(CONTACT_FOR_AI_KEY, JSON.stringify({ draft, questionnaireAnswers: payloadAnswers }));
       setLocation("/contact/ai-chat");
     } catch {
@@ -114,15 +166,15 @@ export default function ContactQuestionnaire() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <section id="main-content" className="pt-32 pb-24 sm:pt-40 sm:pb-32 relative">
+        <section id="main-content" className="pt-safe-lg pb-24 sm:pb-32 relative">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <Button
               type="button"
               variant="ghost"
-              className="text-muted-foreground hover:text-foreground mb-8 -ml-2"
+              className="text-muted-foreground hover:text-foreground mb-8 -ms-2"
               onClick={() => setLocation("/contact")}
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
+              <ChevronLeft className="w-4 h-4 me-1 rtl:rotate-180" aria-hidden />
               {t("questionnaire.back")}
             </Button>
 
@@ -160,14 +212,23 @@ export default function ContactQuestionnaire() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {questions.map((q) => (
-                  <QuestionField
+                  <div
                     key={q.id}
-                    question={q}
-                    value={answers[q.id] ?? ""}
-                    onChange={(v) => handleChange(q.id, v)}
-                    t={t}
-                    required={q.required}
-                  />
+                    id={`${QUESTION_FIELD_ID_PREFIX}${q.id}`}
+                    className={cn(
+                      "scroll-mt-28 sm:scroll-mt-36 rounded-lg transition-shadow",
+                      validationHighlightId === q.id &&
+                        "ring-2 ring-destructive ring-offset-2 ring-offset-background",
+                    )}
+                  >
+                    <QuestionField
+                      question={q}
+                      value={answers[q.id] ?? ""}
+                      onChange={(v) => handleChange(q.id, v)}
+                      t={t}
+                      required={isQuestionRequired(q, answers)}
+                    />
+                  </div>
                 ))}
 
                 <div>
@@ -275,7 +336,7 @@ function QuestionField({
   const labelEl = (
     <label className="block text-sm text-muted-foreground mb-2">
       {label}
-      {required && <span className="text-red-400 ml-0.5" aria-hidden>*</span>}
+      {required && <span className="text-red-400 ms-0.5" aria-hidden>*</span>}
     </label>
   );
 
@@ -288,6 +349,7 @@ function QuestionField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={3}
+          aria-required={required}
           className="bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus:border-primary resize-none"
         />
       </div>
@@ -299,7 +361,7 @@ function QuestionField({
       <div>
         {labelEl}
         <Select value={value || undefined} onValueChange={onChange}>
-          <SelectTrigger className="bg-background/80 border-border text-foreground">
+          <SelectTrigger aria-required={required} className="bg-background/80 border-border text-foreground">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
@@ -345,6 +407,7 @@ function QuestionField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-required={required}
         className="bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus:border-primary"
       />
     </div>

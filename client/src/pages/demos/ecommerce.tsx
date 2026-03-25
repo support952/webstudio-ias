@@ -107,7 +107,7 @@ export default function DemoEcommerce() {
           {cartOpen && (
             <>
               <div className="absolute inset-0 bg-black/50 z-40" onClick={() => setCartOpen(false)} />
-              <div className="absolute top-0 right-0 w-full max-w-sm h-full bg-slate-900 border-l border-white/10 z-50 shadow-xl flex flex-col">
+              <div className="absolute top-0 end-0 w-full max-w-sm h-full bg-slate-900 border-s border-white/10 z-50 shadow-xl flex flex-col">
                 <div className="p-4 border-b border-white/10 flex items-center justify-between">
                   <h2 className="font-bold text-lg">{t("demo.ecommerce.cart")}</h2>
                   <Button variant="ghost" size="sm" onClick={() => setCartOpen(false)}>

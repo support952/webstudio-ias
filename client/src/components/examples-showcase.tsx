@@ -7,13 +7,6 @@ import { DigitalCardPreviewModal } from "@/components/digital-card-preview-modal
 import { TiltCard } from "@/components/tilt-card";
 import { useState } from "react";
 
-const productToServiceParam: Record<string, string> = {
-  websites: "Ecommerce",
-  landing: "LandingPage",
-  card: "DigitalCards",
-  marketing: "Branding",
-};
-
 const examples = [
   {
     id: "websites",
@@ -101,7 +94,7 @@ export function ExamplesShowcase() {
                   onClick={() => {
                     if (item.id === "card") setDigitalCardModalOpen(true);
                     else if (item.id === "marketing") {
-                      setLocation(`/contact?service=${productToServiceParam.marketing}`);
+                      setLocation("/contact?product=marketing");
                       return;
                     } else setOpenDemo(item.href);
                   }}
@@ -109,7 +102,7 @@ export function ExamplesShowcase() {
                     if (e.key !== "Enter") return;
                     if (item.id === "card") setDigitalCardModalOpen(true);
                     else if (item.id === "marketing") {
-                      setLocation(`/contact?service=${productToServiceParam.marketing}`);
+                      setLocation("/contact?product=marketing");
                       return;
                     } else setOpenDemo(item.href);
                   }}
@@ -124,7 +117,7 @@ export function ExamplesShowcase() {
                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 min-w-0">
+                  <div className="absolute bottom-4 start-4 end-4 flex items-center gap-3 min-w-0">
                     <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_24px_rgba(139,92,246,0.4)] transition-shadow duration-300`}>
                       <item.icon className="w-5 h-5 text-white" />
                     </div>
@@ -135,7 +128,7 @@ export function ExamplesShowcase() {
                 </div>
                 {/* Content area: flex-1 + min-h-0 so CTAs align at bottom */}
                 <div className="flex flex-1 flex-col min-h-0 p-5 sm:p-6 border-t border-border">
-                  <p className="text-muted-foreground text-sm leading-[1.6] line-clamp-3 mb-3">
+                  <p className="text-muted-foreground text-sm leading-[1.6] line-clamp-3 mb-3 text-start">
                     {t(item.descKey)}
                   </p>
                   <div className="mt-auto pt-0 flex flex-col">
@@ -143,13 +136,13 @@ export function ExamplesShowcase() {
                       {item.id === "marketing" ? t("marketing.details.cta") : t("examples.clickForPreview")}
                     </p>
                     <Link
-                      href={`/contact?service=${productToServiceParam[item.id] ?? productToServiceParam.websites}`}
+                      href={`/contact?product=${item.id}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center min-h-[48px] w-fit text-muted-foreground hover:text-primary text-sm font-medium transition-all duration-200 hover:translate-x-0.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background pr-1 -ml-1 py-2"
+                      className="inline-flex items-center min-h-[48px] w-fit text-muted-foreground hover:text-primary text-sm font-medium transition-all duration-200 hover:translate-x-0.5 rtl:hover:-translate-x-0.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background pe-1 -ms-1 py-2"
                       aria-label={t("examples.cta")}
                     >
                       {t("examples.cta")}
-                      <ArrowRight className="w-3.5 h-3.5 ms-1.5 shrink-0" aria-hidden />
+                      <ArrowRight className="w-3.5 h-3.5 ms-1.5 shrink-0 rtl:rotate-180" aria-hidden />
                     </Link>
                   </div>
                 </div>

@@ -47,7 +47,7 @@ export function Footer() {
       <div className="relative bg-transparent">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-14 sm:py-16 grid grid-cols-2 md:grid-cols-6 gap-10 md:gap-12">
-          <div className="col-span-2">
+          <div className="col-span-2 text-start">
             <Logo href="/" variant={theme === "light" ? "light" : "dark"} className="mb-5" />
             <p className="text-sm text-muted-foreground leading-[1.65] max-w-xs mb-5">
               {t("footer.tagline")}
@@ -59,20 +59,20 @@ export function Footer() {
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
               data-testid="link-footer-email"
             >
-              <Mail className="w-4 h-4 opacity-80" />
-              support@webstudio-ias.com
+              <Mail className="w-4 h-4 shrink-0 opacity-80" />
+              <span dir="ltr">support@webstudio-ias.com</span>
             </a>
           </div>
 
           {columns.map((col) => (
-            <div key={col.title}>
+            <div key={col.title} className="text-start">
               <h4 className="text-xs font-medium tracking-[0.15em] uppercase text-foreground mb-5">{col.title}</h4>
               <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                      className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 text-start"
                       data-testid={`link-footer-${link.label.toLowerCase().replace(/\s/g, "-")}`}
                     >
                       {link.label}

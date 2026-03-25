@@ -53,21 +53,27 @@ export function Navbar() {
     }
   }, [langOpen, userMenuOpen]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
+
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled ? "glass-nav backdrop-blur-md border-b border-border/40" : "bg-transparent border-b border-transparent"
       }`}
       data-testid="header-navbar"
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-neon-cyan font-medium"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-neon-cyan font-medium"
       >
-        Skip to Content
+        {t("nav.skipToContent")}
       </a>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 h-16 sm:h-20">
@@ -93,7 +99,7 @@ export function Navbar() {
                   })()}
                   {t(link.labelKey)}
                   {isActive && !("icon" in link) && (
-                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                    <span className="absolute bottom-0.5 start-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
                   )}
                 </Link>
               );
@@ -120,7 +126,7 @@ export function Navbar() {
                   e.stopPropagation();
                   setLangOpen(!langOpen);
                 }}
-                aria-label="Select language"
+                aria-label={t("nav.selectLanguage")}
                 data-testid="button-language-switcher"
               >
                 <Globe className="w-4 h-4" />
@@ -217,7 +223,7 @@ export function Navbar() {
               variant="ghost"
               className="lg:hidden text-muted-foreground min-h-[48px] min-w-[48px] rounded-lg transition-transform duration-200 hover:scale-105 active:scale-95"
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-label={mobileOpen ? t("faq.close") : t("nav.openMenu")}
               aria-expanded={mobileOpen}
               data-testid="button-mobile-menu"
             >
@@ -290,6 +296,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }

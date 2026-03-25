@@ -71,7 +71,7 @@ export function MarketingDetailsModal({ open, onClose }: MarketingDetailsModalPr
               ref={closeRef}
               type="button"
               onClick={onClose}
-              className="absolute top-3 right-3 z-10 flex items-center justify-center w-12 h-12 sm:w-11 sm:h-11 rounded-full bg-background/90 border-2 border-border text-foreground hover:bg-accent hover:border-primary/50 shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="absolute top-3 end-3 z-10 flex items-center justify-center w-12 h-12 sm:w-11 sm:h-11 rounded-full bg-background/90 border-2 border-border text-foreground hover:bg-accent hover:border-primary/50 shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               aria-label={t("faq.close")}
             >
               <X className="w-5 h-5 sm:w-4 sm:h-4" />
@@ -81,7 +81,7 @@ export function MarketingDetailsModal({ open, onClose }: MarketingDetailsModalPr
             <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 p-6 pt-14 sm:p-8 sm:pt-16">
               <h2
                 id="marketing-details-title"
-                className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 pr-10"
+                className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 pe-10"
               >
                 {t("marketing.details.title")}
               </h2>

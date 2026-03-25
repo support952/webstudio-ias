@@ -60,8 +60,8 @@ function AdminLogin({ onLogin }: { onLogin: (admin: AdminUser) => void }) {
     <div className="min-h-screen bg-[#050A14] flex items-center justify-center p-4">
       <SEOHead title="Admin Login" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-neon-purple/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-neon-cyan/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 start-1/4 w-96 h-96 bg-neon-purple/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 end-1/4 w-96 h-96 bg-neon-cyan/5 rounded-full blur-3xl" />
       </div>
 
       <motion.div
@@ -400,9 +400,9 @@ function ClientsTab() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="max-h-64 overflow-y-auto space-y-2 pr-1">
+              <div className="max-h-64 overflow-y-auto space-y-2 pe-1">
                 {clientDetail.messages.length ? clientDetail.messages.map((m: any) => (
-                  <div key={m.id} className={`p-2.5 rounded-lg ${m.senderType === "admin" ? "bg-neon-purple/10 ml-4" : "bg-white/[0.03] mr-4"}`} data-testid={`msg-${m.id}`}>
+                  <div key={m.id} className={`p-2.5 rounded-lg ${m.senderType === "admin" ? "bg-neon-purple/10 ms-4" : "bg-white/[0.03] me-4"}`} data-testid={`msg-${m.id}`}>
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <Badge variant="outline" className={`text-xs ${m.senderType === "admin" ? "text-neon-purple border-neon-purple/30" : "text-slate-400 border-slate-400/30"}`}>
                         {m.senderType === "admin" ? "You" : "Client"}
@@ -737,7 +737,7 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen bg-[#050A14] text-white">
-      <SEOHead title="Admin Panel" path="/ws-panel-9x7k" />
+      <SEOHead title="Admin Panel" path="/admin" />
       <header className="sticky top-0 z-50 glass-nav border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">

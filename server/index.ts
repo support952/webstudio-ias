@@ -48,6 +48,8 @@ declare module "express-session" {
 
 app.use(
   express.json({
+    /** Default 100kb breaks contact + AI chat payloads (base64 images in transcript). */
+    limit: "15mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },

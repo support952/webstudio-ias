@@ -11,8 +11,9 @@ import { Footer } from "@/components/footer";
 import { PageWrapper } from "@/components/page-wrapper";
 import { SEOHead } from "@/components/seo-head";
 import { ContactPageJsonLd } from "@/components/json-ld";
-import { openLiveChat } from "@/components/live-chat-widget";
+import { openLiveChat } from "@/lib/live-chat-events";
 import { useI18n } from "@/lib/i18n";
+import { apiRequest } from "@/lib/queryClient";
 
 const CONTACT_DRAFT_KEY = "contact_draft";
 
@@ -50,10 +51,12 @@ export default function Contact() {
   const { t } = useI18n();
   const { toast } = useToast();
   const [sending, setSending] = useState(false);
-  const params = typeof search === "string" && search.startsWith("?") ? new URLSearchParams(search) : null;
-  const serviceParam = params?.get("service") ?? null;
-  const planParam = params?.get("plan") ?? null;
-  const productParam = params?.get("product") ?? null;
+  const rawSearch = typeof search === "string" ? search : "";
+  const normalizedSearch = rawSearch.startsWith("?") ? rawSearch : `?${rawSearch}`;
+  const params = new URLSearchParams(normalizedSearch);
+  const serviceParam = params.get("service");
+  const planParam = params.get("plan");
+  const productParam = params.get("product");
 
   const projectType =
     serviceParam ??
@@ -89,10 +92,14 @@ export default function Contact() {
         name,
         email,
         subject: projectType,
-        message: message || t("contact.defaultMessage", "Project inquiry"),
+        message: message || t("contact.defaultMessage"),
         service: toQuestionnaireService(projectType),
       };
       sessionStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));
+      await apiRequest("POST", "/api/contact/stage-transition", {
+        stage: "step_1_to_step_2",
+        ...draft,
+      }).catch(() => null);
       setLocation("/contact/questionnaire");
     } catch {
       toast({ title: t("contact.error"), description: t("contact.errorDesc"), variant: "destructive" });
@@ -109,10 +116,10 @@ export default function Contact() {
         <Navbar />
 
         <main id="main-content">
-          <section className="pt-24 pb-20 sm:pt-32 sm:pb-28 relative overflow-hidden">
-            <div className="absolute top-1/4 right-0 w-[420px] h-[420px] rounded-full bg-neon-pink/10 blur-[110px] pointer-events-none animate-pulse-soft" />
-            <div className="absolute bottom-1/3 left-0 w-[320px] h-[320px] rounded-full bg-neon-cyan/8 blur-[90px] pointer-events-none animate-pulse-soft" style={{ animationDelay: "0.5s" }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full bg-neon-purple/5 blur-[60px] pointer-events-none" />
+          <section className="pt-safe-contact pb-20 sm:pb-28 relative overflow-hidden">
+            <div className="absolute top-1/4 end-0 w-[420px] h-[420px] rounded-full bg-neon-pink/10 blur-[110px] pointer-events-none animate-pulse-soft" />
+            <div className="absolute bottom-1/3 start-0 w-[320px] h-[320px] rounded-full bg-neon-cyan/8 blur-[90px] pointer-events-none animate-pulse-soft" style={{ animationDelay: "0.5s" }} />
+            <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full bg-neon-purple/5 blur-[60px] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
               <motion.div
@@ -218,7 +225,6 @@ export default function Contact() {
                       <Textarea
                         id="contact-message"
                         name="Message"
-                        required
                         placeholder="Tell us about your project..."
                         rows={5}
                         className="min-h-[120px] rounded-xl bg-background/80 border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:border-primary resize-none transition-shadow"
@@ -247,19 +253,24 @@ export default function Contact() {
                 className="lg:col-span-2 space-y-5"
               >
                 {[
-                  { icon: Mail, labelKey: "contact.emailUs", value: "support@webstudio-ias.com", href: "https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com", color: "text-neon-purple", bg: "bg-neon-purple/10", isExternal: true },
-                  { icon: MessageCircle, labelKey: "contact.liveChat", valueKey: "contact.liveChat.value", href: "#", color: "text-neon-cyan", bg: "bg-neon-cyan/10", openChat: true },
-                  { icon: MapPin, labelKey: "contact.location", valueKey: "contact.location.value", href: "https://maps.google.com/?q=2+N+Central+Ave+Phoenix+AZ+85004", color: "text-neon-pink", bg: "bg-neon-pink/10", isExternal: true },
+                  { icon: Mail, labelKey: "contact.emailUs", value: "support@webstudio-ias.com", href: "https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com", color: "text-neon-purple", bg: "bg-neon-purple/10", isExternal: true, valueLtr: true },
+                  { icon: MessageCircle, labelKey: "contact.liveChat", valueKey: "contact.liveChat.value", href: "#", color: "text-neon-cyan", bg: "bg-neon-cyan/10", openChat: true, valueLtr: false },
+                  { icon: MapPin, labelKey: "contact.location", valueKey: "contact.location.value", href: "https://maps.google.com/?q=2+N+Central+Ave+Phoenix+AZ+85004", color: "text-neon-pink", bg: "bg-neon-pink/10", isExternal: true, valueLtr: true },
                 ].map((item) => {
-                  const className = "flex items-center gap-5 p-6 rounded-2xl border border-border bg-card/80 transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-0.5 group";
+                  const className = "flex items-center gap-5 p-6 rounded-2xl border border-border bg-card/80 transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-0.5 group text-start";
                   const content = (
                     <>
                       <div className={`shrink-0 w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                         <item.icon className={`w-6 h-6 ${item.color}`} />
                       </div>
-                      <div className="contact-card-inner flex-1 min-w-0 py-0.5 pl-0 rounded-r-xl">
+                      <div className="contact-card-inner flex-1 min-w-0 py-0.5 ps-0 rounded-e-xl">
                         <div className="contact-card-label text-xs uppercase tracking-wider mb-1 font-semibold">{t(item.labelKey)}</div>
-                        <div className="contact-card-value text-sm font-medium">{item.value || t(item.valueKey!)}</div>
+                        <div
+                          className="contact-card-value text-sm font-medium"
+                          dir={item.valueLtr ? "ltr" : undefined}
+                        >
+                          {item.value || t(item.valueKey!)}
+                        </div>
                       </div>
                     </>
                   );
@@ -269,7 +280,7 @@ export default function Contact() {
                         key={item.labelKey}
                         type="button"
                         onClick={openLiveChat}
-                        className={`${className} w-full text-left`}
+                        className={`${className} w-full`}
                         data-testid={`link-contact-${t(item.labelKey).toLowerCase().replace(/\s/g, "-")}`}
                       >
                         {content}

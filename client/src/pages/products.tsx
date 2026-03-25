@@ -16,7 +16,7 @@ const products = [
     titleKey: "products.websites",
     descKey: "products.websitesDesc",
     href: "/preview/websites",
-    ctaHref: "/contact?service=Ecommerce",
+    ctaHref: "/contact?product=websites",
     gradient: "from-neon-purple to-blue-500",
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
   },
@@ -26,7 +26,7 @@ const products = [
     titleKey: "products.marketing",
     descKey: "products.marketingDesc",
     href: "/preview/marketing",
-    ctaHref: "/contact?service=Branding",
+    ctaHref: "/contact?product=marketing",
     gradient: "from-neon-pink to-neon-purple",
     imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop",
   },
@@ -36,7 +36,7 @@ const products = [
     titleKey: "products.card",
     descKey: "products.cardDesc",
     href: "/preview/digital-card",
-    ctaHref: "/contact?service=DigitalCards",
+    ctaHref: "/contact?product=card",
     gradient: "from-neon-pink to-rose-500",
     imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
   },
@@ -46,7 +46,7 @@ const products = [
     titleKey: "products.landing",
     descKey: "products.landingDesc",
     href: "/preview/landing",
-    ctaHref: "/contact?service=LandingPage",
+    ctaHref: "/contact?product=landing",
     gradient: "from-neon-cyan to-emerald-500",
     imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=500&fit=crop",
   },
@@ -64,7 +64,7 @@ export default function Products() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <main id="main-content" className="pt-32 pb-16 sm:pt-40 sm:pb-20 relative">
+        <main id="main-content" className="pt-safe-lg pb-16 sm:pb-20 relative">
           <div className="absolute top-20 end-0 w-[400px] h-[400px] rounded-full bg-neon-cyan/5 blur-[120px] pointer-events-none" />
           <div className="absolute bottom-0 start-0 w-[500px] h-[500px] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none" />
 
@@ -110,7 +110,7 @@ export default function Products() {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3">
+                      <div className="absolute bottom-4 start-4 end-4 flex items-center gap-3 min-w-0">
                         <div
                           className={`w-12 h-12 rounded-xl bg-gradient-to-br ${product.gradient} flex items-center justify-center shadow-lg`}
                         >
@@ -123,10 +123,10 @@ export default function Products() {
                     </div>
                   </Link>
                   <div className="p-5 sm:p-6 border-t border-border">
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-4 text-start">
                       {t(product.descKey)}
                     </p>
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-3 justify-start">
                       <Link href={product.href}>
                         <Button
                           variant="outline"
@@ -134,7 +134,7 @@ export default function Products() {
                           className="border-primary/40 text-primary hover:bg-primary/10"
                         >
                           {t("products.cta")}
-                          <ArrowRight className="w-3.5 h-3.5 ms-1.5" />
+                          <ArrowRight className="w-3.5 h-3.5 ms-1.5 rtl:rotate-180" aria-hidden />
                         </Button>
                       </Link>
                       <Link href={product.ctaHref}>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { ChevronLeft, Send, User, ImagePlus, X } from "lucide-react";
@@ -14,6 +14,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 const CONTACT_FOR_AI_KEY = "contact_for_ai";
+/** Persisted chat so Finish always has a transcript (refresh / React batching / stale handlers). */
+const CONTACT_AI_TRANSCRIPT_KEY = "contact_ai_transcript_v1";
 
 interface Message {
   role: "user" | "assistant";
@@ -26,6 +28,20 @@ interface ContactForAi {
   questionnaireAnswers: Record<string, string>;
 }
 
+/** Drop image base64 from payload — default express JSON limit (~100kb) breaks; emails stay readable. */
+function chatTranscriptForApi(msgs: Message[]): Array<{ role: string; content: string }> {
+  return msgs.map((m) => {
+    if (m.imageDataUrl) {
+      const base = (m.content || "").trim() || "(image)";
+      return {
+        role: m.role,
+        content: `${base} [Image attached — omitted from email payload]`,
+      };
+    }
+    return { role: m.role, content: (m.content || "").trim() };
+  });
+}
+
 export default function ContactAIChat() {
   const [, setLocation] = useLocation();
   const { t } = useI18n();
@@ -36,10 +52,21 @@ export default function ContactAIChat() {
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [summaryDone, setSummaryDone] = useState(false);
+  /** Full structured summary after ---SUMMARY--- (kept for email; not shown in chat bubble). */
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [finishing, setFinishing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const initialSentRef = useRef(false);
+  const messagesRef = useRef<Message[]>([]);
+  const aiSummaryRef = useRef<string | null>(null);
+
+  useLayoutEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+  useLayoutEffect(() => {
+    aiSummaryRef.current = aiSummary;
+  }, [aiSummary]);
 
   useEffect(() => {
     try {
@@ -60,22 +87,71 @@ export default function ContactAIChat() {
   }, [setLocation]);
 
   useEffect(() => {
-    if (data && messages.length === 0 && !loading && !initialSentRef.current) {
+    if (!data) return;
+    try {
+      const raw = sessionStorage.getItem(CONTACT_AI_TRANSCRIPT_KEY);
+      if (raw) {
+        const p = JSON.parse(raw) as {
+          draftEmail?: string;
+          messages?: Message[];
+          aiSummary?: string | null;
+          summaryDone?: boolean;
+        };
+        if (
+          p.draftEmail === data.draft.email &&
+          Array.isArray(p.messages) &&
+          p.messages.length > 0
+        ) {
+          setMessages(p.messages);
+          if (p.aiSummary != null && p.aiSummary !== "") setAiSummary(p.aiSummary);
+          if (p.summaryDone) setSummaryDone(true);
+          initialSentRef.current = true;
+          return;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    if (!initialSentRef.current) {
       initialSentRef.current = true;
-      sendInitialGreeting();
+      void sendInitialGreeting();
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!data) return;
+    if (messages.length === 0 && (aiSummary == null || aiSummary === "")) return;
+    try {
+      sessionStorage.setItem(
+        CONTACT_AI_TRANSCRIPT_KEY,
+        JSON.stringify({
+          draftEmail: data.draft.email,
+          messages,
+          aiSummary,
+          summaryDone,
+        })
+      );
+    } catch {
+      /* quota / private mode */
+    }
+  }, [data, messages, aiSummary, summaryDone]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
-  function cleanReply(reply: string): string {
-    if (reply.includes("---SUMMARY---")) {
-      setSummaryDone(true);
-      return reply.split("---SUMMARY---")[0].trim() || t("aiChat.thankYou");
+  function processAssistantReply(reply: string): string {
+    if (!reply.includes("---SUMMARY---")) {
+      return reply;
     }
-    return reply;
+    const [, after] = reply.split("---SUMMARY---");
+    const summary = after?.trim() ?? "";
+    if (summary) {
+      setAiSummary(summary);
+      setSummaryDone(true);
+    }
+    const visible = reply.split("---SUMMARY---")[0].trim();
+    return visible || t("aiChat.thankYou");
   }
 
   async function sendInitialGreeting() {
@@ -89,7 +165,7 @@ export default function ContactAIChat() {
         productType: data.draft.service,
       });
       const body = await res.json();
-      setMessages([{ role: "assistant", content: cleanReply(body.reply ?? t("aiChat.errorMsg")) }]);
+      setMessages([{ role: "assistant", content: processAssistantReply(body.reply ?? t("aiChat.errorMsg")) }]);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "";
       const serverMsg = msg.startsWith("503:") || msg.startsWith("500:")
@@ -137,7 +213,7 @@ export default function ContactAIChat() {
         productType: data.draft.service,
       });
       const body = await res.json();
-      setMessages([...newMessages, { role: "assistant", content: cleanReply(body.reply ?? t("aiChat.errorMsg")) }]);
+      setMessages([...newMessages, { role: "assistant", content: processAssistantReply(body.reply ?? t("aiChat.errorMsg")) }]);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "";
       let serverMsg = t("aiChat.errorMsg");
@@ -158,13 +234,47 @@ export default function ContactAIChat() {
     if (!data) return;
     setFinishing(true);
     try {
-      const chatTranscript = messages.length > 0 ? messages : undefined;
+      const msgs = messagesRef.current;
+      const summary = aiSummaryRef.current;
+      const baseTranscript = msgs.length > 0 ? chatTranscriptForApi(msgs) : [];
+      const transcriptPayload =
+        summary != null && summary !== ""
+          ? [
+              ...baseTranscript,
+              {
+                role: "assistant" as const,
+                content: `--- Structured AI summary (for team) ---\n${summary}`,
+              },
+            ]
+          : baseTranscript.length > 0
+            ? baseTranscript
+            : undefined;
+
+      const safeMessage =
+        data.draft.message === "contact.defaultMessage"
+          ? t("contact.defaultMessage")
+          : data.draft.message;
+
+      await apiRequest("POST", "/api/contact/stage-transition", {
+        stage: "step_3_ai_to_completed",
+        name: data.draft.name,
+        email: data.draft.email,
+        subject: data.draft.subject,
+        message: safeMessage,
+        service: data.draft.service,
+        questionnaireAnswers: data.questionnaireAnswers,
+        chatTranscript: transcriptPayload,
+        aiSummary: summary ?? undefined,
+      });
       await apiRequest("POST", "/api/contact", {
         ...data.draft,
+        message: safeMessage,
         questionnaireAnswers: data.questionnaireAnswers,
-        chatTranscript,
+        chatTranscript: transcriptPayload,
+        aiSummary: summary ?? undefined,
       });
       sessionStorage.removeItem(CONTACT_FOR_AI_KEY);
+      sessionStorage.removeItem(CONTACT_AI_TRANSCRIPT_KEY);
       sessionStorage.removeItem("contact_draft");
       toast({ title: t("contact.success"), description: t("contact.successDesc") });
       setLocation("/contact");
@@ -191,15 +301,15 @@ export default function ContactAIChat() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <section id="main-content" className="pt-32 pb-24 sm:pt-40 sm:pb-32 relative">
+        <section id="main-content" className="pt-safe-lg pb-24 sm:pb-32 relative">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <Button
               type="button"
               variant="ghost"
-              className="text-slate-400 hover:text-white mb-6 -ml-2"
+              className="text-slate-400 hover:text-white mb-6 -ms-2"
               onClick={() => setLocation("/contact/questionnaire")}
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
+              <ChevronLeft className="w-4 h-4 me-1 rtl:rotate-180" />
               {t("questionnaire.back")}
             </Button>
 
@@ -317,7 +427,7 @@ export default function ContactAIChat() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={summaryDone ? t("aiChat.chatEnded") : t("aiChat.placeholder")}
                     disabled={loading || summaryDone}
-                    className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-neon-purple/50"
+                    className="min-w-0 flex-1 border-border bg-background/90 text-foreground placeholder:text-muted-foreground focus-visible:border-neon-purple/50 focus-visible:ring-neon-purple/25"
                   />
                   <Button
                     type="submit"

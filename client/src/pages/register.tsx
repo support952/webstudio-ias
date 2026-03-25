@@ -58,10 +58,10 @@ export default function Register() {
         <Navbar />
 
         <main id="main-content">
-          <section className="relative pt-28 pb-20 px-4">
+          <section className="relative pt-safe-md pb-20 px-4">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-neon-pink/12 rounded-full blur-3xl" />
-              <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-neon-purple/10 rounded-full blur-3xl" />
+              <div className="absolute top-1/4 end-1/4 w-80 h-80 bg-neon-pink/12 rounded-full blur-3xl" />
+              <div className="absolute bottom-1/4 start-1/4 w-80 h-80 bg-neon-purple/10 rounded-full blur-3xl" />
             </div>
 
             <div className="max-w-md mx-auto relative">

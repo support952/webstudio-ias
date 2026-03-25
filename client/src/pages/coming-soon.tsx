@@ -39,7 +39,7 @@ export default function ComingSoon() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <main id="main-content" className="pt-32 pb-16 sm:pt-40 sm:pb-20 flex items-center justify-center min-h-[60vh]">
+        <main id="main-content" className="pt-safe-lg pb-16 sm:pb-20 flex items-center justify-center min-h-[60vh]">
           <div className="max-w-lg mx-auto px-4 text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}

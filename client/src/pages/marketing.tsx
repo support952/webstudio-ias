@@ -29,7 +29,7 @@ export default function Marketing() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <main id="main-content" className="pt-32 pb-16 sm:pt-40 sm:pb-20 relative">
+        <main id="main-content" className="pt-safe-lg pb-16 sm:pb-20 relative">
           <div className="absolute top-20 end-0 w-[400px] h-[400px] rounded-full bg-neon-pink/5 blur-[120px] pointer-events-none" />
           <div className="absolute bottom-0 start-0 w-[500px] h-[500px] rounded-full bg-neon-cyan/5 blur-[120px] pointer-events-none" />
 
@@ -87,7 +87,7 @@ export default function Marketing() {
                   data-testid="button-marketing-contact"
                 >
                   {t("hero.cta2")}
-                  <ArrowRight className="w-4 h-4 ms-2" />
+                  <ArrowRight className="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden />
                 </Button>
               </Link>
             </motion.div>

@@ -9,4 +9,7 @@ vite.config.ts.*
 .env
 .env.local
 .env.*
-!.env.examplewebstudio-ias/
+!.env.example
+
+# IDE / local tooling (Replit agent state, etc.)
+.local/

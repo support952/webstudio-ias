@@ -1,18 +1,42 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { I18nProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
 import { LenisProvider, useLenis } from "@/lib/lenis";
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FlowLine } from "@/components/flow-line";
-import { LiveChatWidget } from "@/components/live-chat-widget";
 import { ScrollProgress } from "@/components/scroll-progress";
+
+const LiveChatWidgetLazy = lazy(() =>
+  import("@/components/live-chat-widget").then((m) => ({ default: m.LiveChatWidget })),
+);
+
+function DeferredLiveChatWidget() {
+  const [mount, setMount] = useState(false);
+  useEffect(() => {
+    const w = window as Window & {
+      requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (w.requestIdleCallback) {
+      const idleId = w.requestIdleCallback(() => setMount(true), { timeout: 2800 });
+      return () => w.cancelIdleCallback?.(idleId);
+    }
+    const timeoutId = window.setTimeout(() => setMount(true), 1800);
+    return () => clearTimeout(timeoutId);
+  }, []);
+  if (!mount) return null;
+  return (
+    <Suspense fallback={null}>
+      <LiveChatWidgetLazy />
+    </Suspense>
+  );
+}
 
 // Lazy-loaded page components for code splitting
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -116,7 +140,7 @@ function Router() {
         <Route path="/coming-soon" component={ComingSoon} />
         <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
         <Route path="/dashboard/:tab">{() => <ProtectedRoute component={Dashboard} />}</Route>
-        <Route path="/ws-panel-9x7k" component={AdminPanel} />
+        <Route path="/admin" component={AdminPanel} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
@@ -126,9 +150,9 @@ function Router() {
 
 function App() {
   return (
+    <LazyMotion features={domAnimation}>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-<I18nProvider>
         <ThemeProvider>
           <AuthProvider>
             <ErrorBoundary>
@@ -140,15 +164,15 @@ function App() {
                   <ScrollToTop />
                   <Toaster />
                   <Router />
-                  <LiveChatWidget />
+                  <DeferredLiveChatWidget />
                 </div>
               </LenisProvider>
             </ErrorBoundary>
           </AuthProvider>
         </ThemeProvider>
-        </I18nProvider>
       </TooltipProvider>
     </QueryClientProvider>
+    </LazyMotion>
   );
 }
 

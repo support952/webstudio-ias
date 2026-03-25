@@ -4,7 +4,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsx server/index.ts",
+    "dev": "node --import tsx scripts/dev.mjs",
     "build": "tsx script/build.ts",
     "email:test": "tsx script/send-test-contact-email.ts",
     "start": "cross-env NODE_ENV=production node dist/index.cjs",

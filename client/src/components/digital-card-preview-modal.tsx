@@ -119,7 +119,7 @@ export function DigitalCardPreviewModal({ open, onClose }: DigitalCardPreviewMod
               ref={closeRef}
               type="button"
               onClick={onClose}
-              className="absolute -top-2 -right-2 z-10 flex items-center justify-center w-11 h-11 rounded-full bg-card border-2 border-border text-foreground hover:bg-accent hover:border-primary/50 shadow-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="absolute -top-2 -end-2 z-10 flex items-center justify-center w-11 h-11 rounded-full bg-card border-2 border-border text-foreground hover:bg-accent hover:border-primary/50 shadow-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               aria-label={t("demo.closeWindow")}
             >
               <X className="w-5 h-5" />
@@ -128,7 +128,7 @@ export function DigitalCardPreviewModal({ open, onClose }: DigitalCardPreviewMod
             {/* 3D floating card — theme-aware shadow */}
             <FloatingCard className="w-full max-w-[340px]">
               <div className="digital-card-preview-card relative rounded-[1.75rem] p-[2px] bg-gradient-to-br from-neon-cyan/50 via-neon-purple/40 to-neon-pink/50 shadow-2xl [data-theme=light]:from-neon-cyan/40 [data-theme=light]:via-neon-purple/30 [data-theme=light]:to-neon-pink/40">
-              <div className="rounded-[calc(1.75rem-2px)] overflow-hidden bg-card border border-border">
+              <div className="rounded-[calc(1.75rem-2px)] overflow-hidden bg-card border border-border" dir="ltr" lang="en">
                 {/* Header strip */}
                 <div className="h-20 bg-gradient-to-br from-primary/20 via-transparent to-primary/10" />
                 <div className="relative px-6 pb-6 -mt-12">

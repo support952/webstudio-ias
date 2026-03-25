@@ -55,12 +55,16 @@ export default function PreviewMarketing() {
   };
 
   return (
-    <div className={`preview-page ${isLight ? "preview-light bg-background text-foreground" : "preview-dark bg-gradient-to-b from-slate-950 via-violet-950/20 to-slate-950 text-white"} min-h-screen`}>
+    <div
+      dir="ltr"
+      lang="en"
+      className={`preview-page ${isLight ? "preview-light bg-background text-foreground" : "preview-dark bg-gradient-to-b from-slate-950 via-violet-950/20 to-slate-950 text-white"} min-h-screen`}
+    >
       <SEOHead title="Marketing Campaign Demo" path="/preview/marketing" />
       <PreviewPageControls />
 
       {typeof window !== "undefined" && window.self !== window.top && (
-        <div className={`fixed top-0 left-0 right-0 z-50 h-9 backdrop-blur-sm border-b flex items-center justify-end px-4 ${
+        <div className={`fixed top-0 inset-x-0 z-50 h-9 backdrop-blur-sm border-b flex items-center justify-end px-4 ${
           isLight ? "bg-white/80 border-slate-200" : "bg-black/60 border-white/5"
         }`}>
           <button
@@ -261,7 +265,7 @@ export default function PreviewMarketing() {
             <div className="mt-7 flex flex-wrap gap-3">
               <button type="button" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold hover:scale-[1.02] transition-transform">
                 Duplicate this campaign
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 rtl:rotate-180" aria-hidden />
               </button>
               <button type="button" className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold border ${
                 isLight ? "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200" : "bg-white/10 text-slate-200 border-white/20 hover:bg-white/15"

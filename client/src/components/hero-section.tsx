@@ -1,5 +1,4 @@
-import { useState, useCallback, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -9,16 +8,30 @@ import { useCountUp } from "@/lib/use-count-up";
 import { useTheme } from "@/lib/theme";
 
 function HeroMeshBackground({ isLight }: { isLight: boolean }) {
-  const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 300], [1, 0.4]);
+  const meshRef = useRef<HTMLDivElement>(null);
+  const lightRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const update = () => {
+      const y = window.scrollY;
+      const o = Math.max(0.4, 1 - (y / 300) * 0.6);
+      if (meshRef.current) meshRef.current.style.opacity = String(o);
+      if (lightRef.current) lightRef.current.style.opacity = String(o);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-      <motion.div style={{ opacity }} className="hero-canvas-mesh absolute inset-0" />
+      <div ref={meshRef} className="hero-canvas-mesh absolute inset-0" style={{ opacity: 1 }} />
       {isLight ? (
-        <motion.div
+        <div
+          ref={lightRef}
           className="absolute inset-0"
           style={{
-            opacity,
+            opacity: 1,
             background:
               "radial-gradient(ellipse 55% 40% at 50% 20%, rgba(168,85,247,0.30), transparent 70%), radial-gradient(ellipse 50% 35% at 80% 35%, rgba(6,182,212,0.24), transparent 72%), radial-gradient(ellipse 45% 32% at 20% 45%, rgba(99,102,241,0.22), transparent 72%)",
             mixBlendMode: "screen",
@@ -32,7 +45,6 @@ function HeroMeshBackground({ isLight }: { isLight: boolean }) {
           backgroundSize: "64px 64px",
         }}
       />
-      {/* Animated gradient blobs */}
       <div className="hero-blob hero-blob-purple absolute w-[500px] h-[500px] rounded-full blur-3xl" />
       <div className="hero-blob hero-blob-cyan absolute w-[400px] h-[400px] rounded-full blur-3xl" />
       <div className="hero-blob hero-blob-pink absolute w-[350px] h-[350px] rounded-full blur-3xl" />
@@ -45,8 +57,6 @@ const HERO_STATS = [
   { valueKey: "hero.stat3.value", labelKey: "hero.stat3.label", accent: "text-emerald-400" },
   { valueKey: "hero.stat4.value", labelKey: "hero.stat4.label", accent: "text-amber-400" },
 ] as const;
-
-const stagger = { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const };
 
 function HeroStat({ valueKey, labelKey, accent, statsRef }: {
   valueKey: (typeof HERO_STATS)[number]["valueKey"];
@@ -84,7 +94,7 @@ export function HeroSection() {
   return (
     <section
       data-hero-section
-      className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden bg-transparent"
+      className="relative min-h-screen flex flex-col items-center justify-center pt-safe-nav overflow-hidden bg-transparent"
       data-testid="section-hero"
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
@@ -93,12 +103,7 @@ export function HeroSection() {
       <HeroLogoParallax mousePosition={mousePosition} />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24 flex flex-col items-center text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...stagger, delay: 0 }}
-          className="mb-6 sm:mb-8"
-        >
+        <div className="mb-6 sm:mb-8">
           <span
             className="hero-badge-glass inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-[11px] font-medium tracking-[0.2em] uppercase text-foreground"
             data-testid="badge-hero-tag"
@@ -106,12 +111,9 @@ export function HeroSection() {
             <span className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
             {t("hero.badge")}
           </span>
-        </motion.div>
+        </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...stagger, delay: 0.1 }}
+        <h1
           className="hero-headline-boutique font-bold text-foreground mb-3 sm:mb-4"
           data-testid="text-hero-title"
         >
@@ -146,31 +148,18 @@ export function HeroSection() {
                 </linearGradient>
               </defs>
             </svg>
-        </motion.h1>
+        </h1>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent mb-6 sm:mb-8"
-        />
+        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent mb-6 sm:mb-8" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...stagger, delay: 0.22 }}
+        <p
           className="hero-subtext text-muted-foreground max-w-xl mx-auto mb-8 sm:mb-10 px-1"
           data-testid="text-hero-subtitle"
         >
           {t("hero.subtitle")}
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...stagger, delay: 0.32 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <Link href="/pricing">
             <Button
               size="lg"
@@ -178,34 +167,31 @@ export function HeroSection() {
               data-testid="button-get-started"
             >
               {t("hero.cta1")}
-              <ArrowRight className="w-4 h-4 ms-2" />
+              <ArrowRight className="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden />
             </Button>
           </Link>
           <Link href="/contact">
             <Button
               variant="outline"
               size="lg"
-              className="hero-cta-secondary glass-float rounded-xl text-foreground px-6 sm:px-8 py-5 sm:py-6"
+              className="hero-cta-secondary rounded-xl border-2 border-primary text-foreground hover:bg-primary/10 px-6 sm:px-8 py-5 sm:py-6 font-semibold tracking-wide transition-colors duration-200"
               data-testid="button-contact-hero"
             >
               <Play className="w-4 h-4 me-2" />
               {t("hero.cta2")}
             </Button>
           </Link>
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
+      <div
         ref={statsRef}
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
         className="relative z-10 mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-3xl mx-auto px-4"
       >
         {HERO_STATS.map(({ valueKey, labelKey, accent }) => (
           <HeroStat key={valueKey} valueKey={valueKey} labelKey={labelKey} accent={accent} statsRef={statsRef} />
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }

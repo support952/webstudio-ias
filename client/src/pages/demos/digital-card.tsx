@@ -15,7 +15,7 @@ function CardPreview() {
             alt=""
             className="w-full h-full object-cover opacity-70"
           />
-          <div className="absolute bottom-0 left-0 right-0 p-5 pt-12 text-center">
+          <div className="absolute bottom-0 inset-x-0 p-5 pt-12 text-center">
             <div className="w-16 h-16 rounded-full border-2 border-white/40 overflow-hidden mx-auto mb-3 shadow-lg">
               <img
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"

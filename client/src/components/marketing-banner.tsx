@@ -44,7 +44,7 @@ export function MarketingBanner() {
                 data-testid="button-marketing-cta"
               >
                 {t("marketing.banner.cta")}
-                <ArrowRight className="w-4 h-4 ms-2" />
+                <ArrowRight className="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden />
               </Button>
             </div>
           </motion.div>

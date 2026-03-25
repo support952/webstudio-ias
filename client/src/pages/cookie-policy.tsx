@@ -15,7 +15,7 @@ export default function CookiePolicy() {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
 
-        <section id="main-content" className="pt-32 pb-16 sm:pt-40 sm:pb-20">
+        <section id="main-content" className="pt-safe-lg pb-16 sm:pb-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -62,7 +62,7 @@ export default function CookiePolicy() {
               <h2 className="text-lg font-semibold text-white mb-2">{t("cookies.contact.title")}</h2>
               <p className="text-slate-400 text-sm mb-4">{t("cookies.contact.description")}</p>
               <a href="https://mail.google.com/mail/?view=cm&to=support%40webstudio-ias.com" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline text-sm font-medium">
-                support@webstudio-ias.com
+                <span dir="ltr">support@webstudio-ias.com</span>
               </a>
             </motion.div>
           </div>
