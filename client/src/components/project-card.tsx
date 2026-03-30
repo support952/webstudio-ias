@@ -77,6 +77,8 @@ function DesktopFrame({ project }: { project: Project }) {
               <img
                 src={project.imageUrl}
                 alt=""
+                width={1280}
+                height={4384}
                 loading="lazy"
                 decoding="async"
                 sizes={IMG_SIZES}
@@ -136,9 +138,11 @@ function PhoneFrame({ project }: { project: Project }) {
               <img
                 src={project.imageUrl}
                 alt=""
+                width={1280}
+                height={4384}
                 loading="lazy"
                 decoding="async"
-                sizes="100vw"
+                sizes="260px"
                 className="relative z-20 w-full h-auto object-top"
               />
             )}

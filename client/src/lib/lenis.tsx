@@ -32,6 +32,7 @@ function usePrefersReducedMotion(): boolean {
  */
 export function LenisProvider({ children, options }: LenisProviderProps) {
   const reducedMotion = usePrefersReducedMotion();
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [enableLenis, setEnableLenis] = useState(false);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function LenisProvider({ children, options }: LenisProviderProps) {
     return () => clearTimeout(t);
   }, [reducedMotion]);
 
-  if (reducedMotion || !enableLenis) {
+  if (reducedMotion || isMobile || !enableLenis) {
     return <>{children}</>;
   }
   return (

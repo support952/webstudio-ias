@@ -1499,4 +1499,39 @@
       animation: none !important;
     }
   }
+
+  /* ── Mobile Performance: reduce GPU-heavy effects ── */
+  @media (max-width: 768px) {
+    /* Downgrade backdrop-blur on mobile to reduce GPU compositing */
+    .glass-nav,
+    .glass-card,
+    .glass-float,
+    [class*="backdrop-blur"] {
+      -webkit-backdrop-filter: blur(4px) !important;
+      backdrop-filter: blur(4px) !important;
+    }
+
+    /* Pause all infinite background animations on mobile */
+    .site-canvas,
+    .site-canvas::after,
+    .hero-canvas-mesh,
+    .hero-canvas-mesh::before,
+    .hero-canvas-mesh::after,
+    .hero-badge-glass,
+    .hero-logo-bg,
+    .trust-floating-card,
+    .animate-float,
+    .animate-float-delayed,
+    .animate-pulse-glow,
+    .animate-shimmer,
+    .animate-glow-pulse {
+      animation-play-state: paused !important;
+      animation: none !important;
+    }
+
+    /* Disable smooth scroll for better FPS */
+    html {
+      scroll-behavior: auto !important;
+    }
+  }
 }

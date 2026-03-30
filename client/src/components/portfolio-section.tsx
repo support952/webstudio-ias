@@ -239,10 +239,10 @@ export function PortfolioSection() {
                 dragElastic={0.2}
                 onDragEnd={handleMobileSwipe}
                 onTouchStart={() => { mobilePausedRef.current = true; }}
-                initial={{ opacity: 0, x: 30 }}
+                initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.6, ease: EASE }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
                 className="cursor-grab active:cursor-grabbing will-change-[opacity,transform]"
               >
                 <ProjectCard project={mobileProject} showInfo={false} device="phone" />
@@ -253,11 +253,11 @@ export function PortfolioSection() {
           <AnimatePresence mode="wait">
             <motion.div
               key={mobileIdx}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5, ease: EASE }}
-              className="mt-6 w-full text-center will-change-[opacity,transform]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="mt-6 w-full text-center"
             >
               <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground/50">
                 {mobileProject?.category}
