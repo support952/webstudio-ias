@@ -23,7 +23,7 @@ export const projectsData: Project[] = [
     category: "Transport & Logistics",
     techStack: ["Corporate", "Lead Generation", "Responsive"],
     videoUrl: "",
-    imageUrl: "/portfolio/screencapture-tr-vldymyr-vercel-app-2026-03-30-11_24_42.png",
+    imageUrl: "/portfolio/screencapture-tr-vldymyr-vercel-app-2026-03-30-11_24_42.webp",
     liveUrl: "https://tr-vldymyr.vercel.app",
     translations: {
       he: {
@@ -53,7 +53,7 @@ export const projectsData: Project[] = [
     category: "Creative Portfolio",
     techStack: ["Dark Aesthetic", "Gallery Grid", "Minimalist"],
     videoUrl: "",
-    imageUrl: "/portfolio/screencapture-yulibity-en-2026-03-30-11_11_00.png",
+    imageUrl: "/portfolio/screencapture-yulibity-en-2026-03-30-11_11_00.webp",
     liveUrl: "https://yulibity.com/",
     translations: {
       he: {
@@ -83,7 +83,7 @@ export const projectsData: Project[] = [
     category: "Global Corporate & Legal",
     techStack: ["Multilingual", "Legal-Tech", "Complex Architecture"],
     videoUrl: "",
-    imageUrl: "/portfolio/screencapture-immigrationadviceservice-org-2026-03-30-11_10_00.png",
+    imageUrl: "/portfolio/screencapture-immigrationadviceservice-org-2026-03-30-11_10_00.webp",
     liveUrl: "https://immigrationadviceservice.org/",
     translations: {
       he: {
@@ -113,7 +113,7 @@ export const projectsData: Project[] = [
     category: "Wine Tourism & Events",
     techStack: ["RTL Design", "Booking System", "Storytelling"],
     videoUrl: "",
-    imageUrl: "/portfolio/screencapture-yachad-lechaim-2026-03-30-11_20_16.png",
+    imageUrl: "/portfolio/screencapture-yachad-lechaim-2026-03-30-11_20_16.webp",
     liveUrl: "https://yachad-lechaim.co.il",
     translations: {
       he: {
@@ -143,7 +143,7 @@ export const projectsData: Project[] = [
     category: "Commercial Services",
     techStack: ["Service Platform", "B2B", "Multi-Section"],
     videoUrl: "",
-    imageUrl: "/portfolio/screencapture-ljbcommercialgas-vercel-app-2026-03-30-11_25_15.png",
+    imageUrl: "/portfolio/screencapture-ljbcommercialgas-vercel-app-2026-03-30-11_25_15.webp",
     liveUrl: "https://ljbcommercialgas.vercel.app",
     translations: {
       he: {
