@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Globe, LogOut, User, LayoutDashboard, PlusCircle, Settings, Sun, Moon, type LucideIcon } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User, LayoutDashboard, PlusCircle, Settings, Sun, Moon, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
-import { useI18n, languageNames, type Language } from "@/lib/i18n";
+import { useI18n, type Language } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
+
+const languages: { code: Language; flag: string; label: string }[] = [
+  { code: "en", flag: "\u{1F1EC}\u{1F1E7}", label: "EN" },
+  { code: "he", flag: "\u{1F1EE}\u{1F1F1}", label: "HE" },
+  { code: "es", flag: "\u{1F1EA}\u{1F1F8}", label: "ES" },
+  { code: "fr", flag: "\u{1F1EB}\u{1F1F7}", label: "FR" },
+];
 
 const guestLinks: { labelKey: string; href: string }[] = [
   { labelKey: "nav.home", href: "/" },
@@ -27,7 +34,6 @@ const userLinks: { labelKey: string; href: string; icon: LucideIcon }[] = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { t, lang, setLang } = useI18n();
   const { user, logout } = useAuth();
@@ -44,14 +50,13 @@ export function Navbar() {
 
   useEffect(() => {
     const handleClick = () => {
-      setLangOpen(false);
       setUserMenuOpen(false);
     };
-    if (langOpen || userMenuOpen) {
+    if (userMenuOpen) {
       document.addEventListener("click", handleClick);
       return () => document.removeEventListener("click", handleClick);
     }
-  }, [langOpen, userMenuOpen]);
+  }, [userMenuOpen]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -117,54 +122,32 @@ export function Navbar() {
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-foreground gap-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setLangOpen(!langOpen);
-                }}
-                aria-label={t("nav.selectLanguage")}
-                data-testid="button-language-switcher"
-              >
-                <Globe className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs uppercase">{lang}</span>
-                <ChevronDown className="w-3 h-3" />
-              </Button>
-
-              <AnimatePresence>
-                {langOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    className="absolute end-0 top-full mt-1 w-36 glass-card rounded-md py-1 z-50"
-                    data-testid="dropdown-language"
+            <div
+              className="flex items-center gap-0.5 rounded-full border border-border/60 bg-card/60 p-0.5 backdrop-blur-sm"
+              role="radiogroup"
+              aria-label={t("nav.selectLanguage")}
+              data-testid="language-switcher"
+            >
+              {languages.map(({ code, flag, label }) => {
+                const isActive = lang === code;
+                return (
+                  <button
+                    key={code}
+                    role="radio"
+                    aria-checked={isActive}
+                    onClick={() => setLang(code)}
+                    className={`relative flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
+                    }`}
+                    data-testid={`button-lang-${code}`}
                   >
-                    {(Object.entries(languageNames) as [Language, string][]).map(
-                      ([code, name]) => (
-                        <button
-                          key={code}
-                          onClick={() => {
-                            setLang(code);
-                            setLangOpen(false);
-                          }}
-                          className={`w-full text-start px-3 py-2 text-sm transition-colors ${
-                            lang === code
-                              ? "text-foreground bg-accent"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                          }`}
-                          data-testid={`button-lang-${code}`}
-                        >
-                          {name}
-                        </button>
-                      )
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <span className="text-sm leading-none">{flag}</span>
+                    <span className="hidden sm:inline">{label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {user ? (
