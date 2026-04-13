@@ -12,10 +12,10 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 const { sendContactEmail } = await import("../server/email.js");
 
 const testData = {
-  name: "בדיקה – Test User",
+  name: "Test User",
   email: "test@example.com",
-  subject: "בדיקת שליחת מייל / Test contact email",
-  message: "זו פניה לבדיקה. אני רוצה לראות את שני הפרומפטים (Replit ו-Cursor) במייל.",
+  subject: "Test contact email",
+  message: "This is a test inquiry. I want to see both prompts (Replit and Cursor) in the email.",
   service: "websites" as const,
 };
 

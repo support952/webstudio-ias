@@ -1,4 +1,4 @@
-export const SUPPORTED_LANGUAGES = ["he", "en", "es", "fr"] as const;
+export const SUPPORTED_LANGUAGES = ["en", "de", "es", "fr"] as const;
 
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -26,10 +26,10 @@ export const projectsData: Project[] = [
     imageUrl: "/portfolio/screencapture-tr-vldymyr-vercel-app-2026-03-30-11_24_42.webp",
     liveUrl: "https://tr-vldymyr.vercel.app",
     translations: {
-      he: {
-        title: "TR Vldymyr — לוגיסטיקה והובלה",
+      de: {
+        title: "TR Vldymyr — Logistik & Transport",
         description:
-          "אתר תדמית לחברת הובלות מקצועית. עיצוב נקי עם דגש על אמינות, שירות מהיר ונוכחות דיגיטלית חזקה.",
+          "Eine Unternehmenswebsite für ein professionelles Transportunternehmen. Klares Design mit Schwerpunkt auf Zuverlässigkeit, schnellem Service und starker digitaler Präsenz.",
       },
       en: {
         title: "TR Vldymyr — Logistics",
@@ -56,10 +56,10 @@ export const projectsData: Project[] = [
     imageUrl: "/portfolio/screencapture-yulibity-en-2026-03-30-11_11_00.webp",
     liveUrl: "https://yulibity.com/",
     translations: {
-      he: {
-        title: "Yuli Bity — אמנות קעקועים ועיצוב",
+      de: {
+        title: "Yuli Bity — Tattoo-Kunst & Design",
         description:
-          "אתר תיק עבודות לאמנית קעקועים עם עיצוב כהה ומינימליסטי. גלריית תמונות אינטראקטיבית, אסתטיקה פרימיום וחוויית משתמש חלקה.",
+          "Ein dunkles, redaktionelles Portfolio für eine Tattoo-Künstlerin. Interaktive Bildergalerie, Premium-Ästhetik und nahtlose Benutzererfahrung.",
       },
       en: {
         title: "Yuli Bity — Tattoo Art & Design",
@@ -86,10 +86,10 @@ export const projectsData: Project[] = [
     imageUrl: "/portfolio/screencapture-immigrationadviceservice-org-2026-03-30-11_10_00.webp",
     liveUrl: "https://immigrationadviceservice.org/",
     translations: {
-      he: {
-        title: "שירותי ייעוץ הגירה (IAS)",
+      de: {
+        title: "Immigration Advice Service (IAS)",
         description:
-          "האתר הרשמי של פירמת עורכי הדין המובילה בבריטניה להגירה. פלטפורמת תוכן ענקית המספקת ייעוץ משפטי ושירותי ויזה ברחבי העולם.",
+          "Die führende britische Einwanderungskanzlei-Website. Eine umfassende, inhaltsorientierte Plattform für Rechtsberatung und Visa-Dienstleistungen weltweit.",
       },
       en: {
         title: "Immigration Advice Service (IAS)",
@@ -116,10 +116,10 @@ export const projectsData: Project[] = [
     imageUrl: "/portfolio/screencapture-yachad-lechaim-2026-03-30-11_20_16.webp",
     liveUrl: "https://yachad-lechaim.co.il",
     translations: {
-      he: {
-        title: "יחד לחיים — חווית יקב בוטיק",
+      de: {
+        title: "Yachad Lechaim — Weingut-Erlebnis",
         description:
-          "אתר חוויתי ליקב ישראלי עם מסלולי סיורים, הזמנת קבוצות ועיצוב סיפורי שמזמין לטעום את הכרם מבפנים.",
+          "Eine immersive israelische Weingut-Website mit geführten Touren, Gruppenbuchungen und erzählerischem Design, das den Weinberg zum Leben erweckt.",
       },
       en: {
         title: "Yachad Lechaim — Winery Experience",
@@ -146,10 +146,10 @@ export const projectsData: Project[] = [
     imageUrl: "/portfolio/screencapture-ljbcommercialgas-vercel-app-2026-03-30-11_25_15.webp",
     liveUrl: "https://ljbcommercialgas.vercel.app",
     translations: {
-      he: {
-        title: "LJB — שירותי גז מסחריים",
+      de: {
+        title: "LJB Commercial Gas",
         description:
-          "אתר שירות מקצועי לחברת גז מסחרית בבריטניה. פלטפורמה מקיפה עם מערכת הזמנות, סקירת שירותים ועיצוב אמין.",
+          "Eine professionelle Service-Website für ein britisches Gasunternehmen. Umfassende Plattform mit Buchungssystem, Serviceübersicht und vertrauenswürdigem Design.",
       },
       en: {
         title: "LJB Commercial Gas",

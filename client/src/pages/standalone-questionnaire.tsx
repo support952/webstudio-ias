@@ -164,7 +164,7 @@ export default function StandaloneQuestionnaire() {
                   {t("questionnaire.service_label")}
                 </p>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Questionnaire language">
-                  {(["en", "he", "es", "fr"] as const).map((code) => (
+                  {(["en", "de", "es", "fr"] as const).map((code) => (
                     <button
                       key={code}
                       type="button"

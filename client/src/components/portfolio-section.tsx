@@ -34,7 +34,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PortfolioSection() {
   const { t, lang } = useI18n();
-  const isRtl = lang === "he";
+  const isRtl = false;
 
   // ── Desktop state ──
   const [centerIdx, setCenterIdx] = useState(0);
@@ -214,7 +214,7 @@ export function PortfolioSection() {
                 isRtl ? "flex-row-reverse" : ""
               }`}
             >
-              {isRtl ? "צפה בפרויקט" : "View Project"}
+              {"View Project"}
               {isRtl ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
             </a>
 
@@ -274,7 +274,7 @@ export function PortfolioSection() {
                   isRtl ? "flex-row-reverse" : ""
                 }`}
               >
-                {isRtl ? "צפה בפרויקט" : "View Project"}
+                {"View Project"}
                 {isRtl ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
               </a>
             </motion.div>

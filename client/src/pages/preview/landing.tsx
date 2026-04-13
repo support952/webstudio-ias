@@ -117,7 +117,7 @@ export default function PreviewLanding() {
         </div>
       </section>
 
-      {/* Image strip — גלריית תמונות */}
+      {/* Image strip — Image gallery */}
       <section className="py-20 px-4 border-y border-white/5">
         <div className="max-w-6xl mx-auto">
           <p className="text-slate-500 text-center text-sm font-medium mb-12 tracking-wide uppercase">See what we've built</p>
@@ -157,7 +157,7 @@ export default function PreviewLanding() {
         </div>
       </section>
 
-      {/* Gallery — גריד תמונות מושקע */}
+      {/* Gallery — Premium image grid */}
       <section className="py-24 px-4 border-y border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -186,7 +186,7 @@ export default function PreviewLanding() {
         </div>
       </section>
 
-      {/* Features — עם תמונות */}
+      {/* Features — with images */}
       <section id="features" className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -223,7 +223,7 @@ export default function PreviewLanding() {
         </div>
       </section>
 
-      {/* How it works — עם תמונות */}
+      {/* How it works — with images */}
       <section className="relative py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-slate-900/50" />
         <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
@@ -287,7 +287,7 @@ export default function PreviewLanding() {
         </div>
       </section>
 
-      {/* Showcase — תמונות גדולות */}
+      {/* Showcase — Large images */}
       <section className="py-24 px-4 border-t border-white/5 bg-slate-900/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
@@ -309,7 +309,7 @@ export default function PreviewLanding() {
               </div>
             ))}
           </div>
-          {/* שורה שנייה של תמונות */}
+          {/* Second row of images */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=500&h=320&fit=crop",

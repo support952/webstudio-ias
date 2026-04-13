@@ -22,18 +22,18 @@ function serviceDisplay(service?: string | null): string {
   return SERVICE_LABELS[service] || service;
 }
 
-/** Inbox subject / summary line for contact funnel stage notifications (Hebrew). */
-export function contactStageSummaryHebrew(name: string, stage: string): string {
-  const who = name.trim() || "לקוח";
+/** Inbox subject / summary line for contact funnel stage notifications. */
+export function contactStageSummary(name: string, stage: string): string {
+  const who = name.trim() || "Client";
   switch (stage) {
     case "step_1_to_step_2":
-      return `${who} סיים שלב 1`;
+      return `${who} completed step 1`;
     case "step_2_to_step_3_ai":
-      return `${who} סיים שלב 2`;
+      return `${who} completed step 2`;
     case "step_3_ai_to_completed":
-      return `${who} סיים שלב 3`;
+      return `${who} completed step 3`;
     case "step_2_to_completed":
-      return `${who} סיים שלב 2 והשלים את הפנייה (ללא צ'אט AI)`;
+      return `${who} completed step 2 and finished inquiry (without AI chat)`;
     default:
       return `${who} — ${stage}`;
   }
@@ -65,14 +65,14 @@ function formatChatTranscriptHtml(
     const p = "margin:0.55em 0;color:#111827;";
     const lbl = "color:#0f172a;font-weight:700;";
     return `
-      <h3 style="color:#1e293b;">שיחת סוכן AI (שלב 3)</h3>
+      <h3 style="color:#1e293b;">AI Agent Chat (Step 3)</h3>
       <div style="${box}">
         ${messages
           .map((m) => {
             const text = esc(String(m.content ?? ""));
             const hasImage = !!m.imageDataUrl;
-            const who = m.role === "user" ? "לקוח" : "סוכן";
-            return `<p style="${p}"><strong style="${lbl}">${esc(who)}:</strong> ${text}${hasImage ? " [תמונה מצורפת]" : ""}</p>`;
+            const who = m.role === "user" ? "Client" : "Agent";
+            return `<p style="${p}"><strong style="${lbl}">${esc(who)}:</strong> ${text}${hasImage ? " [Image attached]" : ""}</p>`;
           })
           .join("")}
       </div>`;
@@ -85,7 +85,7 @@ function formatAiSummaryHtml(esc: (s: string) => string, summary: string | null 
   const s = summary?.trim();
   if (!s) return "";
   return `
-      <h3 style="color:#1e293b;">סיכום AI מובנה (לצוות)</h3>
+      <h3 style="color:#1e293b;">AI Structured Summary (For Team)</h3>
       <pre style="white-space: pre-wrap; font-family: Arial, Helvetica, sans-serif; background-color: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 8px; font-size: 14px; line-height: 1.5;">${esc(s)}</pre>`;
 }
 
@@ -152,14 +152,14 @@ export async function sendContactEmail(data: {
       );
       if (attachmentList.length > 0) {
         questionnaireSection += `
-      <h3>קבצים מצורפים (שאלון)</h3>
+      <h3>Attachments (Questionnaire)</h3>
       <ul>
         ${attachmentList.map((a) => `<li>${esc(a.name || "file")}</li>`).join("")}
       </ul>`;
       }
       if (questionnaireEntries.length > 0) {
         questionnaireSection = (questionnaireSection || "") + `
-      <h3>שאלון (שלב 2) – שאלות רלוונטיות לבניית האתר</h3>
+      <h3>Questionnaire (Step 2)</h3>
       <ul>
         ${questionnaireEntries.map(([k, v]) => `<li><strong>${esc(k)}:</strong> ${esc(String(v))}</li>`).join("")}
       </ul>`;
@@ -172,7 +172,7 @@ export async function sendContactEmail(data: {
   chatSection = formatChatTranscriptHtml(esc, data.chatTranscript);
   const aiSummarySection = formatAiSummaryHtml(esc, data.aiSummary);
 
-  // בלוק פרומפט לאתר בלבד – בלי פרטים אישיים, רק תוכן להעתקה לבניית האתר
+  // Prompt block for website only — no personal info, just content to copy for building the site
   const promptForWebsiteLines: string[] = [];
   promptForWebsiteLines.push(`Requested service: ${serviceLabel || data.service || "—"}`);
   promptForWebsiteLines.push(`Subject: ${data.subject}`);
@@ -205,9 +205,9 @@ export async function sendContactEmail(data: {
   }
   const promptForWebsite = promptForWebsiteLines.join("\n");
 
-  // פרומפט מותאם ל-Replit (העתקה ל-Replit)
+  // Prompt tailored for Replit
   const promptReplit = `[Replit] Build a website / web app with the following requirements. Use Replit for hosting and deployment.\n\n${promptForWebsite}`;
-  // פרומפט מותאם ל-Cursor (העתקה ל-Cursor)
+  // Prompt tailored for Cursor
   const promptCursor = `[Cursor] Build a website / web app with the following requirements. Use the codebase and AI assistant in Cursor.\n\n${promptForWebsite}`;
 
   const emailAttachments: { filename: string; content: Buffer }[] = [];
@@ -242,9 +242,9 @@ export async function sendContactEmail(data: {
     subject: `New Contact: ${data.subject} [${serviceLabel || "Inquiry"}]`,
     attachments: emailAttachments.length > 0 ? emailAttachments : undefined,
     html: `
-      <h2>פניה חדשה</h2>
+      <h2>New Inquiry</h2>
 
-      <h3>פרטים אישיים (שלב 1)</h3>
+      <h3>Personal Details (Step 1)</h3>
       <p><strong>Name:</strong> ${esc(data.name)}</p>
       <p><strong>Email:</strong> ${esc(data.email)}</p>
       <p><strong>Requested service:</strong> ${esc(serviceLabel || data.service || "—")}</p>
@@ -258,13 +258,13 @@ export async function sendContactEmail(data: {
       ${aiSummarySection}
 
       <hr/>
-      <h3>פרומפטים להעתקה (בלי פרטים אישיים)</h3>
-      <p style="color: #666; font-size: 0.9em;">העתק את הבלוק המתאים לסביבה שבה את בונה את האתר.</p>
+      <h3>Prompts to copy (without personal info)</h3>
+      <p style="color: #666; font-size: 0.9em;">Copy the block for the environment you're building the site in.</p>
 
-      <h4 style="margin-top: 1em;">לשימוש ב-Replit</h4>
+      <h4 style="margin-top: 1em;">For Replit</h4>
       <pre style="white-space: pre-wrap; font-family: monospace; background: #1a1a1a; color: #e0e0e0; padding: 1rem; border-radius: 6px; border: 1px solid #333;">${esc(promptReplit)}</pre>
 
-      <h4 style="margin-top: 1em;">לשימוש ב-Cursor</h4>
+      <h4 style="margin-top: 1em;">For Cursor</h4>
       <pre style="white-space: pre-wrap; font-family: monospace; background: #1a1a1a; color: #e0e0e0; padding: 1rem; border-radius: 6px; border: 1px solid #333;">${esc(promptCursor)}</pre>
     `,
   });
@@ -342,18 +342,18 @@ export async function sendContactStageEmail(data: {
 
   const chatSection = formatChatTranscriptHtml(esc, data.chatTranscript);
   const aiSummarySection = formatAiSummaryHtml(esc, data.aiSummary);
-  const stageSummary = contactStageSummaryHebrew(data.name, data.stage);
+  const stageSummary = contactStageSummary(data.name, data.stage);
 
   const textLines = [
     stageSummary,
     "",
-    `שלב פנימי: ${data.stage}`,
-    `שם: ${data.name}`,
-    `אימייל: ${data.email}`,
+    `Internal stage: ${data.stage}`,
+    `Name: ${data.name}`,
+    `Email: ${data.email}`,
   ];
-  if (data.subject) textLines.push(`נושא: ${data.subject}`);
-  if (serviceLabel || data.service) textLines.push(`שירות: ${serviceLabel || data.service}`);
-  if (data.message) textLines.push(`הודעה: ${data.message}`);
+  if (data.subject) textLines.push(`Subject: ${data.subject}`);
+  if (serviceLabel || data.service) textLines.push(`Service: ${serviceLabel || data.service}`);
+  if (data.message) textLines.push(`Message: ${data.message}`);
   if (data.chatTranscript) {
     try {
       const msgs =
@@ -361,9 +361,9 @@ export async function sendContactStageEmail(data: {
           ? (JSON.parse(data.chatTranscript) as Array<{ role?: string; content?: string }>)
           : (data.chatTranscript as Array<{ role?: string; content?: string }>);
       if (Array.isArray(msgs) && msgs.length > 0) {
-        textLines.push("", "שיחת סוכן AI:");
+        textLines.push("", "AI Agent Chat:");
         for (const m of msgs) {
-          const who = m.role === "user" ? "לקוח" : "סוכן";
+          const who = m.role === "user" ? "Client" : "Agent";
           textLines.push(`  [${who}] ${String(m.content ?? "")}`);
         }
       }
@@ -372,7 +372,7 @@ export async function sendContactStageEmail(data: {
     }
   }
   if (data.aiSummary?.trim()) {
-    textLines.push("", "סיכום AI מובנה:", data.aiSummary.trim());
+    textLines.push("", "AI Structured Summary:", data.aiSummary.trim());
   }
   const textBody = textLines.join("\n");
 
@@ -383,7 +383,7 @@ export async function sendContactStageEmail(data: {
     text: textBody,
     html: `
       <h2>${esc(stageSummary)}</h2>
-      <p><strong>שלב (פנימי):</strong> ${esc(data.stage)}</p>
+      <p><strong>Stage (internal):</strong> ${esc(data.stage)}</p>
       <p><strong>Name:</strong> ${esc(data.name)}</p>
       <p><strong>Email:</strong> ${esc(data.email)}</p>
       ${data.subject ? `<p><strong>Subject:</strong> ${esc(data.subject)}</p>` : ""}

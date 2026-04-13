@@ -186,7 +186,7 @@ export default function ContactAIChat() {
   async function handleSend() {
     if (!data || (!input.trim() && !pendingImage) || loading || summaryDone) return;
 
-    const userMsg: Message = { role: "user", content: input.trim() || "(תמונה)", imageDataUrl: pendingImage || undefined };
+    const userMsg: Message = { role: "user", content: input.trim() || "(image)", imageDataUrl: pendingImage || undefined };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
@@ -200,7 +200,7 @@ export default function ContactAIChat() {
           return {
             role: "user" as const,
             content: [
-              { type: "text" as const, text: m.content === "(תמונה)" ? "" : m.content },
+              { type: "text" as const, text: m.content === "(image)" ? "" : m.content },
               { type: "image_url" as const, image_url: { url: m.imageDataUrl } },
             ],
           };

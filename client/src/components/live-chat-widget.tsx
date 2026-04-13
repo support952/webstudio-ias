@@ -21,7 +21,7 @@ const FAQ_KEYS = [
 
 const LANG_TO_HINT: Record<Language, string> = {
   en: "English",
-  he: "Hebrew",
+  de: "German",
   es: "Spanish",
   fr: "French",
 };

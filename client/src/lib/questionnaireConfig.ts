@@ -1,6 +1,6 @@
 /**
- * שאלון מותאם לפי סוג השירות – סוג המוצר כבר נקבע בשאלה "שירות מבוקש",
- * לכן כאן רק שאלות רלוונטיות ללא כפילות.
+ * Service-specific questionnaire — the product type is already selected
+ * in the "requested service" question, so only relevant questions appear here.
  */
 export type QuestionType = "text" | "textarea" | "select" | "radio";
 
@@ -49,7 +49,7 @@ export type ServiceType =
   | "digital_business_card"
   | "marketing_ppc";
 
-/** שאלות לכל שירות – מותאם לבחירה: אתרים, כרטיס ביקור דיגיטלי, קמפיינים (PPC) */
+/** Questions per service — websites, digital business card, marketing campaigns (PPC) */
 export const QUESTIONNAIRE_BY_SERVICE: Record<ServiceType, QuestionDef[]> = {
   websites: [
     { id: "site_type", type: "select", labelKey: "questionnaire.websites.site_type", required: true, options: [

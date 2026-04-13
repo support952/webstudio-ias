@@ -8,7 +8,7 @@ import {
 } from "react";
 import enJson from "@/locales/en.json";
 
-export type Language = "en" | "es" | "fr" | "he";
+export type Language = "en" | "es" | "fr" | "de";
 
 type Messages = Record<string, string>;
 
@@ -34,8 +34,8 @@ const localeLoaders: Record<Language, () => Promise<Messages>> = {
     const m = await import("@/locales/fr.json");
     return { ...en, ...m.default };
   },
-  he: async () => {
-    const m = await import("@/locales/he.json");
+  de: async () => {
+    const m = await import("@/locales/de.json");
     return { ...en, ...m.default };
   },
 };
@@ -56,7 +56,7 @@ export function I18nProvider({
   const [lang, setLangState] = useState<Language>(initialLang);
   const [messages, setMessages] = useState<Messages>(initialMessages);
 
-  const dir = lang === "he" ? "rtl" : "ltr";
+  const dir = "ltr";
 
   const setLang = useCallback((newLang: Language) => {
     if (newLang === lang) return;
@@ -104,5 +104,5 @@ export const languageNames: Record<Language, string> = {
   en: "English",
   es: "Español",
   fr: "Français",
-  he: "\u05e2\u05d1\u05e8\u05d9\u05ea",
+  de: "Deutsch",
 };

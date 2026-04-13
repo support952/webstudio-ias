@@ -8,7 +8,7 @@ import {
   sendContactEmail,
   sendAiSummaryEmail,
   sendContactStageEmail,
-  contactStageSummaryHebrew,
+  contactStageSummary,
 } from "./email";
 import bcrypt from "bcryptjs";
 import OpenAI from "openai";
@@ -354,7 +354,7 @@ export async function registerRoutes(
             ? payload.chatTranscript
             : JSON.stringify(payload.chatTranscript);
 
-      const stageSummary = contactStageSummaryHebrew(payload.name, payload.stage);
+      const stageSummary = contactStageSummary(payload.name, payload.stage);
 
       if (
         process.env.NODE_ENV !== "production" &&
@@ -405,10 +405,10 @@ export async function registerRoutes(
 
       const productTypeLabel =
         productType === "digital_business_card"
-          ? "Digital Business Card (כרטיס ביקור דיגיטלי)"
+          ? "Digital Business Card"
           : productType === "marketing_ppc"
             ? "Marketing campaigns (PPC)"
-            : "Websites (אתרים)";
+            : "Websites";
 
       if (!hasOpenAIKey()) {
         console.error("[AI Chat] OPENAI_API_KEY is missing or empty. Set it in .env and restart the server.");

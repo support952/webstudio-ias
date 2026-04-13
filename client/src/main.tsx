@@ -6,7 +6,7 @@ import { I18nProvider, loadMessagesForLang, type Language } from "./lib/i18n";
 
 function getStoredLang(): Language {
   const v = localStorage.getItem("lang");
-  if (v === "en" || v === "es" || v === "fr" || v === "he") return v;
+  if (v === "en" || v === "es" || v === "fr" || v === "de") return v;
   return "en";
 }
 

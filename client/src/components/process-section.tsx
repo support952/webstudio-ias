@@ -21,7 +21,7 @@ const itemVariants = {
 
 export function ProcessSection() {
   const { t, lang } = useI18n();
-  const isRtl = lang === "he";
+  const isRtl = false;
 
   return (
     <section

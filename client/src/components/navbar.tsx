@@ -10,7 +10,7 @@ import { useTheme } from "@/lib/theme";
 
 const languages: { code: Language; flag: string; label: string }[] = [
   { code: "en", flag: "\u{1F1EC}\u{1F1E7}", label: "EN" },
-  { code: "he", flag: "\u{1F1EE}\u{1F1F1}", label: "HE" },
+  { code: "de", flag: "\u{1F1E9}\u{1F1EA}", label: "DE" },
   { code: "es", flag: "\u{1F1EA}\u{1F1F8}", label: "ES" },
   { code: "fr", flag: "\u{1F1EB}\u{1F1F7}", label: "FR" },
 ];

@@ -20,7 +20,7 @@ export const ProjectCard = memo(function ProjectCard({
     project.translations[lang as SupportedLanguage] ??
     project.translations.en;
 
-  const isRtl = lang === "he";
+  const isRtl = false;
 
   return (
     <div className="group flex flex-col items-center">
@@ -49,7 +49,7 @@ export const ProjectCard = memo(function ProjectCard({
               isRtl ? "flex-row-reverse" : ""
             }`}
           >
-            {isRtl ? "צפה בפרויקט" : "View Project"}
+            {"View Project"}
             {isRtl ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
           </a>
         </div>

@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const c = fs.readFileSync(path.join(__dirname, "../client/src/lib/i18n.tsx"), "utf8");
 
-const langs = ["en", "es", "fr", "he"];
+const langs = ["en", "es", "fr", "de"];
 const blocks = {};
 
 for (const lang of langs) {
@@ -26,7 +26,7 @@ for (const lang of langs) {
 }
 
 const enKeys = blocks["en"];
-for (const lang of ["es", "fr", "he"]) {
+for (const lang of ["es", "fr", "de"]) {
   const missing = [...enKeys].filter((k) => !blocks[lang].has(k)).sort();
   const extra = [...blocks[lang]].filter((k) => !enKeys.has(k)).sort();
   console.log(`\n=== ${lang.toUpperCase()} missing (${missing.length}) ===`);
