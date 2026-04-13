@@ -48,6 +48,7 @@ const Pricing = lazy(() => import("@/pages/pricing"));
 const Contact = lazy(() => import("@/pages/contact"));
 const ContactQuestionnaire = lazy(() => import("@/pages/contact-questionnaire"));
 const ContactAIChat = lazy(() => import("@/pages/contact-ai-chat"));
+const StandaloneQuestionnaire = lazy(() => import("@/pages/standalone-questionnaire"));
 const Checkout = lazy(() => import("@/pages/checkout"));
 const Marketing = lazy(() => import("@/pages/marketing"));
 const Products = lazy(() => import("@/pages/products"));
@@ -119,6 +120,7 @@ function Router() {
         <Route path="/about">{() => <AuthRedirect component={About} />}</Route>
         <Route path="/work">{() => <AuthRedirect component={Work} />}</Route>
         <Route path="/pricing">{() => <AuthRedirect component={Pricing} />}</Route>
+        <Route path="/questionnaire" component={StandaloneQuestionnaire} />
         <Route path="/contact/questionnaire">{() => <AuthRedirect component={ContactQuestionnaire} />}</Route>
         <Route path="/contact/ai-chat">{() => <AuthRedirect component={ContactAIChat} />}</Route>
         <Route path="/contact">{() => <AuthRedirect component={Contact} />}</Route>
