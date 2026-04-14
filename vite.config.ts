@@ -32,7 +32,9 @@ export default defineConfig({
     emptyOutDir: true,
     target: "es2020",
     minify: "esbuild",
+    cssMinify: "esbuild",
     reportCompressedSize: false,
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {

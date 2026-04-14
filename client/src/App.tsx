@@ -7,10 +7,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/lib/theme";
 import { LenisProvider, useLenis } from "@/lib/lenis";
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
+import { LazyMotion, domAnimation } from "framer-motion";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { FlowLine } from "@/components/flow-line";
-import { ScrollProgress } from "@/components/scroll-progress";
+import { WhatsAppBubble } from "@/components/whatsapp-bubble";
+
+// Defer non-critical visual elements
+const FlowLine = lazy(() => import("@/components/flow-line").then((m) => ({ default: m.FlowLine })));
+const ScrollProgress = lazy(() => import("@/components/scroll-progress").then((m) => ({ default: m.ScrollProgress })));
 
 const LiveChatWidgetLazy = lazy(() =>
   import("@/components/live-chat-widget").then((m) => ({ default: m.LiveChatWidget })),
@@ -113,7 +116,6 @@ function PageLoader() {
 function Router() {
   return (
     <Suspense fallback={<PageLoader />}>
-    <AnimatePresence mode="wait">
       <Switch>
         <Route path="/">{() => <HomeOrDashboard />}</Route>
         <Route path="/services">{() => <AuthRedirect component={Services} />}</Route>
@@ -145,7 +147,6 @@ function Router() {
         <Route path="/admin" component={AdminPanel} />
         <Route component={NotFound} />
       </Switch>
-    </AnimatePresence>
     </Suspense>
   );
 }
@@ -160,13 +161,14 @@ function App() {
             <ErrorBoundary>
               <LenisProvider>
                 <div className="site-canvas" aria-hidden />
-                <ScrollProgress />
-                <FlowLine />
+                <Suspense fallback={null}><ScrollProgress /></Suspense>
+                <Suspense fallback={null}><FlowLine /></Suspense>
                 <div className="relative z-10 min-h-screen min-h-full" data-unified-canvas>
                   <ScrollToTop />
                   <Toaster />
                   <Router />
                   <DeferredLiveChatWidget />
+                  <WhatsAppBubble />
                 </div>
               </LenisProvider>
             </ErrorBoundary>

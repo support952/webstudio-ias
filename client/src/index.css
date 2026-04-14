@@ -900,28 +900,30 @@
     -webkit-backdrop-filter: none !important;
   }
 
-  /* Hero: animated gradient blobs */
+  /* Hero: animated gradient blobs — staggered start for smoother LCP */
   .hero-blob {
-    opacity: 0.2;
+    opacity: 0.12;
     mix-blend-mode: screen;
+    will-change: transform;
+    contain: strict;
   }
   .hero-blob-purple {
     background: hsl(263 70% 70%);
     top: 10%;
     left: 15%;
-    animation: hero-blob-float-1 8s ease-in-out infinite alternate;
+    animation: hero-blob-float-1 8s ease-in-out 0.5s infinite alternate;
   }
   .hero-blob-cyan {
     background: hsl(185 80% 65%);
     top: 30%;
     right: 10%;
-    animation: hero-blob-float-2 12s ease-in-out infinite alternate;
+    animation: hero-blob-float-2 12s ease-in-out 1s infinite alternate;
   }
   .hero-blob-pink {
     background: hsl(320 70% 70%);
     bottom: 15%;
     left: 40%;
-    animation: hero-blob-float-3 10s ease-in-out infinite alternate;
+    animation: hero-blob-float-3 10s ease-in-out 1.5s infinite alternate;
   }
   @keyframes hero-blob-float-1 {
     0% { transform: translate(0, 0) scale(1); }
@@ -1530,4 +1532,10 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* ── Performance: skip rendering for below-fold sections until visible ── */
+section:not([data-hero-section]) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }

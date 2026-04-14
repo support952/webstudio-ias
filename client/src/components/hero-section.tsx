@@ -80,13 +80,14 @@ export function HeroSection() {
   const isLight = theme === "light";
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const statsRef = useRef<HTMLDivElement>(null);
+  const rafId = useRef(0);
 
   const onMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
-    });
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => setMousePosition({ x, y }));
   }, []);
 
   const onMouseLeave = useCallback(() => setMousePosition(null), []);
