@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /contact/ai-chat
+Disallow: /contact/questionnaire
+Disallow: /demos/
+Disallow: /preview/
+Disallow: /coming-soon
+
+Sitemap: https://webstudio-ias.com/sitemap.xml
