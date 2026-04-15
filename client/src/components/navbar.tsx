@@ -7,6 +7,7 @@ import { Link, useLocation } from "wouter";
 import { useI18n, type Language } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
+import { AccessibilityMenu } from "@/components/accessibility-menu";
 
 const languages: { code: Language; flag: string; label: string }[] = [
   { code: "en", flag: "\u{1F1EC}\u{1F1E7}", label: "EN" },
@@ -122,6 +123,7 @@ export function Navbar() {
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
+            <AccessibilityMenu />
             <div
               className="flex items-center gap-0.5 rounded-full border border-border/60 bg-card/60 p-0.5 backdrop-blur-sm"
               role="radiogroup"

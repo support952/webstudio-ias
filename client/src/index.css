@@ -1539,3 +1539,31 @@ section:not([data-hero-section]) {
   content-visibility: auto;
   contain-intrinsic-size: auto 600px;
 }
+
+/* ── Accessibility overrides ── */
+.a11y-high-contrast {
+  --foreground: 0 0% 0% !important;
+  --background: 0 0% 100% !important;
+  --muted-foreground: 0 0% 20% !important;
+  --border: 0 0% 30% !important;
+}
+.a11y-high-contrast[data-theme="dark"] {
+  --foreground: 0 0% 100% !important;
+  --background: 0 0% 0% !important;
+  --muted-foreground: 0 0% 85% !important;
+  --border: 0 0% 70% !important;
+}
+.a11y-large-text {
+  font-size: 118% !important;
+}
+.a11y-reduced-motion,
+.a11y-reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+.a11y-underline-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
