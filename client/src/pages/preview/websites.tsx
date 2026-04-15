@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useI18n } from "@/lib/i18n";
-import { Layout, Zap, Globe, ShoppingCart, Star, X, Minus, Plus, Check, Send } from "lucide-react";
+import { Layout, Zap, Globe, ShoppingCart, Star, X, Minus, Plus, Check, Send, Building2, Briefcase, MessageSquare } from "lucide-react";
 import { SEOHead } from "@/components/seo-head";
 import { PreviewPageControls } from "@/components/preview-page-controls";
 import { useTheme } from "@/lib/theme";
@@ -278,6 +278,13 @@ export default function PreviewWebsites() {
         </div>
       </header>
 
+      {/* Demo banner */}
+      <div className={`text-center py-3 px-4 text-sm font-medium border-b ${
+        isLight ? "bg-cyan-50 text-cyan-800 border-cyan-100" : "bg-cyan-500/10 text-cyan-300 border-cyan-500/20"
+      }`}>
+        {t("demo.websites.demoBanner")}
+      </div>
+
       {/* Hero */}
       <section id="hero" className="relative py-20 sm:py-28 px-4 overflow-hidden">
         <div className={`absolute inset-0 ${isLight ? "bg-gradient-to-br from-cyan-500/5 via-violet-500/5 to-rose-500/5" : "bg-gradient-to-br from-cyan-500/10 via-violet-500/10 to-rose-500/10"}`} />
@@ -303,13 +310,49 @@ export default function PreviewWebsites() {
         </div>
       </section>
 
-      {/* Products */}
-      <section id="products" className={`py-20 px-4 border-t ${isLight ? "border-slate-200 bg-white/70" : "border-white/10 bg-white/[0.02]"}`}>
+      {/* Corporate / Business Section */}
+      <section className={`py-20 px-4 border-t ${isLight ? "border-slate-200 bg-white/70" : "border-white/10 bg-white/[0.02]"}`}>
         <div className="max-w-6xl mx-auto">
           <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>
-            {t("demo.ecommerce.title")}
+            {t("demo.websites.corporateTitle")}
           </h2>
-          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>Hand-picked for you. Fast shipping and easy returns.</p>
+          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>
+            {t("demo.websites.corporateSubtitle")}
+          </p>
+          <div className="grid sm:grid-cols-3 gap-8">
+            {[
+              { Icon: Building2, titleKey: "demo.websites.corp1.title", descKey: "demo.websites.corp1.desc", img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&h=300&fit=crop", gradient: "from-violet-500/20 to-violet-600/5", border: "border-violet-500/20" },
+              { Icon: Briefcase, titleKey: "demo.websites.corp2.title", descKey: "demo.websites.corp2.desc", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop", gradient: "from-cyan-500/20 to-cyan-600/5", border: "border-cyan-500/20" },
+              { Icon: MessageSquare, titleKey: "demo.websites.corp3.title", descKey: "demo.websites.corp3.desc", img: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500&h=300&fit=crop", gradient: "from-emerald-500/20 to-emerald-600/5", border: "border-emerald-500/20" },
+            ].map(({ Icon, titleKey, descKey, img, gradient, border }) => (
+              <div key={titleKey} className={`group rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl ${border} ${isLight ? "bg-white" : "bg-slate-900/80"}`}>
+                <div className="aspect-video overflow-hidden">
+                  <img src={img} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div className={`p-6 bg-gradient-to-br ${gradient}`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isLight ? "bg-white/80" : "bg-white/10"}`}>
+                      <Icon className={`w-5 h-5 ${isLight ? "text-slate-700" : "text-white"}`} />
+                    </div>
+                    <h3 className={`font-bold text-lg ${isLight ? "text-slate-900" : "text-white"}`}>{t(titleKey)}</h3>
+                  </div>
+                  <p className={`text-sm leading-relaxed ${isLight ? "text-slate-600" : "text-slate-400"}`}>{t(descKey)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* E-commerce Products */}
+      <section id="products" className={`py-20 px-4 border-t ${isLight ? "border-slate-200" : "border-white/10"}`}>
+        <div className="max-w-6xl mx-auto">
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>
+            {t("demo.websites.ecommerceTitle")}
+          </h2>
+          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>
+            {t("demo.websites.ecommerceSubtitle")}
+          </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {PRODUCTS.map((p, idx) => {
               const accents = [
