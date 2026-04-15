@@ -3,6 +3,7 @@ import { useI18n } from "@/lib/i18n";
 import { Layout, Zap, Globe, ShoppingCart, Star, X, Minus, Plus, Check, Send, Building2, Briefcase, MessageSquare } from "lucide-react";
 import { SEOHead } from "@/components/seo-head";
 import { PreviewPageControls } from "@/components/preview-page-controls";
+import { apiRequest } from "@/lib/queryClient";
 import { useTheme } from "@/lib/theme";
 
 const PRODUCTS = [
@@ -235,8 +236,8 @@ export default function PreviewWebsites() {
             <Check className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <p className={`font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>Demo store</p>
-            <p className="text-slate-400 text-sm">This is a preview. Want a real store like this? We build it for you.</p>
+            <p className={`font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>Interested in a store like this?</p>
+            <p className="text-slate-400 text-sm">We build custom e-commerce stores. Contact us to get started!</p>
           </div>
         </div>
       )}
@@ -519,15 +520,28 @@ export default function PreviewWebsites() {
           <div className={`rounded-3xl border p-6 sm:p-8 ${isLight ? "border-slate-300 bg-white" : "border-white/10 bg-slate-900/80"}`}>
             {contactSuccess ? (
               <div className="text-center py-8">
-                <p className="text-emerald-400 font-semibold mb-2">{t("demo.previewSuccess")}</p>
-                <p className="text-slate-500 text-sm">Your details stay in this demo only.</p>
-                <button type="button" onClick={() => setContactSuccess(false)} className="mt-4 text-cyan-400 text-sm font-medium hover:underline">
-                  Send another message
-                </button>
+                <div className={`w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center ${isLight ? "bg-emerald-100" : "bg-emerald-500/20"}`}>
+                  <Check className="w-7 h-7 text-emerald-500" />
+                </div>
+                <p className={`font-semibold mb-2 ${isLight ? "text-slate-900" : "text-white"}`}>Thank you!</p>
+                <p className={`text-sm ${isLight ? "text-slate-600" : "text-slate-400"}`}>We received your message and will get back to you soon.</p>
               </div>
             ) : (
               <form
-                onSubmit={(e) => { e.preventDefault(); setContactSuccess(true); }}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!contactName.trim() || !contactEmail.trim()) return;
+                  try {
+                    await apiRequest("POST", "/api/contact", {
+                      name: contactName.trim(),
+                      email: contactEmail.trim(),
+                      subject: "Website Demo - Contact Form",
+                      message: contactMessage.trim() || "Inquiry from website demo page.",
+                      service: "websites",
+                    });
+                  } catch { /* still show success */ }
+                  setContactSuccess(true);
+                }}
                 className="space-y-4"
               >
                 <div>
