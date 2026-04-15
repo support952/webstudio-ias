@@ -475,21 +475,21 @@ export default function PreviewWebsites() {
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
-                img: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=500&h=300&fit=crop",
+                img: "/tips/growth.webp",
                 tag: "Growth",
                 tagColor: isLight ? "bg-cyan-100 text-cyan-800" : "bg-cyan-500/20 text-cyan-300",
                 title: "5 Ways to Double Your Website Conversions",
                 content: "Most websites lose visitors because the call-to-action isn't clear. Here's what works: place your main CTA above the fold, use contrasting colors, add social proof near buttons, simplify your forms to 3 fields max, and A/B test your headlines. Small changes, big results.",
               },
               {
-                img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop",
+                img: "/tips/branding.webp",
                 tag: "Branding",
                 tagColor: isLight ? "bg-violet-100 text-violet-800" : "bg-violet-500/20 text-violet-300",
                 title: "Why Your Brand Needs a Professional Website in 2026",
                 content: "Social media alone isn't enough. A professional website builds trust, ranks on Google, and gives you full control over your brand story. It's your 24/7 salesperson — it works while you sleep. Clients check your website before they call you.",
               },
               {
-                img: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500&h=300&fit=crop",
+                img: "/tips/ecommerce.webp",
                 tag: "E-commerce",
                 tagColor: isLight ? "bg-emerald-100 text-emerald-800" : "bg-emerald-500/20 text-emerald-300",
                 title: "Starting an Online Store? Here's What You Need",
