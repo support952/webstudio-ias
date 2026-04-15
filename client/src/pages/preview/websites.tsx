@@ -467,25 +467,43 @@ export default function PreviewWebsites() {
         </div>
       </section>
 
-      {/* Blog preview */}
+      {/* Tips & Insights */}
       <section id="blog" className={`py-20 px-4 border-t ${isLight ? "border-slate-200" : "border-white/10"}`}>
         <div className="max-w-6xl mx-auto">
-          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>From the blog</h2>
-          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>Tips, updates, and inspiration.</p>
+          <h2 className={`text-3xl sm:text-4xl font-bold text-center mb-4 ${isLight ? "text-slate-900" : "text-white"}`}>Tips & Insights</h2>
+          <p className={`text-center mb-14 max-w-xl mx-auto ${isLight ? "text-slate-600" : "text-slate-500"}`}>Practical advice to help your business grow online.</p>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              { img: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&h=300&fit=crop", title: "10 tips for better product photos", excerpt: "How to showcase your products in the best light." },
-              { img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop", title: "Building a brand that lasts", excerpt: "Strategy and design for long-term growth." },
-              { img: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500&h=300&fit=crop", title: "Why customer experience matters", excerpt: "Small improvements that make a big difference." },
+              {
+                img: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=500&h=300&fit=crop",
+                tag: "Growth",
+                tagColor: isLight ? "bg-cyan-100 text-cyan-800" : "bg-cyan-500/20 text-cyan-300",
+                title: "5 Ways to Double Your Website Conversions",
+                content: "Most websites lose visitors because the call-to-action isn't clear. Here's what works: place your main CTA above the fold, use contrasting colors, add social proof near buttons, simplify your forms to 3 fields max, and A/B test your headlines. Small changes, big results.",
+              },
+              {
+                img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=300&fit=crop",
+                tag: "Branding",
+                tagColor: isLight ? "bg-violet-100 text-violet-800" : "bg-violet-500/20 text-violet-300",
+                title: "Why Your Brand Needs a Professional Website in 2026",
+                content: "Social media alone isn't enough. A professional website builds trust, ranks on Google, and gives you full control over your brand story. It's your 24/7 salesperson — it works while you sleep. Clients check your website before they call you.",
+              },
+              {
+                img: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500&h=300&fit=crop",
+                tag: "E-commerce",
+                tagColor: isLight ? "bg-emerald-100 text-emerald-800" : "bg-emerald-500/20 text-emerald-300",
+                title: "Starting an Online Store? Here's What You Need",
+                content: "A successful e-commerce store needs: high-quality product photos, clear descriptions, fast checkout (3 clicks max), mobile-first design, Apple Pay & Google Pay integration, and trust signals like reviews and secure payment badges.",
+              },
             ].map((post, i) => (
-              <article key={i} className={`group rounded-2xl overflow-hidden border transition-colors ${isLight ? "border-slate-300 bg-white hover:border-cyan-400/50" : "border-white/10 bg-slate-900/80 hover:border-cyan-500/30"}`}>
-                <div className="aspect-video overflow-hidden">
-                  <img src={post.img} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <article key={i} className={`group rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl ${isLight ? "border-slate-300 bg-white hover:border-cyan-400/50" : "border-white/10 bg-slate-900/80 hover:border-cyan-500/30"}`}>
+                <div className="aspect-video overflow-hidden relative">
+                  <img src={post.img} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <span className={`absolute top-3 start-3 px-3 py-1 rounded-full text-xs font-semibold ${post.tagColor}`}>{post.tag}</span>
                 </div>
-                <div className="p-5">
-                  <h3 className={`font-bold mb-2 transition-colors ${isLight ? "text-slate-900 group-hover:text-cyan-700" : "text-white group-hover:text-cyan-400"}`}>{post.title}</h3>
-                  <p className={`text-sm mb-3 ${isLight ? "text-slate-600" : "text-slate-400"}`}>{post.excerpt}</p>
-                  <span className={`text-sm font-medium ${isLight ? "text-cyan-700" : "text-cyan-400"}`}>Read more →</span>
+                <div className="p-5 sm:p-6">
+                  <h3 className={`font-bold text-lg mb-3 transition-colors ${isLight ? "text-slate-900 group-hover:text-cyan-700" : "text-white group-hover:text-cyan-400"}`}>{post.title}</h3>
+                  <p className={`text-sm leading-relaxed ${isLight ? "text-slate-600" : "text-slate-400"}`}>{post.content}</p>
                 </div>
               </article>
             ))}
