@@ -3,6 +3,7 @@ import { useI18n } from "@/lib/i18n";
 import { useState } from "react";
 import { SEOHead } from "@/components/seo-head";
 import { PreviewPageControls } from "@/components/preview-page-controls";
+import { apiRequest } from "@/lib/queryClient";
 import { useTheme } from "@/lib/theme";
 
 export default function PreviewDigitalCard() {
@@ -18,7 +19,16 @@ export default function PreviewDigitalCard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDemoAction = () => {
+  const handleDemoAction = async () => {
+    try {
+      await apiRequest("POST", "/api/contact", {
+        name: "Digital Card Visitor",
+        email: "visitor@digital-card-demo.com",
+        subject: "Digital Card Demo - Contact Form",
+        message: "Inquiry from digital card demo page.",
+        service: "digital_business_card",
+      });
+    } catch { /* still show success */ }
     setActionSuccess(true);
     setTimeout(() => setActionSuccess(false), 3000);
   };
@@ -33,7 +43,7 @@ export default function PreviewDigitalCard() {
       <PreviewPageControls />
       {actionSuccess && (
         <div className="fixed bottom-6 start-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-lg">
-          {t("demo.previewSuccess")}
+          Thank you! We received your message and will get back to you soon.
         </div>
       )}
       {typeof window !== "undefined" && window.self !== window.top && (

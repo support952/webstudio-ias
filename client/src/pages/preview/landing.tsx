@@ -3,6 +3,7 @@ import { useI18n } from "@/lib/i18n";
 import { ArrowRight, Zap, Shield, Headphones, Quote, Mail } from "lucide-react";
 import { SEOHead } from "@/components/seo-head";
 import { PreviewPageControls } from "@/components/preview-page-controls";
+import { apiRequest } from "@/lib/queryClient";
 import { useTheme } from "@/lib/theme";
 
 export default function PreviewLanding() {
@@ -29,7 +30,7 @@ export default function PreviewLanding() {
       <PreviewPageControls />
       {ctaSuccess && (
         <div className="fixed bottom-6 start-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-medium shadow-xl shadow-emerald-500/20 backdrop-blur-sm">
-          {t("demo.previewSuccess")}
+          Thank you for your interest! We'll be in touch soon.
         </div>
       )}
       {/* Back bar */}
@@ -470,9 +471,22 @@ export default function PreviewLanding() {
           <h2 className="text-2xl font-bold text-white mb-2">Stay in the loop</h2>
           <p className="text-slate-400 text-sm mb-8">Get tips and updates. No spam, unsubscribe anytime.</p>
           {newsletterSuccess ? (
-            <p className="text-emerald-400 font-medium">{t("demo.previewSuccess")}</p>
+            <p className="text-emerald-400 font-medium">Thank you! We received your message and will get back to you soon.</p>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); setNewsletterSuccess(true); }} className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!newsletterEmail.trim()) return;
+              try {
+                await apiRequest("POST", "/api/contact", {
+                  name: newsletterEmail.trim().split("@")[0],
+                  email: newsletterEmail.trim(),
+                  subject: "Landing Page Demo - Contact Form",
+                  message: "Newsletter signup from landing page demo.",
+                  service: "websites",
+                });
+              } catch { /* still show success */ }
+              setNewsletterSuccess(true);
+            }} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 placeholder="Your email"
