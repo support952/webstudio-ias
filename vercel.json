@@ -2,11 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/public",
   "framework": null,
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@3"
-    }
-  },
   "rewrites": [
     { "source": "/api/contact/stage-transition", "destination": "/api/contact/stage-transition" },
     { "source": "/api/contact", "destination": "/api/contact" },
